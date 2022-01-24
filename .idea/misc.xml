@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/account_bottom_dialog.xml" value="0.13405797101449277" />
+        <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/account_create_bottom_dialog.xml" value="0.13405797101449277" />
+        <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/activity_main.xml" value="0.13405797101449277" />
+        <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/app_bar_main.xml" value="0.13405797101449277" />
+        <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/content_main.xml" value="0.13405797101449277" />
+        <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/drawer_bottom_login_create.xml" value="0.13405797101449277" />
+        <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/drawer_bottom_settings.xml" value="0.13405797101449277" />
+        <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/fragment_home.xml" value="0.13405797101449277" />
+        <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/menu/activity_main_drawer.xml" value="0.14666666666666667" />
+        <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/menu/activity_settings_drawer.xml" value="0.1796875" />
+        <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/menu/main.xml" value="0.1796875" />
+        <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/menu/settings_menu.xml" value="0.1796875" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.5661458333333333" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/drawable/bottom_sheet_background.xml" value="0.32407407407407407" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/drawable/button_shape_color.xml" value="0.334375" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/drawable/ic_launcher_background.xml" value="0.34322916666666664" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/drawable/ic_menu_camera.xml" value="0.34322916666666664" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/drawable/ic_menu_gallery.xml" value="0.34322916666666664" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/drawable/ic_menu_slideshow.xml" value="0.34322916666666664" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/drawable/icon_location_background.xml" value="0.334375" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/drawable/icon_settings_background.xml" value="0.334375" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/drawable/qr_icon_12pubs_background.xml" value="0.334375" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/drawable/side_nav_bar.xml" value="0.334375" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/account_bottom_dialog.xml" value="0.5290858725761773" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/account_create_bottom_dialog.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/app_bar_main.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/content_main.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/create_account_activity.xml" value="0.32708333333333334" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/create_account_screen.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/drawer_bottom_login_create.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/drawer_bottom_settings.xml" value="0.33" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/fragment_gallery.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/fragment_home.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/fragment_pubs.xml" value="0.25" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/fragment_slideshow.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/login_screen.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/nav_header_main.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/settings_activity.xml" value="0.3425925925925926" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/splash_screen.xml" value="0.32708333333333334" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/layout/switch_item.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/menu/activity_main_drawer.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/menu/activity_settings_drawer.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/menu/login_create_account_drawer.xml" value="0.32708333333333334" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/menu/main.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/menu/settings_menu.xml" value="0.33" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.34322916666666664" />
+        <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.34322916666666664" />
+        <entry key="..\:/Users/milkc/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/account_create_bottom_dialog.xml" value="0.38958333333333334" />
+        <entry key="..\:/Users/milkc/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/activity_main.xml" value="0.38958333333333334" />
+        <entry key="..\:/Users/milkc/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/app_bar_main.xml" value="0.38958333333333334" />
+        <entry key="..\:/Users/milkc/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/content_main.xml" value="0.38958333333333334" />
+        <entry key="..\:/Users/milkc/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/fragment_maps.xml" value="0.290625" />
+        <entry key="..\:/Users/milkc/Dropbox/Apps Working on/12Pubs/app/src/main/res/menu/activity_main_drawer.xml" value="0.38958333333333334" />
+        <entry key="..\:/Users/milkc/Dropbox/Apps Working on/12Pubs/app/src/main/res/menu/activity_settings_drawer.xml" value="0.38958333333333334" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

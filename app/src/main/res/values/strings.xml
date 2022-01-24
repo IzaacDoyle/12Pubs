@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">12Pubs</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_pubs">Pubs</string>
+    <string name="menu_maps">Maps</string>
+
+    <string name="client_ID">1027952262847-9aa3fdf26jq91ut53luotd4d0ltvmlvk.apps.googleusercontent.com</string>
+    <string name="google_maps_key">AIzaSyC6o4UU0klD4UygXA7iY2CvkbdlDO5Ef8w</string>
+    <string name="map_id">eb8a43f33bd36507</string>
+</resources>

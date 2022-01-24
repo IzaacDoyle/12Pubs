@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    >
+
+
+    <group
+        android:id="@+id/Profile"
+        android:checkableBehavior="single">
+
+        <item android:title="Location Data">
+            <menu>
+                <item
+                    android:icon="@mipmap/icon_location_foreground"
+                    android:title="Location">
+
+                </item>
+            </menu>
+
+        </item>
+        <item android:title="QR Codes">
+            <menu>
+                <item
+                    android:icon="@mipmap/qr_icon_12pubs_foreground"
+                    android:title="Saved QR Codes" />
+            </menu>
+        </item>
+        <item android:title="Account">
+            <menu>
+                <item android:title="Item" />
+            </menu>
+        </item>
+
+
+    </group>
+</menu>

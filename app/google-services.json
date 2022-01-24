@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "90935282176",
+    "project_id": "pubs-335200",
+    "storage_bucket": "pubs-335200.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:90935282176:android:2ea7da2a6cc6dc9e5f26e5",
+        "android_client_info": {
+          "package_name": "Izaac.Doyle.PubsApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "90935282176-9505n4f70pmgagnk5rf9bbacv0ic0icf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "Izaac.Doyle.PubsApp",
+            "certificate_hash": "14271a51a30c9c7581aaaf0358130ac6891eb070"
+          }
+        },
+        {
+          "client_id": "90935282176-1r3020apb9d0br27rpisrrrcq01nme66.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6o4UU0klD4UygXA7iY2CvkbdlDO5Ef8w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "90935282176-1r3020apb9d0br27rpisrrrcq01nme66.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
