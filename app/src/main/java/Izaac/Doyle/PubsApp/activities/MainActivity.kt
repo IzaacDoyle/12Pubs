@@ -66,9 +66,18 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_pubs, R.id.nav_maps
+                R.id.nav_home, R.id.nav_pubs, R.id.nav_maps, R.id.nav_settings
             ), drawerLayout
         )
+
+
+
+
+
+
+        if (CheckCurrentUser() != null){
+         //   drawerLayout.findViewById<>()
+        }
 
 
         val settingsBtn =

@@ -1,4 +1,9 @@
 package Izaac.Doyle.PubsApp.ui.Settings
 
-class SettingsViewModel {
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+
+class SettingsViewModel: ViewModel() {
+
 }
