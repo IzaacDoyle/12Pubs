@@ -20,6 +20,11 @@
           android:id="@+id/nav_pubs"
         />
 
+    <item android:title="Maps"
+        android:id="@+id/nav_maps"
+        />
+
+
    </menu>
 
 
@@ -36,7 +41,7 @@
     <item
         android:icon="@mipmap/icon_settings_foreground"
         android:title="Account"
-        android:id="@+id/nav_maps"/>
+        android:id="@+id/nav_settings"/>
 
 
    </menu>

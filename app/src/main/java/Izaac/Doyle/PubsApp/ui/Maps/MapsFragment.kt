@@ -66,7 +66,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, OnMapsSdkInitializedCallbac
                 Log.d("MapsDemo", "The latest version of the renderer is used.")
 
                 GoogleMapOptions().apply {
-                    mapId(resources.getString(R.string.map_id))
+                   // mapId(resources.getString(R.string.map_id))
                 }
             }
             Renderer.LEGACY -> {

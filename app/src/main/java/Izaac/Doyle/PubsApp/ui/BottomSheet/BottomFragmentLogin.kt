@@ -110,9 +110,9 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             Log.d("Google Sign In","Google Sign in Attempt")
                 val intent = googleSignInClient.signInIntent
                 // both methods are here, the launch did not work but check again
-          // ActivityResultLauncher.launch(intent)
+           ActivityResultLauncher.launch(intent)
            //startActivityForResult Is depercated( do not use any more)
-                startActivityForResult(intent,GoogleSignIn_R_Code)
+              //  startActivityForResult(intent,GoogleSignIn_R_Code)
             }
 
 
@@ -173,20 +173,20 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
 
     // needs to be changed to on Activity Call back
     //Google sign in method
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode ==  GoogleSignIn_R_Code){
-            val task  = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                firebaseAuthWithGoogle(account.idToken,requireActivity())
-                dismiss()
-            }catch (e:Exception){
-                Toast.makeText(requireContext() ,    "${e.message} $e", Toast.LENGTH_SHORT).show()
-                Log.d("Google SignIn","${e.message} $e")
-            }
-        }
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (requestCode ==  GoogleSignIn_R_Code){
+//            val task  = GoogleSignIn.getSignedInAccountFromIntent(data)
+//            try {
+//                val account = task.getResult(ApiException::class.java)
+//                firebaseAuthWithGoogle(account.idToken,requireActivity())
+//                dismiss()
+//            }catch (e:Exception){
+//                Toast.makeText(requireContext() ,    "${e.message} $e", Toast.LENGTH_SHORT).show()
+//                Log.d("Google SignIn","${e.message} $e")
+//            }
+//        }
+//    }
 
     private val ActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ActivityResultCallback {
 
