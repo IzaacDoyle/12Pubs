@@ -46,7 +46,7 @@ fun GoogleSignInAccount(){
             if (task.isSuccessful){
                 val user = firebaseAuth.currentUser
                 //UpDateUI
-                    dataPasser.ErrorCreatingAccount("Task was Successful", Email)
+                    dataPasser.CreatingAccount("Task was Successful", Email)
 
                // info = "Task was Successful"
             }
@@ -55,7 +55,7 @@ fun GoogleSignInAccount(){
                  try {
                     throw task.exception!!
                 } catch (e: FirebaseAuthUserCollisionException) {
-                     dataPasser.ErrorCreatingAccount("Error Email Already in Use",Email)
+                     dataPasser.CreatingAccount("Error Email Already in Use",Email)
                     Log.d("User Create" ,"Error Email Already in Use ${e.message}  FBCr")
                   //   "Email Already In Use"
                 } catch (e: Exception) {

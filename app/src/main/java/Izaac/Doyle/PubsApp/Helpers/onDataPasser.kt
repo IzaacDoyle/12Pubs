@@ -9,5 +9,5 @@ interface onDataPasser {
    // fun passView(view:View)
 
     fun changeBottomSheet(sheetActive:String)
-    fun ErrorCreatingAccount(info:String,email:String)
+    fun CreatingAccount(info:String,email:String)
 }

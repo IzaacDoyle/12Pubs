@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.12Pubs" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/Background_color</item>
+        <item name="colorPrimary">#979797</item>
         <item name="colorPrimaryVariant">@color/Background_color</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
@@ -12,6 +12,8 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+
+
     </style>
 
     <style name="Theme.12Pubs.NoActionBar">
@@ -19,9 +21,14 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="DarkSettings" parent="ThemeOverlay.AppCompat.DayNight">
-        <item name="background">@color/Background_color</item>
-    </style>
+
+
+
+
+
+
+
+
 
     <style name="Theme.12Pubs.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 

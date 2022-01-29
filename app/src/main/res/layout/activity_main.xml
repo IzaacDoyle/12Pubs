@@ -24,19 +24,12 @@
         app:menu="@menu/activity_main_drawer">
 
         <LinearLayout
+            android:id="@+id/Drawer_Login_Create"
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:layout_gravity="bottom"
             android:orientation="vertical"
             android:padding="10dp">
-
-            <include
-                android:id="@+id/drawer_setting"
-                layout="@layout/drawer_bottom_settings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:visibility="gone" />
 
             <include
                 android:id="@+id/drawer_login_create"

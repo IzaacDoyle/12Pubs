@@ -22,14 +22,12 @@ import Izaac.Doyle.PubsApp.databinding.ActivityMainBinding
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentCreate
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentLogin
 import android.util.Log
-import android.widget.ImageButton
-import android.widget.ImageView
+import android.widget.*
 
-import android.widget.TextView
-
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
+import androidx.core.view.isGone
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -39,7 +37,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity(), onDataPasser {
-
 
 
     lateinit var app: MainApp
@@ -75,28 +72,28 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
 
 
-        if (CheckCurrentUser() != null){
-         //   drawerLayout.findViewById<>()
+        if (CheckCurrentUser() != null) {
+           drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone = true
         }
 
 
-        val settingsBtn =
-            navView.findViewById<androidx.appcompat.widget.LinearLayoutCompat>(R.id.drawer_setting)
+//        val settingsBtn =
+//            navView.findViewById<androidx.appcompat.widget.LinearLayoutCompat>(R.id.drawer_setting)
         val loginBtn = navView.findViewById<TextView>(R.id.Drawer_Login)
         val createAccountBtn = navView.findViewById<TextView>(R.id.Drawer_CreateA)
-        settingsBtn.setOnClickListener {
-
-            //if account avalable show Settings if not make it Gone
-            // settings.visibility = View.GONE
-
-
-            // val intent = Intent(this,SettingsActivity::class.java)
-            //  startActivity(intent)
-
-            //Toast.makeText(applicationContext, "This Works", Toast.LENGTH_SHORT).show()
-
-            //Change Drawer from here
-        }
+//        settingsBtn.setOnClickListener {
+//
+//            //if account avalable show Settings if not make it Gone
+//            // settings.visibility = View.GONE
+//
+//
+//            // val intent = Intent(this,SettingsActivity::class.java)
+//            //  startActivity(intent)
+//
+//            //Toast.makeText(applicationContext, "This Works", Toast.LENGTH_SHORT).show()
+//
+//            //Change Drawer from here
+//        }
 
         loginBtn.setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -160,7 +157,6 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         //get google Image save to firestore
 
 
-
         email.text = CheckCurrentUser()?.email.toString()
         name.text = CheckCurrentUser()?.displayName.toString()
 
@@ -176,6 +172,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
                 val bottomFragmentCreate = BottomFragmentCreate()
                 if (!bottomFragmentCreate.isAdded) {
                     bottomFragmentCreate.show(supportFragmentManager, "Bottom Create")
+
                 }
 
             }
@@ -192,19 +189,24 @@ class MainActivity : AppCompatActivity(), onDataPasser {
     }
 
 
-    override fun ErrorCreatingAccount(info: String, email: String) {
+    override fun CreatingAccount(info: String, email: String) {
         when (info) {
             "Task was Successful" -> {
                 //restart UI
                 // Update()
+
+                //Account Was Made
                 Toast.makeText(this, "Task was Successful", Toast.LENGTH_SHORT).show()
             }
             "Error Email Already in Use" -> {
-
-                changeBottomSheet("Login")
-                    Toast.makeText(this, "Error Email Already in Use", Toast.LENGTH_SHORT).show()
+                val bottomFragment = BottomFragmentLogin()
+                if (!bottomFragment.isAdded && !bottomFragment.isVisible) {
+                    Toast.makeText(this, "Error Email Already in Use Try logging In", Toast.LENGTH_SHORT).show()
+                    bottomFragment.arguments = bundleOf("Email" to email)
+                    bottomFragment.show(supportFragmentManager, "Bottom Login")
                 }
             }
         }
     }
+}
 
