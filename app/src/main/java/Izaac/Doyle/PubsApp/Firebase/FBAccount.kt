@@ -2,6 +2,7 @@ package Izaac.Doyle.PubsApp.Firebase
 
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Models.AccountModel
+import Izaac.Doyle.PubsApp.activities.MainActivity
 import android.accounts.Account
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -12,6 +13,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.*
 import java.lang.Exception
 import android.R
+import androidx.core.view.get
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 
@@ -75,9 +80,31 @@ fun FBLogin(){
     val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 }
 
-fun FBLogout(){
+fun FBLogout(activity: Activity){
     val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
+    val googleSignInClient: GoogleSignInClient
+
+    val gso = GoogleSignInOptions
+        .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestIdToken(activity.getString(Izaac.Doyle.PubsApp.R.string.default_web_client_id))
+        .requestEmail()
+        .build()
+
+    googleSignInClient = GoogleSignIn.getClient(activity, gso)
+
+
+
+
+    googleSignInClient.signOut()
+
+
     firebaseAuth.signOut()
+
+    activity.recreate()
+
+
+
 
 
 
@@ -100,7 +127,7 @@ fun CheckCurrentUser(): UserInfo? {
                 // Sign in success, update UI with the signed-in user's information
                 Log.d("TAG", "signInWithCredential:success")
                 val user = firebaseAuth.currentUser
-
+                activity.recreate()
                 //need to change my motion of updating the users view with a screen refresh,
                 // to update Users name and email and profile and to add the content
                 //eg.Group Info, Rules info, Account Prefrances.

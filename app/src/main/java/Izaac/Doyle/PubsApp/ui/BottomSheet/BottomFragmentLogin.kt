@@ -117,7 +117,7 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
            googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(requireActivity(), gso)
             // Google Sign in
             Log.d("Google Sign In","Google Sign in Attempt")
-                val intent = googleSignInClient.signInIntent
+            val intent = googleSignInClient.signInIntent
                 // both methods are here, the launch did not work but check again
            activityResultLauncher.launch(intent)
            //startActivityForResult Is depercated( do not use any more)

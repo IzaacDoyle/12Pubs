@@ -18,8 +18,8 @@ class AccountMemStore: AccountStore {
 
     }
 
-    override fun SignOut() {
-        FBLogout()
+    override fun SignOut(activity: Activity) {
+        FBLogout(activity)
     }
 
     override fun UpdateAccount(Account: AccountModel) {

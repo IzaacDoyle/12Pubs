@@ -5,7 +5,6 @@ import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 
 
 import Izaac.Doyle.PubsApp.Main.MainApp
-import Izaac.Doyle.PubsApp.Models.AccountModel
 import Izaac.Doyle.PubsApp.R
 import android.os.Bundle
 import android.view.Menu
@@ -21,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import Izaac.Doyle.PubsApp.databinding.ActivityMainBinding
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentCreate
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentLogin
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.MenuItem
 import android.widget.*
@@ -32,8 +32,6 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.get
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -41,7 +39,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import kotlin.math.log
 
 class MainActivity : AppCompatActivity(), onDataPasser {
 
@@ -50,6 +47,8 @@ class MainActivity : AppCompatActivity(), onDataPasser {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
+    private lateinit var drawertabClicked: String
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,13 +74,17 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         )
 
 
-
-
-
-
-        if (CheckCurrentUser() != null) {
-           drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone = true
+        if(CheckCurrentUser() == null){
+            binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone = false
+            binding.navView.menu[2].isVisible = false
+            binding.navView.menu[2].isEnabled =false
+        }else{
+            binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone =true
+            binding.navView.menu[2].isVisible =true
+            binding.navView.menu[2].isEnabled =true
         }
+
+
 
 
 //        val settingsBtn =
@@ -112,28 +115,16 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
         createAccountBtn.setOnClickListener {
             // change off and rebrand the Create account button with the drawer.
-            drawerLayout.closeDrawer(GravityCompat.START)
 
-            val googleSignInClient: GoogleSignInClient
-
-            val gso = GoogleSignInOptions
-                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build()
-
-            googleSignInClient = GoogleSignIn.getClient(this, gso)
-
-            googleSignInClient.signOut()
-            app.account.SignOut()
 
             Toast.makeText(applicationContext, "Create Works", Toast.LENGTH_SHORT).show()
         }
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        val accountdrawer =  navView.menu[1].subMenu[1]
-        accountdrawer.setActionView(R.layout.menu_account_dropdown)
+//        val accountdrawer =  navView.menu[1].subMenu[1]
+//        accountdrawer.setActionView(R.layout.menu_account_dropdown_tabup)
+
 //        accountdrawer.setOnMenuItemClickListener {
 //            when(it.itemId){
 //              R.id.Menu_Account ->{
@@ -157,12 +148,8 @@ class MainActivity : AppCompatActivity(), onDataPasser {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.Menu_Account -> {
-                binding.navView.menu[1].subMenu[2].isVisible
 
-            }
-        }
+
         return super.onOptionsItemSelected(item)
     }
 
@@ -174,16 +161,6 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
-
-       //menu[1].subMenu[1].setActionView(R.layout.menu_account_dropdown)
-
-
-        return true
-    }
 
     override fun onResume() {
 
@@ -198,10 +175,65 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
+        CheckCurrentUser()
 
         val email = findViewById<TextView>(R.id.Drawer_Email)
         val name = findViewById<TextView>(R.id.Drawer_Name)
         //val profileimage = findViewById<ImageView>(R.id.Drawer_Account_Image)
+
+        val drawerDropDown = findViewById<LinearLayout>(R.id.drawer_header_button)
+
+        var buttonclicks = 0
+
+
+
+        if (CheckCurrentUser() == null){
+            drawerDropDown.isVisible = false
+            drawerDropDown.isEnabled = false
+        }else {
+
+            drawerDropDown.setOnClickListener {
+
+                val icon = findViewById<ImageView>(R.id.button_tabup)
+
+                if (buttonclicks == 0) {
+                    icon.setImageResource(R.drawable.ic_log_out_tabdown)
+                    binding.navView.menu[0].isVisible = true
+
+
+
+                    val signoutButton = binding.navView.menu[0]
+                    signoutButton.setOnMenuItemClickListener {
+                        Log.d("SignOut", "Signout Clicked")
+                        binding.drawerLayout.closeDrawer(GravityCompat.START)
+
+                        binding.navView.menu[0].isVisible = false
+
+                        app.account.SignOut(this)
+
+                        buttonclicks = 0
+                        true
+                    }
+
+                    buttonclicks = 1
+
+                } else if (buttonclicks == 1) {
+                    icon.setImageResource(R.drawable.ic_log_out_tabup)
+                    binding.navView.menu[0].isVisible = false
+                    buttonclicks = 0
+                }
+
+
+            }
+        }
+        if (CheckCurrentUser() != null){
+            drawerDropDown.isVisible = true
+            drawerDropDown.isEnabled = true
+            binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone = true
+        }
+
+
+
 
 
         //an UI so that once user loged in Email and Name and Image change
