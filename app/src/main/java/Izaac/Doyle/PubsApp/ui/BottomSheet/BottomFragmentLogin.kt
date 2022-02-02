@@ -240,14 +240,18 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
     }
 
     override fun onDestroy() {
-        dismiss()
         super.onDestroy()
+
+    }
+
+    override fun onPause() {
+        super.onPause()
 
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        //_binding = null
+        _binding = null
     }
 
     override fun changeBottomSheet(sheetActive: String) {

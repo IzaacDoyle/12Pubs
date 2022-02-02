@@ -22,12 +22,18 @@ import Izaac.Doyle.PubsApp.databinding.ActivityMainBinding
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentCreate
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentLogin
 import android.util.Log
+import android.view.MenuItem
 import android.widget.*
 
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.view.menu.MenuView
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
+import androidx.core.view.get
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -35,6 +41,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlin.math.log
 
 class MainActivity : AppCompatActivity(), onDataPasser {
 
@@ -125,8 +132,38 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        val accountdrawer =  navView.menu[1].subMenu[1]
+        accountdrawer.setActionView(R.layout.menu_account_dropdown)
+//        accountdrawer.setOnMenuItemClickListener {
+//            when(it.itemId){
+//              R.id.Menu_Account ->{
+//                    Log.d("drawerAction","Account Button pressed")
+//                    navView.menu[1].subMenu[2].expandActionView()
+//                   true
+//                }
+//
+//                else -> {
+//                    Log.d("drawerAction","ELSE ENTERED Account Button pressed")
+//                    false}
+//            }
+//
+//        }
 
 
+
+        //getItem(R.id.Menu_Account).setActionView(R.layout.menu_account_dropdown)
+            //.setActionView(R.layout.menu_account_dropdown)
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.Menu_Account -> {
+                binding.navView.menu[1].subMenu[2].isVisible
+
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onStart() {
@@ -142,8 +179,22 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
 
+       //menu[1].subMenu[1].setActionView(R.layout.menu_account_dropdown)
+
+
         return true
     }
+
+    override fun onResume() {
+
+        super.onResume()
+    }
+
+    override fun onPause() {
+
+        super.onPause()
+    }
+
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
@@ -164,22 +215,24 @@ class MainActivity : AppCompatActivity(), onDataPasser {
     }
 
     override fun changeBottomSheet(sheetActive: String) {
+        val bottomFragment = BottomFragmentLogin()
+        val bottomFragmentCreate = BottomFragmentCreate()
         when (sheetActive) {
 
 
             "Create" -> {
 
-                val bottomFragmentCreate = BottomFragmentCreate()
                 if (!bottomFragmentCreate.isAdded) {
                     bottomFragmentCreate.show(supportFragmentManager, "Bottom Create")
-
+                    bottomFragment.isHidden
                 }
 
             }
             "Login" -> {
-                val bottomFragment = BottomFragmentLogin()
+
                 if (!bottomFragment.isAdded && !bottomFragment.isVisible) {
                     bottomFragment.show(supportFragmentManager, "Bottom Login")
+                    bottomFragmentCreate.isHidden
                 }
 
             }

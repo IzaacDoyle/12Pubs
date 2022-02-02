@@ -196,6 +196,7 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
     override fun onDestroyView() {
         super.onDestroyView()
         dataPasser.changeBottomSheet("Login")
+        _binding = null
     }
 
     override fun onAttach(context: Context) {
