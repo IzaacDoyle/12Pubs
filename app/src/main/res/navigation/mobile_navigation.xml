@@ -26,4 +26,8 @@
         android:id="@+id/nav_settings"
         android:name="Izaac.Doyle.PubsApp.ui.Settings.SettingsFragment"
         android:label="@string/menu_settings" />
+    <fragment
+        android:id="@+id/nav_group"
+        android:name="Izaac.Doyle.PubsApp.ui.home.GroupsFragment"
+        android:label="@string/menu_group" />
 </navigation>
