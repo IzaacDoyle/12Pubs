@@ -1,10 +1,12 @@
 package Izaac.Doyle.PubsApp.ui.BottomSheet
 
+import Izaac.Doyle.PubsApp.Firebase.firebaseAuthWithGoogle
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.AccountBottomDialogBinding
 import Izaac.Doyle.PubsApp.databinding.AccountCreateBottomDialogBinding
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +18,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
@@ -23,6 +31,7 @@ import org.w3c.dom.Text
 
 class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
 
+    private lateinit var googleSignInClient: GoogleSignInClient
     private var _binding: AccountCreateBottomDialogBinding? = null
     lateinit var app: MainApp
     lateinit var dataPasser : onDataPasser
@@ -66,7 +75,9 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
 
 
             binding.LoginAccount.setOnClickListener {
-            dismiss()
+                dismiss()
+                dataPasser.changeBottomSheet("Login")
+
            //dataPasser.changeBottomSheet("Login")
             Log.d("CreateAccount","Login CLicked ")
 
@@ -116,10 +127,46 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
             }
         }
 
+        binding.GoogleSignIn.setOnClickListener {
+
+            val gso = GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+
+            googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(requireActivity(), gso)
+            // Google Sign in
+            Log.d("Google Sign In","Google Sign in Attempt")
+            val intent = googleSignInClient.signInIntent
+            // both methods are here, the launch did not work but check again
+            activityResultLauncher.launch(intent)
+            //startActivityForResult Is depercated( do not use any more)
+            //  startActivityForResult(intent,GoogleSignIn_R_Code)
+        }
+
 
         return root
 
     }
+
+    private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ActivityResultCallback {
+
+        if(it.resultCode == Activity.RESULT_OK){
+            Log.d("Activity Result","Activity Result has been started")
+            val task  = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                firebaseAuthWithGoogle(account.idToken,requireActivity())
+                dismiss()
+            }catch (e:Exception){
+                Toast.makeText(requireContext() ,    "${e.message} $e", Toast.LENGTH_SHORT).show()
+                Log.d("Google SignIn","${e.message} $e")
+            }
+        }
+
+
+    })
 
 
 
@@ -195,7 +242,7 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        dataPasser.changeBottomSheet("Login")
+      // dataPasser.changeBottomSheet("Login")
         _binding = null
     }
 

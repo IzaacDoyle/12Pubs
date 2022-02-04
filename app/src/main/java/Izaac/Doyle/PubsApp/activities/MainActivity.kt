@@ -7,7 +7,7 @@ import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.R
 import android.os.Bundle
-import android.view.Menu
+
 
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -43,19 +43,21 @@ import com.google.firebase.ktx.Firebase
 class MainActivity : AppCompatActivity(), onDataPasser {
 
 
-    lateinit var app: MainApp
+
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
-    private lateinit var drawertabClicked: String
+    lateinit var app: MainApp
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         super.onCreate(savedInstanceState)
-        app = application as MainApp
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        app = application as MainApp
+
         setContentView(binding.root)
         auth = Firebase.auth
 
@@ -89,8 +91,8 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
 //        val settingsBtn =
 //            navView.findViewById<androidx.appcompat.widget.LinearLayoutCompat>(R.id.drawer_setting)
-        val loginBtn = navView.findViewById<TextView>(R.id.Drawer_Login)
-        val createAccountBtn = navView.findViewById<TextView>(R.id.Drawer_CreateA)
+        val loginBtn = navView.findViewById<LinearLayout>(R.id.Drawer_Login)
+        val createAccountBtn = navView.findViewById<LinearLayout>(R.id.Drawer_CreateA)
 //        settingsBtn.setOnClickListener {
 //
 //            //if account avalable show Settings if not make it Gone
@@ -115,9 +117,11 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
         createAccountBtn.setOnClickListener {
             // change off and rebrand the Create account button with the drawer.
+            drawerLayout.closeDrawer(GravityCompat.START)
+            val bottomFragment = BottomFragmentCreate()
+            bottomFragment.show(supportFragmentManager, "Bottom Login")
 
-
-            Toast.makeText(applicationContext, "Create Works", Toast.LENGTH_SHORT).show()
+           // Toast.makeText(applicationContext, "Create Works", Toast.LENGTH_SHORT).show()
         }
 
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -148,7 +152,13 @@ class MainActivity : AppCompatActivity(), onDataPasser {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.settings_signout -> {
+                Log.d("settingsActivity","Log out")
+                app.account.SignOut(this)
+            }
 
+        }
 
         return super.onOptionsItemSelected(item)
     }
@@ -176,9 +186,9 @@ class MainActivity : AppCompatActivity(), onDataPasser {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         CheckCurrentUser()
-
         val email = findViewById<TextView>(R.id.Drawer_Email)
         val name = findViewById<TextView>(R.id.Drawer_Name)
+
         //val profileimage = findViewById<ImageView>(R.id.Drawer_Account_Image)
 
         val drawerDropDown = findViewById<LinearLayout>(R.id.drawer_header_button)
@@ -225,23 +235,31 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
 
             }
+
+
+
+            if (!email.text.isNullOrEmpty()){
+                email.text = CheckCurrentUser()?.email.toString()
+            }
+            if (!name.text.isNullOrEmpty()){
+                name.text = CheckCurrentUser()?.displayName.toString()
+            }
         }
         if (CheckCurrentUser() != null){
             drawerDropDown.isVisible = true
             drawerDropDown.isEnabled = true
             binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone = true
+
+
+          //  email.text = "12 Pubs"
+          //  email.text = "Pub Games"
+
+
+
         }
-
-
-
-
 
         //an UI so that once user loged in Email and Name and Image change
         //get google Image save to firestore
-
-
-        email.text = CheckCurrentUser()?.email.toString()
-        name.text = CheckCurrentUser()?.displayName.toString()
 
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
