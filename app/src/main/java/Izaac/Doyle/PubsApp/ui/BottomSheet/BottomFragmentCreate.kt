@@ -1,12 +1,13 @@
 package Izaac.Doyle.PubsApp.ui.BottomSheet
 
-import Izaac.Doyle.PubsApp.Firebase.firebaseAuthWithGoogle
+
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.AccountBottomDialogBinding
 import Izaac.Doyle.PubsApp.databinding.AccountCreateBottomDialogBinding
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -37,6 +38,7 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
     lateinit var dataPasser : onDataPasser
     var emailValid:Boolean = false
     var passwordValid:Boolean = false
+    var usernameValid:Boolean = false
 
     private val binding get() = _binding!!
 
@@ -60,16 +62,6 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
         val root: View = binding.root
 
 
-//        val LoginAccountButton = view?.findViewById<TextView>(R.id.Login_Account)
-//        val Create_Button_Account = view?.findViewById<Button>(R.id.User_Create_Create)
-//        val email = view?.findViewById<EditText>(R.id.UserEmailCreate2)
-//        val password = view?.findViewById<EditText>(R.id.UserPasswordCreate2)
-//        val username = view?.findViewById<EditText>(R.id.UserUsernameCreate2)
-//        val password_retype = view?.findViewById<EditText>(R.id.UserPasswordRetypeCreate2)
-//        val UserPasswordCreate = view?.findViewById<TextInputLayout>(R.id.UserPasswordCreate1)
-//        val UserPasswordCreate2 = view?.findViewById<TextInputLayout>(R.id.UserPasswordRetypeCreate1)
-//        val UserEmailLogin = view?.findViewById<TextInputLayout>(R.id.User_Email_Create1)
-//        val UsernameTextInput = view?.findViewById<TextInputLayout>(R.id.UserUsernameCreate1)
 
 
 
@@ -85,7 +77,6 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
 
 
             binding.UserCreateCreate.setOnClickListener {
-                //binding.UserPasswordCreate2.restoreDefaultFocus()
                 binding.UserEmailCreate2.clearFocus()
                 binding.UserPasswordCreate2.clearFocus()
                 binding.UserUsernameCreate2.clearFocus()
@@ -114,6 +105,8 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
                            binding.UserUsernameCreate2.text.toString().trim(),
                             requireActivity()
                         )
+                        dismiss()
+
 
                     }
                     /* "Noting Returned" -> Log.d("Create Account","Global scope not reached and create account was not Attempted")
@@ -157,7 +150,7 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
             val task  = GoogleSignIn.getSignedInAccountFromIntent(it.data)
             try {
                 val account = task.getResult(ApiException::class.java)
-                firebaseAuthWithGoogle(account.idToken,requireActivity())
+                app.account.GoogleSignIn(account.idToken,requireActivity())
                 dismiss()
             }catch (e:Exception){
                 Toast.makeText(requireContext() ,    "${e.message} $e", Toast.LENGTH_SHORT).show()
@@ -171,8 +164,7 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
 
 
     private fun emailFocusListener() {
-//        val UserEmailLogin = view?.findViewById<TextInputLayout>(R.id.UserEmailCreate1)
-//        val UserEmailTextInput = view?.findViewById<EditText>(R.id.UserEmailCreate2)
+
         binding.UserEmailCreate2.setOnFocusChangeListener { _, focused ->
             if (!focused){
                 binding.UserEmailCreate1.helperText  = validEmail()
@@ -182,10 +174,7 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
     }
 
     private fun passwordFocusListener(){
-//        val UserPasswordCreate = view?.findViewById<TextInputLayout>(R.id.UserPasswordCreate1)
-//        val UserPassedTextInput = view?.findViewById<EditText>(R.id.UserPasswordCreate2)
-//        val UserPasswordCreate2 = view?.findViewById<TextInputLayout>(R.id.UserPasswordRetypeCreate1)
-//        val UserPassedTextInput2 = view?.findViewById<EditText>(R.id.UserPasswordRetypeCreate2)
+
        binding.UserPasswordCreate2.setOnFocusChangeListener { _, focused ->
             if (!focused){
                 binding.UserPasswordCreate1.helperText  = validPassWord()
@@ -273,5 +262,6 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
             }
         }
     }
+
 
 }

@@ -31,6 +31,12 @@
         <item android:title="Account">
             <menu>
 
+                <item
+                    android:id="@+id/settings_update_account"
+                    android:icon="@drawable/ic_update_user_data"
+
+                    android:title="Update Account Info" />
+
 
                 <item
                     android:id="@+id/settings_signout"
@@ -38,9 +44,10 @@
                     android:title="SIGN OUT">
 
                 </item>
-                <item android:title="Delete Account"
+                <item
+                    android:id="@+id/settings_delete_account"
                     android:icon="@drawable/ic_delete_account"
-                    />
+                    android:title="Delete Account" />
 
             </menu>
 

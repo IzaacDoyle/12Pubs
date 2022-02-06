@@ -3,6 +3,7 @@ package Izaac.Doyle.PubsApp.Firebase
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Models.AccountModel
 import Izaac.Doyle.PubsApp.activities.MainActivity
+import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentCreate
 import android.accounts.Account
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -13,7 +14,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.*
 import java.lang.Exception
 import android.R
+import android.app.Dialog
+import android.view.View
 import androidx.core.view.get
+import androidx.navigation.Navigation
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -23,14 +27,22 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.delay
 
 
-fun GoogleSignInAccount(){
+fun FBReAuth(Email:String,password:String,info:String){
+
     var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-
-
-
+    firebaseAuth.currentUser!!.reauthenticate(EmailAuthProvider.getCredential(Email,password)).addOnCompleteListener {task ->
+        if (task.isSuccessful){
+            Log.d("ReAuth","Auth Entered")
+            if (info == "Delete"){
+                FBDeleteAccount()
+            }
+        }
+    }
 
 }
 
@@ -54,6 +66,13 @@ fun GoogleSignInAccount(){
                     dataPasser.CreatingAccount("Task was Successful", Email)
 
                // info = "Task was Successful"
+
+                val navController = Navigation.findNavController(activity,
+                    Izaac.Doyle.PubsApp.R.id.nav_host_fragment_content_main)
+                navController.navigate(Izaac.Doyle.PubsApp.R.id.nav_home)
+                activity.recreate()
+
+
             }
 
             if (!task.isSuccessful) {
@@ -71,13 +90,26 @@ fun GoogleSignInAccount(){
 
             }
 
-
-
-
 }
 
 fun FBLogin(){
     val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+}
+
+fun FBDeleteAccount(){
+    val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+   val user = firebaseAuth.currentUser!!
+    user.delete().addOnCompleteListener  { task->
+        if (task.isSuccessful){
+
+
+        }else{
+            Log.d("Error Delete",task.exception?.message.toString())
+        }
+
+    }
+
+
 }
 
 fun FBLogout(activity: Activity){
@@ -118,7 +150,7 @@ fun CheckCurrentUser(): UserInfo? {
 }
 
 
-  fun firebaseAuthWithGoogle(idToken: String?,activity: Activity) {
+  fun GoogleSignInAccount(idToken: String?,activity: Activity) {
     val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     val credential = GoogleAuthProvider.getCredential(idToken, null)
     firebaseAuth.signInWithCredential(credential)

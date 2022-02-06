@@ -2,35 +2,31 @@ package Izaac.Doyle.PubsApp.ui.BottomSheet
 
 
 
-import Izaac.Doyle.PubsApp.Firebase.firebaseAuthWithGoogle
+
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.AccountModel
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.AccountBottomDialogBinding
-import Izaac.Doyle.PubsApp.databinding.FragmentHomeBinding
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
+import androidx.fragment.app.setFragmentResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.textfield.TextInputLayout
-
-
 
 
 class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
@@ -45,6 +41,7 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
     var emailValid:Boolean = false
     var passwordValid:Boolean = false
      var extraData: String? = null
+   // lateinit var dialogSettings:Dialog
 
 
 
@@ -63,6 +60,7 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
         super.onCreate(savedInstanceState)
         app = requireActivity().application as MainApp
 
+
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -75,16 +73,19 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
 
       // val view = inflater.inflate(R.layout.account_bottom_dialog, container , false)
 
-//        val CreateAccount = view?.findViewById<TextView>(R.id.Login_Account)
-//        val UserLoginLogin = view?.findViewById<androidx.appcompat.widget.AppCompatButton>(R.id.User_Login_Login)
-//        val UserEmailLogin = view?.findViewById<EditText>(R.id.User_Email_Login2)
-//        // val UserPasswordLogin = view?.findViewById<TextInputLayout>(R.id.User_Password_Login1)
-//        val GoogleSignIn = view?.findViewById<com.google.android.gms.common.SignInButton>(R.id.Google_SignIn)
-//        val UserTextInput = view?.findViewById<EditText>(R.id.User_Password_Login2)
 
-        if (this.arguments != null){
-            val email = this.arguments?.get("Email").toString()
-            binding.UserEmailLogin2.setText(email)
+
+        if (this.arguments != null) {
+            if (arguments?.containsKey("Email") == true) {
+                val email = this.arguments?.get("Email").toString()
+                binding.UserEmailLogin2.setText(email)
+            }else if (arguments?.containsKey("relogin") == true){
+                binding.LoginAccount.isEnabled = false
+                binding.LoginAccount.isVisible = false
+                binding.loginTopText.text = "Login Again to Confirm User"
+                //Log.d("dialogArg",arguments!!.get("relogin").toString())
+                 //dialogSettings = arguments?.get("dialog") as Dialog
+            }
         }
 
 
@@ -99,12 +100,26 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
         binding.UserLoginLogin.setOnClickListener {
             binding.UserEmailLogin2.clearFocus()
             binding.UserPasswordLogin2.clearFocus()
-            if (emailValid && passwordValid){
-                Log.d("User","User can be logged in or if account not there create account prompt")
+            if (emailValid && passwordValid) {
+//                if (arguments?.containsKey("relogin") == true) {
+//
+//                    app.account.ReAuth(binding.UserEmailLogin2.toString(),binding.UserPasswordLogin2.toString())
+//
+//
+//
+//                } else {
+                    Log.d(
+                        "User",
+                        "User can be logged in or if account not there create account prompt"
+                    )
 
+                    //app.account.SignIn()
+                    //add login
+                    dismiss()
+                }
             }
 
-        }
+//        }
 
         binding.GoogleSignIn.setOnClickListener {
 
@@ -211,7 +226,8 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             val task  = GoogleSignIn.getSignedInAccountFromIntent(it.data)
             try {
                 val account = task.getResult(ApiException::class.java)
-                firebaseAuthWithGoogle(account.idToken,requireActivity())
+                app.account.GoogleSignIn(account.idToken,requireActivity())
+               // setFragmentResult(DeleteAccountConstraint.REQUEST_CODE, bundleOf(DeleteAccountConstraint.BUNDLE_KEY to "confirm"))
                 dismiss()
             }catch (e:Exception){
                 Toast.makeText(requireContext() ,    "${e.message} $e", Toast.LENGTH_SHORT).show()
@@ -272,6 +288,8 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
 
 
     }
+
+
 
 
 }

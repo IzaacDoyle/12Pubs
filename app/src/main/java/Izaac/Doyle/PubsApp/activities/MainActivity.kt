@@ -21,6 +21,7 @@ import Izaac.Doyle.PubsApp.databinding.ActivityMainBinding
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentCreate
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentLogin
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.util.Log
 import android.view.MenuItem
 import android.widget.*
@@ -126,28 +127,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-//        val accountdrawer =  navView.menu[1].subMenu[1]
-//        accountdrawer.setActionView(R.layout.menu_account_dropdown_tabup)
 
-//        accountdrawer.setOnMenuItemClickListener {
-//            when(it.itemId){
-//              R.id.Menu_Account ->{
-//                    Log.d("drawerAction","Account Button pressed")
-//                    navView.menu[1].subMenu[2].expandActionView()
-//                   true
-//                }
-//
-//                else -> {
-//                    Log.d("drawerAction","ELSE ENTERED Account Button pressed")
-//                    false}
-//            }
-//
-//        }
-
-
-
-        //getItem(R.id.Menu_Account).setActionView(R.layout.menu_account_dropdown)
-            //.setActionView(R.layout.menu_account_dropdown)
 
     }
 
@@ -159,7 +139,6 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             }
 
         }
-
         return super.onOptionsItemSelected(item)
     }
 
@@ -170,18 +149,6 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
 
     }
-
-
-    override fun onResume() {
-
-        super.onResume()
-    }
-
-    override fun onPause() {
-
-        super.onPause()
-    }
-
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
@@ -216,8 +183,8 @@ class MainActivity : AppCompatActivity(), onDataPasser {
                     signoutButton.setOnMenuItemClickListener {
                         Log.d("SignOut", "Signout Clicked")
                         binding.drawerLayout.closeDrawer(GravityCompat.START)
-
                         binding.navView.menu[0].isVisible = false
+                        navController.navigate(R.id.nav_home)
 
                         app.account.SignOut(this)
 
@@ -311,5 +278,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             }
         }
     }
+
+
 }
 

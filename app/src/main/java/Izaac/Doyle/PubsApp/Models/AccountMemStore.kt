@@ -1,12 +1,10 @@
 package Izaac.Doyle.PubsApp.Models
 
-import Izaac.Doyle.PubsApp.Firebase.FBCreateAccount
-import Izaac.Doyle.PubsApp.Firebase.FBLogout
-import Izaac.Doyle.PubsApp.R
-import Izaac.Doyle.PubsApp.activities.MainActivity
+import Izaac.Doyle.PubsApp.Firebase.*
 import android.app.Activity
-import android.content.res.Resources
+import android.app.Dialog
 import android.util.Log
+import android.view.View
 import kotlinx.coroutines.*
 import java.util.logging.Handler
 
@@ -40,6 +38,16 @@ class AccountMemStore: AccountStore {
             Thread.sleep(2000)
             Log.d("Create User","See if pause works")
         }
+    }
+
+    override fun GoogleSignIn(idToken: String?, activity: Activity) {
+        GoogleSignInAccount(idToken,activity)
+    }
+
+
+
+    override fun ReAuth(email: String, password: String,info:String) {
+        FBReAuth(email, password,info)
     }
 
 }
