@@ -26,18 +26,20 @@ class AccountMemStore: AccountStore {
         TODO("Not yet implemented")
     }
 
-    override fun LoginCreate(Email: String, Password: String, Username:String, activity: Activity) {
-        val account = AccountModel(0,Username,Password,Email)
-        if (account.email.isNotEmpty()){
-            GlobalScope.launch (Dispatchers.IO){
-                val job = launch{FBCreateAccount(account,activity)}
+    override fun LoginCreate(Account: AccountModel, Password: String, activity: Activity) {
+        val account = AccountModel("",Account.username,Account.email)
+        if (Account.email.isNotEmpty()){
+//            GlobalScope.launch (Dispatchers.IO){
+//                val job = launch{
+            Log.d("Create User","Entering here")
+                    FBCreateAccount(account,Password,activity)}
 
                 //inside launch storage creation, no storage to be created unless Account created
                 // need to save user Profile pic to begin with
-            }
-            Thread.sleep(2000)
+//            }
+//            Thread.sleep(2000)
             Log.d("Create User","See if pause works")
-        }
+      //  }
     }
 
     override fun GoogleSignIn(idToken: String?, activity: Activity) {

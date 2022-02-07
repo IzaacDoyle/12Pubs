@@ -10,7 +10,7 @@ interface AccountStore{
     fun SignIn(Account: AccountModel)
     fun SignOut(activity: Activity)
     fun UpdateAccount(Account: AccountModel)
-    fun LoginCreate(Email:String,Password: String,Username:String,activity: Activity)
+    fun LoginCreate(Account: AccountModel,Password: String,activity: Activity)
     fun GoogleSignIn(idToken: String?,activity: Activity)
     fun ReAuth(email:String,password:String,info: String)
 }

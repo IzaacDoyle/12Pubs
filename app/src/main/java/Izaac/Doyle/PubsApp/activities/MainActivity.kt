@@ -1,6 +1,7 @@
 package Izaac.Doyle.PubsApp.activities
 
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+import Izaac.Doyle.PubsApp.Firebase.FBGetDB
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 
 
@@ -22,6 +23,8 @@ import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentCreate
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentLogin
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import android.view.MenuItem
 import android.widget.*
@@ -52,6 +55,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -61,6 +65,8 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
         setContentView(binding.root)
         auth = Firebase.auth
+
+
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
@@ -85,8 +91,8 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone =true
             binding.navView.menu[2].isVisible =true
             binding.navView.menu[2].isEnabled =true
+            FBGetDB(CheckCurrentUser()!!.uid,this)
         }
-
 
 
 
@@ -169,6 +175,22 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             drawerDropDown.isEnabled = false
         }else {
 
+
+            val sharedPrefInfo = getSharedPreferences(CheckCurrentUser()!!.uid,Context.MODE_PRIVATE)
+
+            val username  = sharedPrefInfo.getString("Username","")
+            val userEmail = sharedPrefInfo.getString("Email", "")
+            Log.d("shardpref","$username to $userEmail")
+
+
+          //  email.text = userinfo.email
+
+            name.text = username
+            email.text = CheckCurrentUser()!!.email
+
+
+
+
             drawerDropDown.setOnClickListener {
 
                 val icon = findViewById<ImageView>(R.id.button_tabup)
@@ -177,39 +199,22 @@ class MainActivity : AppCompatActivity(), onDataPasser {
                     icon.setImageResource(R.drawable.ic_log_out_tabdown)
                     binding.navView.menu[0].isVisible = true
 
-
-
                     val signoutButton = binding.navView.menu[0]
                     signoutButton.setOnMenuItemClickListener {
                         Log.d("SignOut", "Signout Clicked")
                         binding.drawerLayout.closeDrawer(GravityCompat.START)
                         binding.navView.menu[0].isVisible = false
                         navController.navigate(R.id.nav_home)
-
                         app.account.SignOut(this)
-
                         buttonclicks = 0
                         true
                     }
-
                     buttonclicks = 1
-
                 } else if (buttonclicks == 1) {
                     icon.setImageResource(R.drawable.ic_log_out_tabup)
                     binding.navView.menu[0].isVisible = false
                     buttonclicks = 0
                 }
-
-
-            }
-
-
-
-            if (!email.text.isNullOrEmpty()){
-                email.text = CheckCurrentUser()?.email.toString()
-            }
-            if (!name.text.isNullOrEmpty()){
-                name.text = CheckCurrentUser()?.displayName.toString()
             }
         }
         if (CheckCurrentUser() != null){

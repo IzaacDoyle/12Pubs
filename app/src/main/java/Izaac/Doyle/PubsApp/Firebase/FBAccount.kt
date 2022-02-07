@@ -28,8 +28,12 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.auth.User
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 fun FBReAuth(Email:String,password:String,info:String){
@@ -46,17 +50,15 @@ fun FBReAuth(Email:String,password:String,info:String){
 
 }
 
-   fun FBCreateAccount(account: AccountModel, activity: Activity) {
+   fun FBCreateAccount(account: AccountModel,password: String, activity: Activity) {
     val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     val Email = account.email
     val Username = account.username
-    val Password = account.password
+   // val Password = account.password
     //var info: String? = null
        var dataPasser :onDataPasser
 
-
-
-    firebaseAuth.createUserWithEmailAndPassword(Email,Password)
+    firebaseAuth.createUserWithEmailAndPassword(Email,password)
         .addOnCompleteListener(activity) { task->
             dataPasser = activity as onDataPasser
 
@@ -65,6 +67,7 @@ fun FBReAuth(Email:String,password:String,info:String){
                 //UpDateUI
                     dataPasser.CreatingAccount("Task was Successful", Email)
 
+                FBcreateDB(user!!.uid, Username)
                // info = "Task was Successful"
 
                 val navController = Navigation.findNavController(activity,
@@ -72,7 +75,8 @@ fun FBReAuth(Email:String,password:String,info:String){
                 navController.navigate(Izaac.Doyle.PubsApp.R.id.nav_home)
                 activity.recreate()
 
-
+            }else{
+                Log.d("UserCreate", task.exception!!.message.toString()+ account.email)
             }
 
             if (!task.isSuccessful) {
@@ -159,6 +163,9 @@ fun CheckCurrentUser(): UserInfo? {
                 // Sign in success, update UI with the signed-in user's information
                 Log.d("TAG", "signInWithCredential:success")
                 val user = firebaseAuth.currentUser
+                if (task.result.additionalUserInfo?.isNewUser == true) {
+                    FBcreateDB(user!!.uid, user.displayName.toString())
+                }
                 activity.recreate()
                 //need to change my motion of updating the users view with a screen refresh,
                 // to update Users name and email and profile and to add the content

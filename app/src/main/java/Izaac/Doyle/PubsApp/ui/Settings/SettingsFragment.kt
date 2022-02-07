@@ -5,7 +5,7 @@ import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.SettingsActivityBinding
-import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentLogin
+import Izaac.Doyle.PubsApp.ui.BottomSheet.settings_update_info
 import Izaac.Doyle.PubsApp.ui.home.HomeFragment
 import android.app.Dialog
 import android.content.Context
@@ -14,7 +14,6 @@ import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.EditText
-import androidx.core.os.bundleOf
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -88,10 +87,6 @@ class SettingsFragment: Fragment() {
 
                     //start up the login again to verify, and then after display dialog box to confirm
 
-
-
-
-
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
                     dialog.setCancelable(false)
                     dialog.setContentView(R.layout.custom_delete_dialogbox)
@@ -122,14 +117,26 @@ class SettingsFragment: Fragment() {
                            // textbox.error = "Email Does not match"
                         }
                     }
-
-
                     dialog.show()
-
-
                     true
                 }
                 else -> {true }
+            }
+        }
+        binding.navviewMenuitems.menu[2].subMenu[0].setOnMenuItemClickListener {
+            val settings = settings_update_info()
+            when(it.itemId){
+                R.id.settings_update_account->{
+
+                    if (!settings.isAdded) {
+                        settings.show(childFragmentManager, "Bottom Create")
+                        settings.isHidden
+                    }
+                    true
+                }
+                else -> {
+                    true
+                }
             }
         }
 

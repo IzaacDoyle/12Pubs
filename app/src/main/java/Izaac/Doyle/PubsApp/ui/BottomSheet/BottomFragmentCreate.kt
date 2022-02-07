@@ -3,6 +3,7 @@ package Izaac.Doyle.PubsApp.ui.BottomSheet
 
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
+import Izaac.Doyle.PubsApp.Models.AccountModel
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.AccountBottomDialogBinding
 import Izaac.Doyle.PubsApp.databinding.AccountCreateBottomDialogBinding
@@ -100,9 +101,8 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
                 } else {
                     if (passwordValid && emailValid) {
                         app.account.LoginCreate(
-                            binding.UserEmailCreate2.text.toString().trim(),
+                            AccountModel("",  binding.UserUsernameCreate2.text.toString().trim(), binding.UserEmailCreate2.text.toString().trim()),
                             binding.UserPasswordCreate2.text.toString().trim(),
-                           binding.UserUsernameCreate2.text.toString().trim(),
                             requireActivity()
                         )
                         dismiss()
