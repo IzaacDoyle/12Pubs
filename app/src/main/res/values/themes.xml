@@ -19,9 +19,7 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="DarkSettings" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="backgroundColor">@color/Background_color</item>
-    </style>
+
 
 
     <style name="Theme.12Pubs.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

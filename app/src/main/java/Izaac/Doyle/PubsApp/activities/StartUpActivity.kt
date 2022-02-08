@@ -2,6 +2,7 @@ package Izaac.Doyle.PubsApp.activities
 
 import Izaac.Doyle.PubsApp.R
 import android.Manifest
+import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -12,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import kotlin.system.exitProcess
 
 class StartUpActivity: AppCompatActivity() {
     private val PERMISSIONS_GRANTED = 101
@@ -71,10 +73,12 @@ class StartUpActivity: AppCompatActivity() {
                         startActivity(intent)
                         finish()
                     }, 1000)
-
-
+                }else{
+                    exitProcess(-1)
                 }
             }
+        }else{
+            exitProcess(-1)
         }
 
     }

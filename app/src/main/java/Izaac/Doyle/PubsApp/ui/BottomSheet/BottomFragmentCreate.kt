@@ -1,8 +1,14 @@
 package Izaac.Doyle.PubsApp.ui.BottomSheet
 
+
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
+import Izaac.Doyle.PubsApp.Models.AccountModel
 import Izaac.Doyle.PubsApp.R
+import Izaac.Doyle.PubsApp.databinding.AccountBottomDialogBinding
+import Izaac.Doyle.PubsApp.databinding.AccountCreateBottomDialogBinding
+import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +20,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
@@ -21,10 +33,15 @@ import org.w3c.dom.Text
 
 class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
 
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private var _binding: AccountCreateBottomDialogBinding? = null
     lateinit var app: MainApp
     lateinit var dataPasser : onDataPasser
     var emailValid:Boolean = false
     var passwordValid:Boolean = false
+    var usernameValid:Boolean = false
+
+    private val binding get() = _binding!!
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,97 +58,144 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
     ): View? {
 
 
-        val view = inflater.inflate(R.layout.account_create_bottom_dialog, container, false)
+        //val view = inflater.inflate(R.layout.account_create_bottom_dialog, container, false)
+        _binding = AccountCreateBottomDialogBinding.inflate(inflater, container, false)
+        val root: View = binding.root
 
 
 
-        val LoginAccountButton = view?.findViewById<TextView>(R.id.Login_Account)
-        val Create_Button_Account = view?.findViewById<Button>(R.id.User_Create_Create)
-        val email = view?.findViewById<EditText>(R.id.User_Email_Create2)
-        val password = view?.findViewById<EditText>(R.id.User_Password_Create2)
-        val username = view?.findViewById<EditText>(R.id.User_Username_Create2)
-        val password_retype = view?.findViewById<EditText>(R.id.User_Password_Retype_Create2)
-        val UserPasswordCreate = view?.findViewById<TextInputLayout>(R.id.User_Password_Create1)
-        val UserPasswordCreate2 = view?.findViewById<TextInputLayout>(R.id.User_Password_Retype_Create1)
 
 
-        LoginAccountButton!!.setOnClickListener {
-            dismiss()
+
+            binding.LoginAccount.setOnClickListener {
+                dismiss()
+                dataPasser.changeBottomSheet("Login")
+
            //dataPasser.changeBottomSheet("Login")
             Log.d("CreateAccount","Login CLicked ")
 
         }
 
-        Create_Button_Account!!.setOnClickListener {
-            password?.restoreDefaultFocus()
-            email?.clearFocus()
-            password?.clearFocus()
-            username?.clearFocus()
-            password_retype?.clearFocus()
 
-            if (password?.text.toString().trim() != password_retype?.text.toString().trim()){
-                UserPasswordCreate?.helperText = "Passwords do not Match"
-                UserPasswordCreate2?.helperText = "Passwords do not Match"
-            }else{
-                if (passwordValid && emailValid){
-                  app.account.LoginCreate(email?.text.toString().trim(),password?.text.toString().trim(),username?.text.toString().trim(),requireActivity())
+            binding.UserCreateCreate.setOnClickListener {
+                binding.UserEmailCreate2.clearFocus()
+                binding.UserPasswordCreate2.clearFocus()
+                binding.UserUsernameCreate2.clearFocus()
+                binding.UserPasswordRetypeCreate2.clearFocus()
+
+
+
+            if (binding.UserEmailCreate2.text.toString().isBlank()) {
+                binding.UserEmailCreate1.helperText = "Required"
+            } else if (binding.UserUsernameCreate2.text.toString().isBlank()) {
+               binding.UserUsernameCreate1.helperText = "Required"
+            } else if (binding.UserPasswordCreate2.text.toString().isBlank()) {
+                binding.UserPasswordCreate1.helperText = "Required"
+            }else if (binding.UserPasswordRetypeCreate2.text.toString().isBlank()) {
+                binding.UserPasswordRetypeCreate1.helperText = "Required"
+            } else {
+
+                if (binding.UserPasswordCreate2.text.toString().trim() != binding.UserPasswordRetypeCreate2.text.toString().trim()) {
+                    binding.UserPasswordCreate1.helperText = "Passwords do not Match"
+                    binding.UserPasswordRetypeCreate1.helperText = "Passwords do not Match"
+                } else {
+                    if (passwordValid && emailValid) {
+                        app.account.LoginCreate(
+                            AccountModel("",  binding.UserUsernameCreate2.text.toString().trim(), binding.UserEmailCreate2.text.toString().trim()),
+                            binding.UserPasswordCreate2.text.toString().trim(),
+                            requireActivity()
+                        )
+                        dismiss()
+
 
                     }
-                     /* "Noting Returned" -> Log.d("Create Account","Global scope not reached and create account was not Attempted")
+                    /* "Noting Returned" -> Log.d("Create Account","Global scope not reached and create account was not Attempted")
                       "Email Already In Use" -> {
                           Log.d("User Create BFC","Email is in User")
                           Toast.makeText(requireContext(),"Email Address Linked with Another Account",Toast.LENGTH_SHORT).show()
                       }
 
                       */
-                  }
                 }
+            }
+        }
+
+        binding.GoogleSignIn.setOnClickListener {
+
+            val gso = GoogleSignInOptions
+                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+
+            googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(requireActivity(), gso)
+            // Google Sign in
+            Log.d("Google Sign In","Google Sign in Attempt")
+            val intent = googleSignInClient.signInIntent
+            // both methods are here, the launch did not work but check again
+            activityResultLauncher.launch(intent)
+            //startActivityForResult Is depercated( do not use any more)
+            //  startActivityForResult(intent,GoogleSignIn_R_Code)
+        }
 
 
-
-
-
-
-
-        return view
+        return root
 
     }
+
+    private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ActivityResultCallback {
+
+        if(it.resultCode == Activity.RESULT_OK){
+            Log.d("Activity Result","Activity Result has been started")
+            val task  = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                app.account.GoogleSignIn(account.idToken,requireActivity())
+                dismiss()
+            }catch (e:Exception){
+                Toast.makeText(requireContext() ,    "${e.message} $e", Toast.LENGTH_SHORT).show()
+                Log.d("Google SignIn","${e.message} $e")
+            }
+        }
+
+
+    })
 
 
 
     private fun emailFocusListener() {
-        val UserEmailLogin = view?.findViewById<TextInputLayout>(R.id.User_Email_Create1)
-        val UserEmailTextInput = view?.findViewById<EditText>(R.id.User_Email_Create2)
-        UserEmailTextInput!!.setOnFocusChangeListener { _, focused ->
+
+        binding.UserEmailCreate2.setOnFocusChangeListener { _, focused ->
             if (!focused){
-                UserEmailLogin!!.helperText  = validEmail()
+                binding.UserEmailCreate1.helperText  = validEmail()
             }
         }
 
     }
 
     private fun passwordFocusListener(){
-        val UserPasswordCreate = view?.findViewById<TextInputLayout>(R.id.User_Password_Create1)
-        val UserPassedTextInput = view?.findViewById<EditText>(R.id.User_Password_Create2)
-        val UserPasswordCreate2 = view?.findViewById<TextInputLayout>(R.id.User_Password_Retype_Create1)
-        val UserPassedTextInput2 = view?.findViewById<EditText>(R.id.User_Password_Retype_Create2)
-        UserPassedTextInput!!.setOnFocusChangeListener { _, focused ->
+
+       binding.UserPasswordCreate2.setOnFocusChangeListener { _, focused ->
             if (!focused){
-                UserPasswordCreate!!.helperText  = validPassWord()
+                binding.UserPasswordCreate1.helperText  = validPassWord()
             }
         }
-        UserPassedTextInput2!!.setOnFocusChangeListener { _, focused ->
+        binding.UserPasswordRetypeCreate2.setOnFocusChangeListener { _, focused ->
             if (!focused){
-                UserPasswordCreate2!!.helperText  = validPassWord()
+                binding.UserPasswordRetypeCreate1.helperText  = validPassWord()
             }
         }
 
     }
 
 
-    private fun validPassWord(): String {
-        val password = view?.findViewById<EditText>(R.id.User_Password_Create2)?.text.toString().trim()
-        val password2 = view?.findViewById<EditText>(R.id.User_Password_Retype_Create2)?.text.toString().trim()
+    private fun validPassWord(): String? {
+        val password = binding.UserPasswordCreate2.text.toString().trim()
+        val password2 = binding.UserPasswordRetypeCreate2.text.toString().trim()
+
+        if (password.isEmpty()){
+            return null
+        }
         if (password.length < 6) {
             return "Password must be at least 6 Characters Long"
         }
@@ -145,15 +209,19 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
             return "Password must contain at least 1 Digit"
         }
 
-        if (password != password2){
-            return "Passwords do not Match"
+        if (!password2.isBlank()) {
+            if (password != password2) {
+                return "Passwords do not Match"
+            }
         }
         passwordValid = true
         return "All Good"
     }
 
-    private fun validEmail(): String {
-        val email = view?.findViewById<EditText>(R.id.User_Email_Create2)?.text.toString().trim()
+    private fun validEmail(): String? {
+        val email = binding.UserEmailCreate2.text.toString().trim()
+
+        if (email.isEmpty())return null
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             return "Email is Incorrect"
         }
@@ -163,7 +231,8 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        dataPasser.changeBottomSheet("Login")
+      // dataPasser.changeBottomSheet("Login")
+        _binding = null
     }
 
     override fun onAttach(context: Context) {
@@ -183,7 +252,7 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
         TODO("Not yet implemented")
     }
 
-    override fun ErrorCreatingAccount(info: String, email: String) {
+    override fun CreatingAccount(info: String, email: String) {
         when (info) {
             "Task was Successful" -> {
                 //restart UI
@@ -193,5 +262,6 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
             }
         }
     }
+
 
 }
