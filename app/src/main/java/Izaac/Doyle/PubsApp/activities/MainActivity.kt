@@ -46,10 +46,21 @@ import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity(), onDataPasser {
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> b95d90d407161bcc08fc49c88678d89cd227715f
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
     lateinit var app: MainApp
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> b95d90d407161bcc08fc49c88678d89cd227715f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +71,8 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
         setContentView(binding.root)
         auth = Firebase.auth
+
+
 
         setSupportActionBar(binding.appBarMain.toolbar)
 
@@ -126,8 +139,13 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+<<<<<<< HEAD
 
 
+=======
+
+
+>>>>>>> b95d90d407161bcc08fc49c88678d89cd227715f
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

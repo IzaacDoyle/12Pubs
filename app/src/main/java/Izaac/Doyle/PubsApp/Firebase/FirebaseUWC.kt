@@ -24,6 +24,11 @@ fun Update(accountModel: AccountModel){
 
     // navController.navigate(R.id.nav_home)
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> b95d90d407161bcc08fc49c88678d89cd227715f
     val navigationView: NavigationView = MainActivity().findViewById(R.id.nav_view)
     val navHeaderView = navigationView.getHeaderView(0)
 
