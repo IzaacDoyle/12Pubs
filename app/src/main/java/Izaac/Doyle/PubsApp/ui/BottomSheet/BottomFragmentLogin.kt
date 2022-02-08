@@ -8,6 +8,7 @@ import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.AccountModel
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.AccountBottomDialogBinding
+import Izaac.Doyle.PubsApp.ui.Settings.SettingsFragment
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.os.Bundle
@@ -83,6 +84,7 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
                 binding.LoginAccount.isEnabled = false
                 binding.LoginAccount.isVisible = false
                 binding.loginTopText.text = "Login Again to Confirm User"
+                binding.UserLoginLogin.text = "Re-Authenticate"
                 //Log.d("dialogArg",arguments!!.get("relogin").toString())
                  //dialogSettings = arguments?.get("dialog") as Dialog
             }
@@ -101,13 +103,14 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             binding.UserEmailLogin2.clearFocus()
             binding.UserPasswordLogin2.clearFocus()
             if (emailValid && passwordValid) {
-//                if (arguments?.containsKey("relogin") == true) {
-//
-//                    app.account.ReAuth(binding.UserEmailLogin2.toString(),binding.UserPasswordLogin2.toString())
-//
-//
-//
-//                } else {
+                if (arguments?.containsKey("relogin") == true) {
+                    app.account.ReAuth(
+                        binding.UserEmailLogin2.toString(),
+                        binding.UserPasswordLogin2.toString(),
+                        "Delete"
+                    )
+
+                } else {
                     Log.d(
                         "User",
                         "User can be logged in or if account not there create account prompt"
@@ -120,6 +123,7 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             }
 
 //        }
+        }
 
         binding.GoogleSignIn.setOnClickListener {
 
@@ -227,6 +231,9 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             try {
                 val account = task.getResult(ApiException::class.java)
                 app.account.GoogleSignIn(account.idToken,requireActivity())
+                if (arguments?.containsKey("relogin") == true) {
+                    SettingsFragment().reAuth = true
+                }
                // setFragmentResult(DeleteAccountConstraint.REQUEST_CODE, bundleOf(DeleteAccountConstraint.BUNDLE_KEY to "confirm"))
                 dismiss()
             }catch (e:Exception){

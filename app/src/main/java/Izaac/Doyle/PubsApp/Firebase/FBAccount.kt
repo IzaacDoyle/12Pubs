@@ -4,6 +4,7 @@ import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Models.AccountModel
 import Izaac.Doyle.PubsApp.activities.MainActivity
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentCreate
+import Izaac.Doyle.PubsApp.ui.Settings.SettingsFragment
 import android.accounts.Account
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -43,7 +44,9 @@ fun FBReAuth(Email:String,password:String,info:String){
         if (task.isSuccessful){
             Log.d("ReAuth","Auth Entered")
             if (info == "Delete"){
-                FBDeleteAccount()
+            SettingsFragment().dialog()
+            //SettingsFragment().reAuth = true
+                //FBDeleteAccount()
             }
         }
     }
@@ -101,6 +104,7 @@ fun FBLogin(){
 }
 
 fun FBDeleteAccount(){
+
     val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
    val user = firebaseAuth.currentUser!!
     user.delete().addOnCompleteListener  { task->
