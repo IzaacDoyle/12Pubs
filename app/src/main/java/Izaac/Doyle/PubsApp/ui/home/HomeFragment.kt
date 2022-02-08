@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.FragmentHomeBinding
+import android.widget.Toast
 
 class HomeFragment : Fragment() {
 
@@ -31,10 +32,13 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
+
+        if (arguments != null){
+            if (requireArguments().containsKey("Signout")){
+                Toast.makeText(requireContext(),"Signed OUt", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
         return root
     }

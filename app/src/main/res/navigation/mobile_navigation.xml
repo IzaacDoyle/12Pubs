@@ -9,7 +9,17 @@
         android:id="@+id/nav_home"
         android:name="Izaac.Doyle.PubsApp.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_group"
+            app:destination="@id/nav_group" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_pubs"
+            app:destination="@id/nav_pubs" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_maps"
+            app:destination="@id/nav_maps" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_pubs"
@@ -25,5 +35,13 @@
     <fragment
         android:id="@+id/nav_settings"
         android:name="Izaac.Doyle.PubsApp.ui.Settings.SettingsFragment"
-        android:label="@string/menu_settings" />
+        android:label="@string/menu_settings" >
+        <action
+            android:id="@+id/action_nav_settings_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_group"
+        android:name="Izaac.Doyle.PubsApp.ui.home.GroupsFragment"
+        android:label="@string/menu_group" />
 </navigation>

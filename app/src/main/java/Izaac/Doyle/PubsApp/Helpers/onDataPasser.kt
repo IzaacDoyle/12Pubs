@@ -1,6 +1,7 @@
 package Izaac.Doyle.PubsApp.Helpers
 
 import android.app.Activity
+import android.app.Dialog
 import android.view.View
 
 interface onDataPasser {
@@ -10,4 +11,5 @@ interface onDataPasser {
 
     fun changeBottomSheet(sheetActive:String)
     fun CreatingAccount(info:String,email:String)
+   // fun dialogBoxShare(dialog: Dialog)
 }

@@ -8,6 +8,8 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
+
+
     <include
         android:id="@+id/app_bar_main"
         layout="@layout/app_bar_main"
@@ -34,8 +36,9 @@
             <include
                 android:id="@+id/drawer_login_create"
                 layout="@layout/drawer_bottom_login_create"
-                android:layout_width="253dp"
-                android:layout_height="70dp" />
+                android:layout_width="251dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
         </LinearLayout>
 
 

@@ -1,13 +1,14 @@
 package Izaac.Doyle.PubsApp.activities
 
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+import Izaac.Doyle.PubsApp.Firebase.FBGetDB
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 
 
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.R
 import android.os.Bundle
-import android.view.Menu
+
 
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -21,6 +22,9 @@ import Izaac.Doyle.PubsApp.databinding.ActivityMainBinding
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentCreate
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentLogin
 import android.annotation.SuppressLint
+import android.app.Dialog
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import android.view.MenuItem
 import android.widget.*
@@ -42,20 +46,18 @@ import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity(), onDataPasser {
 
-
-    lateinit var app: MainApp
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
-    private lateinit var drawertabClicked: String
-
-
+    lateinit var app: MainApp
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         super.onCreate(savedInstanceState)
-        app = application as MainApp
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        app = application as MainApp
+
         setContentView(binding.root)
         auth = Firebase.auth
 
@@ -69,7 +71,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_pubs, R.id.nav_maps, R.id.nav_settings
+                R.id.nav_home, R.id.nav_pubs, R.id.nav_maps, R.id.nav_settings, R.id.nav_group
             ), drawerLayout
         )
 
@@ -82,15 +84,15 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone =true
             binding.navView.menu[2].isVisible =true
             binding.navView.menu[2].isEnabled =true
+            FBGetDB(CheckCurrentUser()!!.uid,this)
         }
-
 
 
 
 //        val settingsBtn =
 //            navView.findViewById<androidx.appcompat.widget.LinearLayoutCompat>(R.id.drawer_setting)
-        val loginBtn = navView.findViewById<TextView>(R.id.Drawer_Login)
-        val createAccountBtn = navView.findViewById<TextView>(R.id.Drawer_CreateA)
+        val loginBtn = navView.findViewById<LinearLayout>(R.id.Drawer_Login)
+        val createAccountBtn = navView.findViewById<LinearLayout>(R.id.Drawer_CreateA)
 //        settingsBtn.setOnClickListener {
 //
 //            //if account avalable show Settings if not make it Gone
@@ -115,41 +117,27 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
         createAccountBtn.setOnClickListener {
             // change off and rebrand the Create account button with the drawer.
+            drawerLayout.closeDrawer(GravityCompat.START)
+            val bottomFragment = BottomFragmentCreate()
+            bottomFragment.show(supportFragmentManager, "Bottom Login")
 
-
-            Toast.makeText(applicationContext, "Create Works", Toast.LENGTH_SHORT).show()
+           // Toast.makeText(applicationContext, "Create Works", Toast.LENGTH_SHORT).show()
         }
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-//        val accountdrawer =  navView.menu[1].subMenu[1]
-//        accountdrawer.setActionView(R.layout.menu_account_dropdown_tabup)
 
-//        accountdrawer.setOnMenuItemClickListener {
-//            when(it.itemId){
-//              R.id.Menu_Account ->{
-//                    Log.d("drawerAction","Account Button pressed")
-//                    navView.menu[1].subMenu[2].expandActionView()
-//                   true
-//                }
-//
-//                else -> {
-//                    Log.d("drawerAction","ELSE ENTERED Account Button pressed")
-//                    false}
-//            }
-//
-//        }
-
-
-
-        //getItem(R.id.Menu_Account).setActionView(R.layout.menu_account_dropdown)
-            //.setActionView(R.layout.menu_account_dropdown)
 
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.settings_signout -> {
+                Log.d("settingsActivity","Log out")
+                app.account.SignOut(this)
+            }
 
-
+        }
         return super.onOptionsItemSelected(item)
     }
 
@@ -161,24 +149,12 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
     }
 
-
-    override fun onResume() {
-
-        super.onResume()
-    }
-
-    override fun onPause() {
-
-        super.onPause()
-    }
-
-
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         CheckCurrentUser()
-
         val email = findViewById<TextView>(R.id.Drawer_Email)
         val name = findViewById<TextView>(R.id.Drawer_Name)
+
         //val profileimage = findViewById<ImageView>(R.id.Drawer_Account_Image)
 
         val drawerDropDown = findViewById<LinearLayout>(R.id.drawer_header_button)
@@ -192,6 +168,22 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             drawerDropDown.isEnabled = false
         }else {
 
+
+            val sharedPrefInfo = getSharedPreferences(CheckCurrentUser()!!.uid,Context.MODE_PRIVATE)
+
+            val username  = sharedPrefInfo.getString("Username","")
+            val userEmail = sharedPrefInfo.getString("Email", "")
+            Log.d("shardpref","$username to $userEmail")
+
+
+          //  email.text = userinfo.email
+
+            name.text = username
+            email.text = CheckCurrentUser()!!.email
+
+
+
+
             drawerDropDown.setOnClickListener {
 
                 val icon = findViewById<ImageView>(R.id.button_tabup)
@@ -200,48 +192,39 @@ class MainActivity : AppCompatActivity(), onDataPasser {
                     icon.setImageResource(R.drawable.ic_log_out_tabdown)
                     binding.navView.menu[0].isVisible = true
 
-
-
                     val signoutButton = binding.navView.menu[0]
                     signoutButton.setOnMenuItemClickListener {
                         Log.d("SignOut", "Signout Clicked")
                         binding.drawerLayout.closeDrawer(GravityCompat.START)
-
                         binding.navView.menu[0].isVisible = false
-
+                        navController.navigate(R.id.nav_home)
                         app.account.SignOut(this)
-
                         buttonclicks = 0
                         true
                     }
-
                     buttonclicks = 1
-
                 } else if (buttonclicks == 1) {
                     icon.setImageResource(R.drawable.ic_log_out_tabup)
                     binding.navView.menu[0].isVisible = false
                     buttonclicks = 0
                 }
-
-
             }
         }
         if (CheckCurrentUser() != null){
             drawerDropDown.isVisible = true
             drawerDropDown.isEnabled = true
             binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone = true
+
+
+          //  email.text = "12 Pubs"
+          //  email.text = "Pub Games"
+
+
+
         }
-
-
-
-
 
         //an UI so that once user loged in Email and Name and Image change
         //get google Image save to firestore
-
-
-        email.text = CheckCurrentUser()?.email.toString()
-        name.text = CheckCurrentUser()?.displayName.toString()
 
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
@@ -293,5 +276,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             }
         }
     }
+
+
 }
 

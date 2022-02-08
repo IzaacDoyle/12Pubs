@@ -28,6 +28,11 @@
         android:title="@string/home" />
 
     <item
+        android:id="@+id/nav_group"
+        android:icon="@drawable/ic_group"
+        android:title="@string/group"/>
+
+    <item
         android:id="@+id/nav_pubs"
         android:icon="@drawable/ic_pubs"
         android:title="@string/pubs" />

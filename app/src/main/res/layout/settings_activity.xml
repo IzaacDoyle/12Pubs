@@ -16,6 +16,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navview_menuitems"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:itemIconTint="@color/white"

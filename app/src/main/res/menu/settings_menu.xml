@@ -13,7 +13,8 @@
         <item android:title="Location Data">
             <menu>
                 <item
-                    android:icon="@mipmap/icon_location_foreground"
+
+                    android:icon="@drawable/ic_locations"
                     android:title="Location">
 
                 </item>
@@ -29,15 +30,24 @@
         </item>
         <item android:title="Account">
             <menu>
-                <item android:title="Item" />
 
+                <item
+                    android:id="@+id/settings_update_account"
+                    android:icon="@drawable/ic_update_user_data"
+
+                    android:title="Update Account Info" />
 
 
                 <item
+                    android:id="@+id/settings_signout"
                     android:icon="@drawable/ic_log_out_tabup"
                     android:title="SIGN OUT">
 
                 </item>
+                <item
+                    android:id="@+id/settings_delete_account"
+                    android:icon="@drawable/ic_delete_account"
+                    android:title="Delete Account" />
 
             </menu>
 
