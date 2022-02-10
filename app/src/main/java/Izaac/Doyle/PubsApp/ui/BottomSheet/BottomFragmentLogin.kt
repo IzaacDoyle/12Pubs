@@ -8,7 +8,6 @@ import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.AccountModel
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.AccountBottomDialogBinding
-import Izaac.Doyle.PubsApp.ui.Settings.SettingsFragment
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.os.Bundle
@@ -20,14 +19,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.fragment.app.setFragmentResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import java.time.LocalDate
 
 
 class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
@@ -35,14 +33,13 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
     private var _binding: AccountBottomDialogBinding? = null
 
     private lateinit var googleSignInClient: GoogleSignInClient
-   // private val GoogleSignIn_R_Code = 100
     lateinit var dataPasser : onDataPasser
     lateinit var app: MainApp
     var Account = AccountModel()
     var emailValid:Boolean = false
     var passwordValid:Boolean = false
      var extraData: String? = null
-   // lateinit var dialogSettings:Dialog
+
 
 
 
@@ -83,7 +80,9 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             }else if (arguments?.containsKey("relogin") == true){
                 binding.LoginAccount.isEnabled = false
                 binding.LoginAccount.isVisible = false
-                binding.loginTopText.text = "Login Again to Confirm User"
+                binding.loginTopText.text = "Login to Re-Authenticate "
+                //binding.LoginAccount.gravity = 6
+                binding.LoginAccount.text = "Account"
                 binding.UserLoginLogin.text = "Re-Authenticate"
                 //Log.d("dialogArg",arguments!!.get("relogin").toString())
                  //dialogSettings = arguments?.get("dialog") as Dialog
@@ -107,17 +106,18 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
                     app.account.ReAuth(
                         binding.UserEmailLogin2.toString(),
                         binding.UserPasswordLogin2.toString(),
-                        "Delete"
+                        "Delete",
+                        requireActivity()
                     )
+                    Log.d("ReAuth","Google ReAuth")
 
                 } else {
                     Log.d(
                         "User",
                         "User can be logged in or if account not there create account prompt"
                     )
-
-                    //app.account.SignIn()
-                    //add login
+                    val accountModel = AccountModel("","",binding.UserEmailLogin2.text.toString())
+                    app.account.SignIn(accountModel,binding.UserPasswordLogin2.text.toString(),requireContext(),requireActivity())
                     dismiss()
                 }
             }
@@ -126,23 +126,17 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
         }
 
         binding.GoogleSignIn.setOnClickListener {
-
+            // Google Sign in
            val gso = GoogleSignInOptions
                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                .requestIdToken(getString(R.string.default_web_client_id))
                .requestEmail()
                .build()
-
            googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(requireActivity(), gso)
-            // Google Sign in
             Log.d("Google Sign In","Google Sign in Attempt")
             val intent = googleSignInClient.signInIntent
-                // both methods are here, the launch did not work but check again
            activityResultLauncher.launch(intent)
-           //startActivityForResult Is depercated( do not use any more)
-              //  startActivityForResult(intent,GoogleSignIn_R_Code)
             }
-
         return root
     }
 
@@ -230,9 +224,13 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             val task  = GoogleSignIn.getSignedInAccountFromIntent(it.data)
             try {
                 val account = task.getResult(ApiException::class.java)
-                app.account.GoogleSignIn(account.idToken,requireActivity())
                 if (arguments?.containsKey("relogin") == true) {
-                    SettingsFragment().reAuth = true
+                    Log.d("ReAuth","Google ReAuth")
+                    app.account.GoogleSignIn(account.idToken,requireActivity(),"Delete")
+                    Log.d("delete","${requireActivity()}")
+                    //SettingsFragment().reAuth = true
+                }else{
+                    app.account.GoogleSignIn(account.idToken,requireActivity(),"SignIn")
                 }
                // setFragmentResult(DeleteAccountConstraint.REQUEST_CODE, bundleOf(DeleteAccountConstraint.BUNDLE_KEY to "confirm"))
                 dismiss()
@@ -281,7 +279,7 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
         TODO("Not yet implemented")
     }
 
-    override fun CreatingAccount(info: String, email: String) {
+    override fun AccountStatus(info: String, email: String) {
 
         when (info) {
             "Task was Successful" -> {
@@ -295,8 +293,6 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
 
 
     }
-
-
 
 
 }

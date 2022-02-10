@@ -5,10 +5,8 @@ import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.AccountModel
 import Izaac.Doyle.PubsApp.R
-import Izaac.Doyle.PubsApp.databinding.AccountBottomDialogBinding
 import Izaac.Doyle.PubsApp.databinding.AccountCreateBottomDialogBinding
 import android.app.Activity
-import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -16,9 +14,6 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,9 +22,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.textfield.TextInputLayout
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
-import org.w3c.dom.Text
 
 class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
 
@@ -150,7 +142,7 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
             val task  = GoogleSignIn.getSignedInAccountFromIntent(it.data)
             try {
                 val account = task.getResult(ApiException::class.java)
-                app.account.GoogleSignIn(account.idToken,requireActivity())
+                app.account.GoogleSignIn(account.idToken,requireActivity(),"SignIn")
                 dismiss()
             }catch (e:Exception){
                 Toast.makeText(requireContext() ,    "${e.message} $e", Toast.LENGTH_SHORT).show()
@@ -252,7 +244,7 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
         TODO("Not yet implemented")
     }
 
-    override fun CreatingAccount(info: String, email: String) {
+    override fun AccountStatus(info: String, email: String) {
         when (info) {
             "Task was Successful" -> {
                 //restart UI

@@ -10,6 +10,6 @@ interface onDataPasser {
    // fun passView(view:View)
 
     fun changeBottomSheet(sheetActive:String)
-    fun CreatingAccount(info:String,email:String)
+    fun AccountStatus(info:String,email:String)
    // fun dialogBoxShare(dialog: Dialog)
 }

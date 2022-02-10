@@ -22,7 +22,7 @@ import com.google.android.gms.maps.OnMapsSdkInitializedCallback
 
 class MapsFragment : Fragment(), OnMapReadyCallback, OnMapsSdkInitializedCallback {
 
-    private lateinit var slideshowViewModel: MapsViewModel
+    private lateinit var mapsViewModel: MapsViewModel
     private var _binding: FragmentMapsBinding? = null
     private lateinit var mMap: GoogleMap
 
@@ -38,7 +38,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, OnMapsSdkInitializedCallbac
     ): View? {
 
 
-        slideshowViewModel =
+        mapsViewModel =
             ViewModelProvider(this)[MapsViewModel::class.java]
 
         _binding = FragmentMapsBinding.inflate(inflater, container, false)

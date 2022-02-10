@@ -1,15 +1,15 @@
 package Izaac.Doyle.PubsApp.Models
 
+import Izaac.Doyle.PubsApp.Firebase.FBCreateGroup
+
 class GroupMemStore: GroupStore {
     override fun CreateGroup(Group: GroupModel) {
-        TODO("Not yet implemented")
+        FBCreateGroup(Group)
     }
 
     override fun LeaveGroup(Group: GroupModel) {
-        TODO("Not yet implemented")
     }
 
     override fun UpdateGroup(Group: GroupModel) {
-        TODO("Not yet implemented")
     }
 }

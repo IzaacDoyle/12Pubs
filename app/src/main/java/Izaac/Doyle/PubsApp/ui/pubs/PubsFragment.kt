@@ -11,7 +11,7 @@ import Izaac.Doyle.PubsApp.databinding.FragmentPubsBinding
 
 class PubsFragment : Fragment() {
 
-    private lateinit var galleryViewModel: PubsViewModel
+    private lateinit var pubsViewModel: PubsViewModel
     private var _binding: FragmentPubsBinding? = null
 
     // This property is only valid between onCreateView and
@@ -23,8 +23,8 @@ class PubsFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        galleryViewModel =
-                ViewModelProvider(this).get(PubsViewModel::class.java)
+        pubsViewModel =
+            ViewModelProvider(this)[PubsViewModel::class.java]
 
         _binding = FragmentPubsBinding.inflate(inflater, container, false)
         val root: View = binding.root

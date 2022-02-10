@@ -8,11 +8,12 @@
     android:layout_height="wrap_content"
     android:paddingBottom="30dp">
 
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="56dp"
         android:gravity="center|fill"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,6 +26,7 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_gravity="center"
+            android:clickable="false"
             android:contentDescription="Update Profile Image"
             android:src="@drawable/ic_account" />
 
@@ -36,12 +38,11 @@
             android:text="Click to Change Profile Image" />
     </LinearLayout>
 
-
     <Switch
         android:id="@+id/account_toggle_update"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:text="Switch To Edit"
+        android:text="Toggle To Edit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.948"
@@ -51,10 +52,10 @@
         tools:ignore="TouchTargetSizeCheck" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout2"
+        android:id="@+id/account_username1"
         android:layout_width="318dp"
         android:layout_height="58dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,6 +65,7 @@
             android:id="@+id/account_username_update"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:enabled="false"
             android:hint="Update Username" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -79,7 +81,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/account_username1"
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
@@ -87,6 +89,7 @@
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:visibility="gone"
         app:icon="@drawable/ic_back_button"
         app:iconGravity="start"
         app:layout_constraintBottom_toBottomOf="parent"

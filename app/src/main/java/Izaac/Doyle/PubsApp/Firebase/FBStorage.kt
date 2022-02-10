@@ -1,6 +1,7 @@
 package Izaac.Doyle.PubsApp.Firebase
 
 import Izaac.Doyle.PubsApp.Models.AccountModel
+import Izaac.Doyle.PubsApp.Models.GroupModel
 import Izaac.Doyle.PubsApp.activities.MainActivity
 import android.app.Activity
 import android.content.Context
@@ -8,11 +9,14 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.content.edit
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import java.util.*
 import java.util.prefs.Preferences
 
@@ -69,3 +73,47 @@ fun FBUpdateDB(userUUID: String, username: String){
         .update("Username", username)
 
 }
+
+fun FBCreateGroup(groupModel: GroupModel){
+    val db = Firebase.firestore
+
+    val GroupDB = hashMapOf(
+        "OwnerUUID" to groupModel.GroupOwner,
+        "GroupName" to groupModel.GroupName
+    )
+
+    db.collection("Groups").document(groupModel.GroupOwner)
+        .set(GroupDB)
+        .addOnSuccessListener {
+            Log.d("FirestoreDB", "DB created for groups")
+        }
+
+
+}
+
+
+//fun FBGetGroupName(userUUID: String): Flow<List<GroupModel>> {
+//    val db = Firebase.firestore
+//
+//
+//
+//
+////    return callbackFlow {
+////       val groupName = db.collection("Groups").document(userUUID).collection("Username").addSnapshotListener{
+////            querySnapShot:QuerySnapshot?, firebaseFirestoreException: FirebaseFirestoreException? ->
+////            if (firebaseFirestoreException != null) {
+////                cancel(message = "Error fetching posts",
+////                    cause = firebaseFirestoreException)
+////                return@addSnapshotListener
+////            }
+////
+////            val groupname = querySnapShot!!.documents.mapNotNull { it.toObject(GroupModel::class.java) }
+////            trySend(groupname)
+////        }
+////        awaitClose {
+////            groupName.remove()
+////        }
+////
+////    }
+//
+//}

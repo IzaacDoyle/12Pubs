@@ -3,27 +3,28 @@ package Izaac.Doyle.PubsApp.Models
 import Izaac.Doyle.PubsApp.Firebase.*
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.util.Log
 import android.view.View
 import kotlinx.coroutines.*
 import java.util.logging.Handler
+import kotlin.math.log
 
 
 class AccountMemStore: AccountStore {
 
 
-    override fun SignIn(Account: AccountModel) {
-
+    override fun SignIn(Account: AccountModel,Password: String,context: Context,activity: Activity) {
+        Log.d("signing","${Account.email}")
+        FBLogin(Account.email, Password,context,activity)
     }
 
     override fun SignOut(activity: Activity) {
         FBLogout(activity)
     }
 
-    override fun UpdateAccount(Account: AccountModel) {
-
-
-        TODO("Not yet implemented")
+    override fun UpdateAccountDB(Account: AccountModel) {
+        FBUpdateDB(Account.id,Account.username)
     }
 
     override fun LoginCreate(Account: AccountModel, Password: String, activity: Activity) {
@@ -42,14 +43,18 @@ class AccountMemStore: AccountStore {
       //  }
     }
 
-    override fun GoogleSignIn(idToken: String?, activity: Activity) {
-        GoogleSignInAccount(idToken,activity)
+    override fun GoogleSignIn(idToken: String?, activity: Activity,info: String) {
+        GoogleSignInAccount(idToken,activity,info)
     }
 
 
 
-    override fun ReAuth(email: String, password: String,info:String) {
-        FBReAuth(email, password,info)
+    override fun ReAuth(email: String, password: String,info:String,activity: Activity) {
+        FBReAuth(email, password,info,activity)
+    }
+
+    override fun DeleteAccount(activity: Activity,context: Context) {
+        FBDeleteAccount(activity, context)
     }
 
 }

@@ -1,51 +1,40 @@
 package Izaac.Doyle.PubsApp.activities
 
+
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.Firebase.FBGetDB
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
-
-
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.R
-import android.os.Bundle
-
-
-import com.google.android.material.navigation.NavigationView
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
 import Izaac.Doyle.PubsApp.databinding.ActivityMainBinding
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentCreate
+import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentDelete
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentLogin
-import android.annotation.SuppressLint
-import android.app.Dialog
 import android.content.Context
-import android.content.SharedPreferences
+import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import android.widget.*
-
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.view.menu.MenuView
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.core.view.get
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.findNavController
+import androidx.navigation.navArgument
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity(), onDataPasser {
-
 
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -54,22 +43,15 @@ class MainActivity : AppCompatActivity(), onDataPasser {
     lateinit var app: MainApp
 
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        app = application as MainApp
-
         setContentView(binding.root)
-        auth = Firebase.auth
-
-
-
         setSupportActionBar(binding.appBarMain.toolbar)
-
+        app = application as MainApp
+        auth = Firebase.auth
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
@@ -83,28 +65,26 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         )
 
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
         //test
 
 
-
-
-
-        if (CheckCurrentUser() != null){
-         //   drawerLayout.findViewById<>()
-=======
-        if(CheckCurrentUser() == null){
-            binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone = false
+        // if (CheckCurrentUser() != null) {
+        //   drawerLayout.findViewById<>()
+//=======
+        if (CheckCurrentUser() == null) {
+            binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone =
+                false
             binding.navView.menu[2].isVisible = false
-            binding.navView.menu[2].isEnabled =false
-        }else{
-            binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone =true
-            binding.navView.menu[2].isVisible =true
-            binding.navView.menu[2].isEnabled =true
-            FBGetDB(CheckCurrentUser()!!.uid,this)
->>>>>>> 4e3c07637217810eb2b9107dc18be93947d77770
+            binding.navView.menu[2].isEnabled = false
+        } else {
+            binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone =
+                true
+            binding.navView.menu[2].isVisible = true
+            binding.navView.menu[2].isEnabled = true
+            FBGetDB(CheckCurrentUser()!!.uid, this)
+//>>>>>>> 4e3c07637217810eb2b9107dc18be93947d77770
         }
-
 
 
 //        val settingsBtn =
@@ -139,7 +119,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             val bottomFragment = BottomFragmentCreate()
             bottomFragment.show(supportFragmentManager, "Bottom Login")
 
-           // Toast.makeText(applicationContext, "Create Works", Toast.LENGTH_SHORT).show()
+            // Toast.makeText(applicationContext, "Create Works", Toast.LENGTH_SHORT).show()
         }
 
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -148,10 +128,11 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
     }
 
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.settings_signout -> {
-                Log.d("settingsActivity","Log out")
+                Log.d("settingsActivity", "Log out")
                 app.account.SignOut(this)
             }
 
@@ -179,22 +160,20 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
         var buttonclicks = 0
 
-
-
-        if (CheckCurrentUser() == null){
+        if (CheckCurrentUser() == null) {
             drawerDropDown.isVisible = false
             drawerDropDown.isEnabled = false
-        }else {
+        } else {
 
+            val sharedPrefInfo =
+                getSharedPreferences(CheckCurrentUser()!!.uid, Context.MODE_PRIVATE)
 
-            val sharedPrefInfo = getSharedPreferences(CheckCurrentUser()!!.uid,Context.MODE_PRIVATE)
-
-            val username  = sharedPrefInfo.getString("Username","")
+            val username = sharedPrefInfo.getString("Username", "")
             val userEmail = sharedPrefInfo.getString("Email", "")
-            Log.d("shardpref","$username to $userEmail")
+            Log.d("shardpref", "$username to $userEmail")
 
 
-          //  email.text = userinfo.email
+            //  email.text = userinfo.email
 
             name.text = username
             email.text = CheckCurrentUser()!!.email
@@ -228,19 +207,12 @@ class MainActivity : AppCompatActivity(), onDataPasser {
                 }
             }
         }
-        if (CheckCurrentUser() != null){
+        if (CheckCurrentUser() != null) {
             drawerDropDown.isVisible = true
             drawerDropDown.isEnabled = true
-            binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone = true
-
-
-          //  email.text = "12 Pubs"
-          //  email.text = "Pub Games"
-
-
-
+            binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone =
+                true
         }
-
         //an UI so that once user loged in Email and Name and Image change
         //get google Image save to firestore
 
@@ -250,24 +222,34 @@ class MainActivity : AppCompatActivity(), onDataPasser {
     override fun changeBottomSheet(sheetActive: String) {
         val bottomFragment = BottomFragmentLogin()
         val bottomFragmentCreate = BottomFragmentCreate()
+        val bottomFragmentDelete = BottomFragmentDelete()
         when (sheetActive) {
-
-
             "Create" -> {
-
-                if (!bottomFragmentCreate.isAdded) {
-                    bottomFragmentCreate.show(supportFragmentManager, "Bottom Create")
+                if (!bottomFragmentCreate.isAdded && !bottomFragment.isVisible) {
                     bottomFragment.isHidden
-                }
+                    bottomFragmentCreate.show(supportFragmentManager, "Bottom Create")
 
+                }
             }
             "Login" -> {
-
                 if (!bottomFragment.isAdded && !bottomFragment.isVisible) {
-                    bottomFragment.show(supportFragmentManager, "Bottom Login")
                     bottomFragmentCreate.isHidden
+                    bottomFragment.show(supportFragmentManager, "Bottom Login")
                 }
-
+            }
+            "reAuth" -> {
+                if (!bottomFragment.isAdded && !bottomFragment.isVisible) {
+                    bottomFragmentDelete.isHidden
+                    bottomFragment.arguments = bundleOf("relogin" to "reAuth")
+                    bottomFragment.show(supportFragmentManager, "Bottom Login")
+                }
+            }
+            "Delete" -> {
+                if (!bottomFragmentDelete.isAdded && !bottomFragmentDelete.isVisible) {
+                    bottomFragment.isHidden
+                    bottomFragmentDelete.arguments = bundleOf("reAuth" to "confirm")
+                    bottomFragmentDelete.show(supportFragmentManager, "Delete Account")
+                }
             }
 
 
@@ -275,7 +257,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
     }
 
 
-    override fun CreatingAccount(info: String, email: String) {
+    override fun AccountStatus(info: String, email: String) {
         when (info) {
             "Task was Successful" -> {
                 //restart UI
@@ -287,14 +269,32 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             "Error Email Already in Use" -> {
                 val bottomFragment = BottomFragmentLogin()
                 if (!bottomFragment.isAdded && !bottomFragment.isVisible) {
-                    Toast.makeText(this, "Error Email Already in Use Try logging In", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Error Email Already in Use Try logging In",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     bottomFragment.arguments = bundleOf("Email" to email)
                     bottomFragment.show(supportFragmentManager, "Bottom Login")
                 }
             }
+            "Login Failed" -> {
+                val bottomFragment = BottomFragmentLogin()
+                if (!bottomFragment.isAdded && !bottomFragment.isVisible) {
+                    bottomFragment.arguments = bundleOf("Email" to email)
+                    bottomFragment.show(supportFragmentManager, "Bottom Login")
+
+                }
+            }
         }
+
     }
-
-
 }
+
+
+
+
+
+
+
 
