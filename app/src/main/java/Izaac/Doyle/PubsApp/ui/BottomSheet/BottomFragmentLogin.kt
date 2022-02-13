@@ -109,6 +109,7 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
                         "Delete",
                         requireActivity()
                     )
+                    dismiss()
                     Log.d("ReAuth Login","Google ReAuth")
 
                 } else {

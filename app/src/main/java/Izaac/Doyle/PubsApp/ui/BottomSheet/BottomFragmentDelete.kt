@@ -53,10 +53,12 @@ class BottomFragmentDelete: BottomSheetDialogFragment() {
         if (binding.deleteConfirm.isEnabled){
             binding.deleteConfirm.setOnClickListener {
                 app.account.DeleteAccount(requireActivity(),requireContext())
-
                 dismiss()
-
             }
+        }
+
+        binding.deleteCancel.setOnClickListener {
+            dismiss()
         }
 
 
