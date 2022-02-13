@@ -145,7 +145,7 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
                 app.account.GoogleSignIn(account.idToken,requireActivity(),"SignIn")
                 dismiss()
             }catch (e:Exception){
-                Toast.makeText(requireContext() ,    "${e.message} $e", Toast.LENGTH_SHORT).show()
+              //  Toast.makeText(requireContext() ,    "${e.message} $e", Toast.LENGTH_SHORT).show()
                 Log.d("Google SignIn","${e.message} $e")
             }
         }
@@ -207,7 +207,8 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
             }
         }
         passwordValid = true
-        return "All Good"
+       // return "All Good"
+        return null
     }
 
     private fun validEmail(): String? {
@@ -218,7 +219,8 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
             return "Email is Incorrect"
         }
         emailValid = true
-        return "All Good"
+        //return "All Good"
+        return null
     }
 
     override fun onDestroyView() {

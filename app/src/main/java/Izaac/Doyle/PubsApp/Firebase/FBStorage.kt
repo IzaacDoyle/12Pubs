@@ -26,7 +26,7 @@ fun FBcreateDB(userUUID: String,username:String) {
 
     val UserDb = hashMapOf(
         "UserUUID" to userUUID,
-        "Username" to username
+        "Username" to username.lowercase()
 
     )
 
@@ -67,8 +67,8 @@ fun FBGetDB(userUUID: String,activity: Activity){
                     editor.apply()
             }
 //            val userInfo = result.data.
-            val username = result.data!!["Username"]
-            Log.d("FBgetDB","$username and with UID of $userUUID")
+          //  val username = result.data!!["Username"]
+        //    Log.d("FBgetDB","$username and with UID of $userUUID")
         }
 
 }

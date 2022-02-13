@@ -28,7 +28,7 @@ class StartUpActivity: AppCompatActivity() {
     }
 
     private fun requestPermissions(){
-        Toast.makeText(this, "Entered Permission Check", Toast.LENGTH_SHORT).show()
+       // Toast.makeText(this, "Entered Permission Check", Toast.LENGTH_SHORT).show()
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED
             &&
@@ -38,14 +38,14 @@ class StartUpActivity: AppCompatActivity() {
             &&
             ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) !=  PackageManager.PERMISSION_GRANTED
         ){
-            Toast.makeText(this, "Entered Permission Check 2", Toast.LENGTH_SHORT).show()
+         //   Toast.makeText(this, "Entered Permission Check 2", Toast.LENGTH_SHORT).show()
             ActivityCompat.requestPermissions(this, arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.CAMERA ), PERMISSIONS_GRANTED)
 
 
         }else{
-            Toast.makeText(this, "Else Entered", Toast.LENGTH_SHORT).show()
+         //   Toast.makeText(this, "Else Entered", Toast.LENGTH_SHORT).show()
             Handler(Looper.getMainLooper()).postDelayed({
                 val intent = Intent(applicationContext, MainActivity::class.java)
                 startActivity(intent)

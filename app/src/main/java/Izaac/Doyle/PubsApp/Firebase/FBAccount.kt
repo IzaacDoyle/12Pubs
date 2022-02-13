@@ -21,20 +21,22 @@ import com.google.firebase.auth.*
 
 fun FBReAuth(Email:String,password:String,info:String,activity: Activity){
 var dataPasser:onDataPasser
-    var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     firebaseAuth.currentUser!!.reauthenticate(EmailAuthProvider.getCredential(Email,password)).addOnCompleteListener {task ->
         if (task.isSuccessful){
-
-            Log.d("ReAuth","Auth Entered")
+            dataPasser = activity as onDataPasser
+            Log.d("ReAuth Delete","Auth Entered")
             if (info == "Delete"){
            // dataPasser = activity as onDataPasser
-
-
+                dataPasser.changeBottomSheet("Delete")
             //    MainActivity().reAuth = "true"
            // SettingsFragment().dialog()
             //SettingsFragment().reAuth = true
                 //FBDeleteAccount()
             }
+        }
+        if (!task.isSuccessful){
+            Log.d("ReAuth Failed", task.exception?.message.toString())
         }
     }
 

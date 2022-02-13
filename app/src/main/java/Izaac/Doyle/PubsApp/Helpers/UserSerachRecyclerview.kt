@@ -53,7 +53,7 @@ class UserSerachRecyclerview(private val accounts:ArrayList<FBAccountNameModel>)
 
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         fun bindAccounts(accounts:FBAccountNameModel){
-            itemView.findViewById<TextView>(R.id.username).text = accounts.Username
+            itemView.findViewById<TextView>(R.id.username).text = accounts.Username.substring(0,1).uppercase()+accounts.Username.substring(1)
         }
 
 init {
@@ -64,7 +64,6 @@ init {
         Log.d("recylerView","$position")
     }
 }
-
 
     }
 

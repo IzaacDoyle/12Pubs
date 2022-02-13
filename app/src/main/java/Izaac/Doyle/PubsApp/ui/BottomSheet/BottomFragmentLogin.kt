@@ -104,12 +104,12 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             if (emailValid && passwordValid) {
                 if (arguments?.containsKey("relogin") == true) {
                     app.account.ReAuth(
-                        binding.UserEmailLogin2.toString(),
-                        binding.UserPasswordLogin2.toString(),
+                        binding.UserEmailLogin2.text.toString(),
+                        binding.UserPasswordLogin2.text.toString(),
                         "Delete",
                         requireActivity()
                     )
-                    Log.d("ReAuth","Google ReAuth")
+                    Log.d("ReAuth Login","Google ReAuth")
 
                 } else {
                     Log.d(
@@ -184,7 +184,8 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             return "Password must contain at least 1 Digit"
         }
         passwordValid = true
-        return "All Good"
+       // return "All Good"
+        return null
     }
 
     private fun validEmail(): String? {
@@ -196,7 +197,8 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             return "Email is Incorrect"
         }
         emailValid = true
-        return "All Good"
+        //return "All Good"
+        return null
     }
 
 
@@ -235,7 +237,7 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
                // setFragmentResult(DeleteAccountConstraint.REQUEST_CODE, bundleOf(DeleteAccountConstraint.BUNDLE_KEY to "confirm"))
                 dismiss()
             }catch (e:Exception){
-                Toast.makeText(requireContext() ,    "${e.message} $e", Toast.LENGTH_SHORT).show()
+              //  Toast.makeText(requireContext() ,    "${e.message} $e", Toast.LENGTH_SHORT).show()
                 Log.d("Google SignIn","${e.message} $e")
             }
         }

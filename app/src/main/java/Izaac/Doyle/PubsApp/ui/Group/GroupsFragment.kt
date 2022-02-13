@@ -62,7 +62,7 @@ class GroupsFragment : Fragment() {
 
                     }else{
                         Log.d("Search","$query")
-                        groupViewModel.SearchAddusersToGroup(query)
+                        groupViewModel.SearchAddusersToGroup(query.lowercase())
 
                     }
                     return true
@@ -75,7 +75,7 @@ class GroupsFragment : Fragment() {
 
                     }else{
                         Log.d("Search","$query")
-                        groupViewModel.SearchAddusersToGroup(query)
+                        groupViewModel.SearchAddusersToGroup(query.lowercase())
 
                     }
                     return true

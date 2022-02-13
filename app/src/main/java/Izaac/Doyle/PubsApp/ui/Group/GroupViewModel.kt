@@ -59,7 +59,7 @@ class GroupViewModel : ViewModel() {
 
 
      fun SearchAddusersToGroup(SearchName:String){
-         Log.d("SearchUser","$SearchName")
+         Log.d("SearchUser", SearchName.lowercase())
         db.collection("UserProfiles").orderBy("Username")
             .startAt(SearchName)
             .endAt("$SearchName\uf8ff")
