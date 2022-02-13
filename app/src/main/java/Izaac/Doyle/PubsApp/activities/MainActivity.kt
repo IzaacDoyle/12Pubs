@@ -77,11 +77,12 @@ class MainActivity : AppCompatActivity(), onDataPasser {
                 false
             binding.navView.menu[2].isVisible = false
             binding.navView.menu[2].isEnabled = false
+            binding.navView.menu[1].subMenu[1].isVisible = false
         } else {
-            binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone =
-                true
+            binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone = true
             binding.navView.menu[2].isVisible = true
             binding.navView.menu[2].isEnabled = true
+            binding.navView.menu[1].subMenu[1].isVisible = true
             FBGetDB(CheckCurrentUser()!!.uid, this)
 //>>>>>>> 4e3c07637217810eb2b9107dc18be93947d77770
         }

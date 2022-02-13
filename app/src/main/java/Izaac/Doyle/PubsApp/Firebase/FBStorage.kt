@@ -27,6 +27,7 @@ fun FBcreateDB(userUUID: String,username:String) {
     val UserDb = hashMapOf(
         "UserUUID" to userUUID,
         "Username" to username
+
     )
 
     db.collection("UserProfiles").document(userUUID)
@@ -45,17 +46,24 @@ fun FBGetDB(userUUID: String,activity: Activity){
     db.collection("UserProfiles").document(userUUID)
         .get()
         .addOnSuccessListener { result ->
-            if (result != null){
+            if (result != null && result.exists()){
                 Log.d("FBGet","SetSaved Pref")
                  val userInfo = result.toObject(AccountModel::class.java)
               //  Update(userInfo!!)
               //  Update(userInfo!!)
 
-                Log.d("FBGet","SetSaved Pref ${userInfo!!.email} + ${result.data!!["Username"].toString()}")
+            //    Log.d("FBGet","SetSaved Pref ${userInfo!!.email} + ${result.data!!["Username"].toString()}")
                 val datastore = activity.getSharedPreferences(userUUID,Context.MODE_PRIVATE)
                 val editor = datastore.edit()
                     //editor.putString("Email", result.data!!["Username"] as String?)
+
+
                     editor.putString("Username",result.data!!["Username"].toString())
+
+                //if group is empty wont local save
+                    if (result.data!!["Group"].toString().isNotEmpty()) {
+                        editor.putString("GroupName", result.data!!["Group"].toString())
+                    }
                     editor.apply()
             }
 //            val userInfo = result.data.
@@ -74,6 +82,16 @@ fun FBUpdateDB(userUUID: String, username: String){
 
 }
 
+fun FBUserAddGroup(group:String){
+    val db = Firebase.firestore
+
+    db.collection("UserProfiles").document(CheckCurrentUser()!!.uid)
+        .update("Group", group)
+
+}
+
+
+
 fun FBCreateGroup(groupModel: GroupModel){
     val db = Firebase.firestore
 
@@ -82,11 +100,13 @@ fun FBCreateGroup(groupModel: GroupModel){
         "GroupName" to groupModel.GroupName
     )
 
-    db.collection("Groups").document(groupModel.GroupOwner)
+    db.collection("Groups").document( groupModel.GroupOwner)
         .set(GroupDB)
         .addOnSuccessListener {
             Log.d("FirestoreDB", "DB created for groups")
         }
+
+    FBUserAddGroup(groupModel.GroupName)
 
 
 }

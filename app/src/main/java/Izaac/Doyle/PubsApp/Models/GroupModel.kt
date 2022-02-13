@@ -6,7 +6,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class GroupModel(
-    val GroupOwner:String = "",
+    val GroupOwner: String,
     val GroupId:Int = 0,
-                      val GroupName:String ="",
-                      val GroupLocation:String = ""): Parcelable
+    val GroupName:String,
+    val GroupLocation:String): Parcelable{
+      constructor():this("",0,"","")
+    }

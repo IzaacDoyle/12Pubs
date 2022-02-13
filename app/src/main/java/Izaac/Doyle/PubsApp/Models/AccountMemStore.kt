@@ -28,7 +28,7 @@ class AccountMemStore: AccountStore {
     }
 
     override fun LoginCreate(Account: AccountModel, Password: String, activity: Activity) {
-        val account = AccountModel("",Account.username,Account.email)
+        val account = AccountModel("",Account.username,Account.email,"")
         if (Account.email.isNotEmpty()){
 //            GlobalScope.launch (Dispatchers.IO){
 //                val job = launch{

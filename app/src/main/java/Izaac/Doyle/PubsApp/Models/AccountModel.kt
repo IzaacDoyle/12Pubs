@@ -7,5 +7,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class AccountModel(var id: String ="",
                         var username: String = "",
-                        var email: String = ""): Parcelable
+                        var email: String = "",
+                        var group: String? =""): Parcelable
 

@@ -116,7 +116,7 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
                         "User",
                         "User can be logged in or if account not there create account prompt"
                     )
-                    val accountModel = AccountModel("","",binding.UserEmailLogin2.text.toString())
+                    val accountModel = AccountModel("","",binding.UserEmailLogin2.text.toString(),"")
                     app.account.SignIn(accountModel,binding.UserPasswordLogin2.text.toString(),requireContext(),requireActivity())
                     dismiss()
                 }

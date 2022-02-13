@@ -1,20 +1,23 @@
 package Izaac.Doyle.PubsApp.ui.home
 
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+import Izaac.Doyle.PubsApp.Helpers.UserSerachRecyclerview
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.GroupModel
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.FragmentGroupBinding
-import Izaac.Doyle.PubsApp.databinding.FragmentHomeBinding
+import android.util.Log
+import android.widget.SearchView
+import androidx.core.view.isEmpty
 import androidx.lifecycle.LiveData
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.Query
 
 class GroupsFragment : Fragment() {
 
@@ -31,33 +34,109 @@ class GroupsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        groupViewModel =
-            ViewModelProvider(this)[GroupViewModel::class.java]
-
         _binding = FragmentGroupBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        app = requireActivity().application as MainApp
+        if (CheckCurrentUser() !=null){
+            groupViewModel =
+                ViewModelProvider(this)[GroupViewModel::class.java]
 
-        binding.button3.setOnClickListener {
-            if (!binding.editTextTextPersonName.text.isEmpty()){
-                app.group.CreateGroup(GroupModel(CheckCurrentUser()!!.uid,0,binding.editTextTextPersonName.text.toString(),""))
+
+
+
+            groupViewModel.gNames.observe(viewLifecycleOwner) { it ->
+                Log.d("Observe group", "$it")
+                if (it.isNotEmpty()) {
+                    binding.groupName.text = it[0].GroupName
+                }
             }
 
+
+
+            binding.groupAddSearch.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
+
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    if (binding.groupAddSearch.isEmpty()) {
+
+                    }else if (query.isNullOrEmpty()){
+
+                    }else{
+                        Log.d("Search","$query")
+                        groupViewModel.SearchAddusersToGroup(query)
+
+                    }
+                    return true
+                }
+
+                override fun onQueryTextChange(query: String?): Boolean {
+                    if (binding.groupAddSearch.isEmpty()){
+
+                    }else if (query.isNullOrBlank()){
+
+                    }else{
+                        Log.d("Search","$query")
+                        groupViewModel.SearchAddusersToGroup(query)
+
+                    }
+                    return true
+                }
+            })
+
+            groupViewModel.UsersGroupname.observe(viewLifecycleOwner){it->
+
+
+                val myAdapter = UserSerachRecyclerview(it)
+                binding.useraddRecyclerview.layoutManager = LinearLayoutManager(requireContext())
+                binding.useraddRecyclerview.adapter = myAdapter
+
+
+
+
+            }
+
+
+
+
+
+
+
+
+
         }
 
 
-        groupViewModel.groupname.observe(viewLifecycleOwner) { it ->
-            binding.editTextTextPersonName.setText(it.toString())
 
-            //fix retun type
-        }
+
+
+
+
+            app = requireActivity().application as MainApp
+
+            binding.button3.setOnClickListener {
+                if (!binding.editTextTextPersonName.text.isEmpty()) {
+                    app.group.CreateGroup(
+                        GroupModel(
+                            CheckCurrentUser()!!.uid,
+                            0,
+                            binding.editTextTextPersonName.text.toString(),
+                            ""
+                        )
+                    )
+                    //make to bottom sheet
+                }
+            }
+
+
+//        groupViewModel.gNames.observe(viewLifecycleOwner) { it ->
+//            binding.editTextTextPersonName.setText(it.toString())
+//
+//            //fix retun type
+//        }
+
 
 //        groupViewModel.groupName.observe(viewLifecycleOwner, Observer {
 //            binding.groupName.text = it.toString()
 //        })
-
-
 
 
 //        homeViewModel.text.observe(viewLifecycleOwner, Observer {
@@ -71,3 +150,5 @@ class GroupsFragment : Fragment() {
         _binding = null
     }
 }
+
+

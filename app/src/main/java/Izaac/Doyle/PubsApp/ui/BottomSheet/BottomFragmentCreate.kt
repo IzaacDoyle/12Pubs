@@ -93,7 +93,7 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
                 } else {
                     if (passwordValid && emailValid) {
                         app.account.LoginCreate(
-                            AccountModel("",  binding.UserUsernameCreate2.text.toString().trim(), binding.UserEmailCreate2.text.toString().trim()),
+                            AccountModel("",  binding.UserUsernameCreate2.text.toString().trim(), binding.UserEmailCreate2.text.toString().trim(),""),
                             binding.UserPasswordCreate2.text.toString().trim(),
                             requireActivity()
                         )
