@@ -13,6 +13,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
+import android.view.ActionProvider
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,11 +21,15 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
+import com.firebase.ui.auth.AuthMethodPickerLayout
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.auth.FirebaseAuth
 import java.time.LocalDate
 
 
@@ -33,12 +38,19 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
     private var _binding: AccountBottomDialogBinding? = null
 
     private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var firebaseAuth : FirebaseAuth
+    private lateinit var fblistener:FirebaseAuth.AuthStateListener
+    private lateinit var providers:List<AuthUI.IdpConfig>
+
+
     lateinit var dataPasser : onDataPasser
     lateinit var app: MainApp
     var Account = AccountModel()
     var emailValid:Boolean = false
     var passwordValid:Boolean = false
      var extraData: String? = null
+
+
 
 
 
@@ -70,7 +82,7 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
         val root: View = binding.root
 
       // val view = inflater.inflate(R.layout.account_bottom_dialog, container , false)
-
+        firebaseUI()
 
 
         if (this.arguments != null) {
@@ -118,7 +130,16 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
                         "User can be logged in or if account not there create account prompt"
                     )
                     val accountModel = AccountModel("","",binding.UserEmailLogin2.text.toString(),"")
-                    app.account.SignIn(accountModel,binding.UserPasswordLogin2.text.toString(),requireContext(),requireActivity())
+                    //SignIn
+//                    signInLauncher
+                    firebaseUI()
+
+
+
+
+
+
+//                    app.account.SignIn(accountModel,binding.UserPasswordLogin2.text.toString(),requireContext(),requireActivity())
                     dismiss()
                 }
             }
@@ -136,9 +157,42 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
            googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(requireActivity(), gso)
             Log.d("Google Sign In","Google Sign in Attempt")
             val intent = googleSignInClient.signInIntent
-           activityResultLauncher.launch(intent)
+         //  activityResultLauncher.launch(intent)
             }
         return root
+    }
+
+    private fun firebaseUI() {
+         providers = arrayListOf(
+            AuthUI.IdpConfig.EmailBuilder().build(),
+            AuthUI.IdpConfig.GoogleBuilder().build(),
+           // AuthUI.IdpConfig.PhoneBuilder().build(),
+
+            )
+        firebaseAuth = FirebaseAuth.getInstance()
+        fblistener = object:FirebaseAuth.AuthStateListener{
+            override fun onAuthStateChanged(p0: FirebaseAuth) {
+                val user = p0.currentUser
+                if (user != null){ //already Logged In
+                    Log.d("UserAccount","Account already Logged In ${user.uid}")
+                }else{
+
+                    val customLayout = AuthMethodPickerLayout
+                        .Builder(R.layout.account_bottom_dialog)
+                        .setGoogleButtonId(R.id.Google_SignIn)
+                        .setEmailButtonId(R.id.User_Login_Login)
+                        .build()
+
+                    val signinIntent  = AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .setAuthMethodPickerLayout(customLayout)
+                        .build()
+                    signInLauncher.launch(signinIntent)
+                }
+            }
+
+        }
     }
 
 
@@ -220,6 +274,12 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
 //        }
 //    }
 
+    private val signInLauncher = registerForActivityResult(
+        FirebaseAuthUIActivityResultContract()
+    ) { res ->
+        //this.onSignInResult(res)
+    }
+
     private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ActivityResultCallback {
 
         if(it.resultCode == RESULT_OK){
@@ -245,6 +305,19 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
 
 
     })
+
+    override fun onStart() {
+        super.onStart()
+        firebaseAuth.addAuthStateListener(fblistener)
+    }
+
+    override fun onStop() {
+        if(fblistener !=null){
+            firebaseAuth.removeAuthStateListener(fblistener)
+        }
+        super.onStop()
+
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
