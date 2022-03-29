@@ -76,5 +76,7 @@ dependencies {
 
     implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
 
+    implementation 'com.google.maps.android:places-ktx:0.4.0'
+
 
 }

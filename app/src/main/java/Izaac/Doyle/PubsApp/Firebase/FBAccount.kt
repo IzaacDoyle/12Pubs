@@ -125,6 +125,8 @@ fun FBLogin(email:String,password: String,context: Context,activity: Activity){
 
 fun FBDeleteAccount(activity: Activity,context: Context){
 
+    //Delete Account only if it doesnt own a group
+
     val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
    val user = firebaseAuth.currentUser!!
     user.delete().addOnCompleteListener  { task->

@@ -171,15 +171,29 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             val sharedPrefInfo =
                 getSharedPreferences(CheckCurrentUser()!!.uid, Context.MODE_PRIVATE)
 
-            val username = sharedPrefInfo.getString("Username", "")
-            val userEmail = sharedPrefInfo.getString("Email", "")
-            Log.d("shardpref", "$username to $userEmail")
+            if (sharedPrefInfo.getString("Username", "")!!.isEmpty()){
+                val username = CheckCurrentUser()!!.displayName
+                name.text = username
+                email.text = CheckCurrentUser()!!.email
+
+                val datastore = getSharedPreferences(CheckCurrentUser()!!.uid,Context.MODE_PRIVATE)
+                val editor = datastore.edit()
+                editor.putString("Username",username)
+                editor.apply()
+            }else{
+                val username = sharedPrefInfo.getString("Username", "")
+                //val userEmail = sharedPrefInfo.getString("Email", "")
+                name.text = username
+                email.text = CheckCurrentUser()!!.email
+            }
+
+
+            //Log.d("shardpref", "$username to $userEmail")
 
 
             //  email.text = userinfo.email
 
-            name.text = username
-            email.text = CheckCurrentUser()!!.email
+
 
 
 
@@ -265,9 +279,10 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             "Task was Successful" -> {
                 //restart UI
                 // Update()
+                recreate()
 
                 //Account Was Made
-                Toast.makeText(this, "Task was Successful", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(this, "Task was Successful", Toast.LENGTH_SHORT).show()
             }
             "Error Email Already in Use" -> {
                 val bottomFragment = BottomFragmentLogin()

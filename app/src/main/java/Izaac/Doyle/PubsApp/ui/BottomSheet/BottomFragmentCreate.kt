@@ -5,6 +5,7 @@ import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.AccountModel
 import Izaac.Doyle.PubsApp.R
+import Izaac.Doyle.PubsApp.activities.MainActivity
 import Izaac.Doyle.PubsApp.databinding.AccountCreateBottomDialogBinding
 import android.app.Activity
 import android.content.Context
@@ -17,16 +18,21 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import com.firebase.ui.auth.AuthUI
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.auth.FirebaseAuth
 
 class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private var _binding: AccountCreateBottomDialogBinding? = null
+    private lateinit var firebaseAuth : FirebaseAuth
+    private lateinit var providers:List<AuthUI.IdpConfig>
     lateinit var app: MainApp
     lateinit var dataPasser : onDataPasser
     var emailValid:Boolean = false
@@ -54,9 +60,13 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
         _binding = AccountCreateBottomDialogBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        firebaseAuth = FirebaseAuth.getInstance()
 
-
-
+        providers = arrayListOf(
+           // AuthUI.IdpConfig.EmailBuilder().build(),
+            AuthUI.IdpConfig.GoogleBuilder().build(),
+            AuthUI.IdpConfig.PhoneBuilder().build()
+            )
 
 
             binding.LoginAccount.setOnClickListener {
@@ -114,18 +124,25 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
 
         binding.GoogleSignIn.setOnClickListener {
 
-            val gso = GoogleSignInOptions
-                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
+            val signinIntent  = AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(providers)
+                //.setAuthMethodPickerLayout(customLayout)
                 .build()
+            signInLauncher.launch(signinIntent)
 
-            googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(requireActivity(), gso)
-            // Google Sign in
-            Log.d("Google Sign In","Google Sign in Attempt")
-            val intent = googleSignInClient.signInIntent
-            // both methods are here, the launch did not work but check again
-            activityResultLauncher.launch(intent)
+//            val gso = GoogleSignInOptions
+//                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//                .requestIdToken(getString(R.string.default_web_client_id))
+//                .requestEmail()
+//                .build()
+//
+//            googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(requireActivity(), gso)
+//            // Google Sign in
+//            Log.d("Google Sign In","Google Sign in Attempt")
+//            val intent = googleSignInClient.signInIntent
+//            // both methods are here, the launch did not work but check again
+//            activityResultLauncher.launch(intent)
             //startActivityForResult Is depercated( do not use any more)
             //  startActivityForResult(intent,GoogleSignIn_R_Code)
         }
@@ -134,6 +151,19 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
         return root
 
     }
+
+
+
+    private val signInLauncher = registerForActivityResult(
+        FirebaseAuthUIActivityResultContract()
+    ) { res ->
+        if (FirebaseAuth.getInstance().currentUser !=null){
+            Log.d("Info",res.toString())
+            dataPasser.AccountStatus("Task was Successful", res.idpResponse?.email!!)
+            dismiss()
+        }
+    }
+
 
     private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ActivityResultCallback {
 

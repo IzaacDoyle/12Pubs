@@ -1,5 +1,6 @@
 package Izaac.Doyle.PubsApp.ui.Maps
 
+
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.FragmentMapsBinding
 import android.annotation.SuppressLint
@@ -107,6 +108,12 @@ class MapsFragment : Fragment(), OnMapReadyCallback, OnMapsSdkInitializedCallbac
        mMap.setMapStyle(
            MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.google_maps_custom_pub)
        )
+//        val options = GoogleMapOptions()
+//            .mapId("eb8a43f33bd36507")
+//
+//        val mapsFragment = SupportMapFragment.newInstance(options)
+
+
         setUpMap()
         //mMap.isMyLocationEnabled = true
 

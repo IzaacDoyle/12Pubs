@@ -20,7 +20,6 @@ class GroupViewModel : ViewModel() {
     private var Username: MutableLiveData<ArrayList<FBAccountNameModel>> = MutableLiveData<ArrayList<FBAccountNameModel>>()
 
     init {
-
         db = FirebaseFirestore.getInstance()
         db.firestoreSettings = FirebaseFirestoreSettings.Builder().build()
         CUuid = CheckCurrentUser()!!.uid
@@ -82,7 +81,6 @@ class GroupViewModel : ViewModel() {
                     Username.value = username
                 }
             }
-
     }
 
 
