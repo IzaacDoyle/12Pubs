@@ -40,17 +40,20 @@ class StartUpActivity: AppCompatActivity() {
         ){
          //   Toast.makeText(this, "Entered Permission Check 2", Toast.LENGTH_SHORT).show()
             ActivityCompat.requestPermissions(this, arrayOf(
+                //Manifest.permission.ACCESS_BACKGROUND_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.CAMERA ), PERMISSIONS_GRANTED)
 
 
         }else{
          //   Toast.makeText(this, "Else Entered", Toast.LENGTH_SHORT).show()
+
             Handler(Looper.getMainLooper()).postDelayed({
                 val intent = Intent(applicationContext, MainActivity::class.java)
                 startActivity(intent)
                 finish()
-            }, 1000)
+            }, 2000)
+//
         }
         return
     }
@@ -68,11 +71,12 @@ class StartUpActivity: AppCompatActivity() {
             for (i in grantResults.indices) {
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                     Log.d("Permissions", "${permissions[i]} Granted")
+
                     Handler(Looper.getMainLooper()).postDelayed({
                         val intent = Intent(applicationContext, MainActivity::class.java)
                         startActivity(intent)
                         finish()
-                    }, 1000)
+                    }, 2000)
                 }else{
                     exitProcess(-1)
                 }

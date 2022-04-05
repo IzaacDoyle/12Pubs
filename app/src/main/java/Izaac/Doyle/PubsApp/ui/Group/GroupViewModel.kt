@@ -9,6 +9,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.firebase.ui.auth.data.model.User
 import com.google.firebase.firestore.*
 import kotlin.collections.ArrayList
 import kotlin.coroutines.coroutineContext
@@ -57,29 +58,38 @@ class GroupViewModel : ViewModel() {
 
 
 
-     fun SearchAddusersToGroup(SearchName:String){
-         Log.d("SearchUser", SearchName.lowercase())
+     fun SearchAddusersToGroup(SearchName: String?){
+         if (SearchName.isNullOrEmpty()){
+             Username.value!!.clear()
+             Log.d("SearchName","Search Is Empty")
+             UsersGroupname.value!!.clear()
+         }else{
+
+
+         Log.d("SearchUser", SearchName!!.lowercase())
         db.collection("UserProfiles").orderBy("Username")
             .startAt(SearchName)
             .endAt("$SearchName\uf8ff")
             .limit(10)
             .get()
             .addOnSuccessListener { snapshot ->
-                Log.d("Searchuser Document","${snapshot.documents}")
+                Log.d("Searchuser Document", "${snapshot.documents}")
                 val username = ArrayList<FBAccountNameModel>()
                 if (snapshot != null) {
-                    Log.d("SearchuserInside","${snapshot.documents}")
+                    Log.d("SearchuserInside", "${snapshot.documents}")
                     val document = snapshot.documents
                     document.forEach {
                         val groupuser = it.toObject(FBAccountNameModel::class.java)
-                        if(groupuser != null){
-                            Log.d("SearchUsername","$groupuser")
+                        if (groupuser != null) {
+                            Log.d("SearchUsername", "${groupuser.UserEmail + groupuser.Username}")
                             username.add(groupuser!!)
                         }
 
                     }
+                    Log.d("Search", username.toString())
                     Username.value = username
                 }
+            }
             }
     }
 

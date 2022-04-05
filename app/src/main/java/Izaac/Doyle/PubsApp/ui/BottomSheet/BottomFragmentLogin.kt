@@ -4,37 +4,30 @@ package Izaac.Doyle.PubsApp.ui.BottomSheet
 
 
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
-import Izaac.Doyle.PubsApp.Firebase.FBCreateGroup
 import Izaac.Doyle.PubsApp.Firebase.FBcreateDB
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.AccountModel
 import Izaac.Doyle.PubsApp.R
-import Izaac.Doyle.PubsApp.activities.MainActivity
 import Izaac.Doyle.PubsApp.databinding.AccountBottomDialogBinding
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
-import android.view.ActionProvider
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
-import com.firebase.ui.auth.AuthMethodPickerLayout
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
-import java.time.LocalDate
 
 
 class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
@@ -116,7 +109,6 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             AuthUI.IdpConfig.EmailBuilder().build(),
             AuthUI.IdpConfig.GoogleBuilder().build(),
             AuthUI.IdpConfig.PhoneBuilder().build(),
-
         )
 
 
@@ -274,7 +266,8 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             //set that its gets username from firbase
 
             if (res.idpResponse!!.isNewUser){
-                FBcreateDB(CheckCurrentUser()!!.uid, CheckCurrentUser()!!.displayName.toString())
+                FBcreateDB(CheckCurrentUser()!!.uid, CheckCurrentUser()!!.displayName.toString(),
+                    res.idpResponse!!.email!!)
                 Log.d("Info","FBUI new user")
             }
             dataPasser.AccountStatus("Task was Successful", res.idpResponse?.email!! )

@@ -22,6 +22,8 @@
     <string name="navigation">Navigation</string>
     <string name="sign_out">Sign Out</string>
     <string name="signout">Signout</string>
+    <string name="SelectGroupImage">Select Group Image</string>
+    <string name="SelectProfileImage">Select Profile Image</string>
 
 
 </resources>

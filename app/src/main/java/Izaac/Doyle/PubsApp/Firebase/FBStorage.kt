@@ -6,6 +6,7 @@ import Izaac.Doyle.PubsApp.activities.MainActivity
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.Uri
 import android.util.Log
 import androidx.core.content.edit
 import com.google.firebase.database.ktx.database
@@ -13,6 +14,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -21,12 +24,14 @@ import java.util.*
 import java.util.prefs.Preferences
 
 
-fun FBcreateDB(userUUID: String,username:String) {
+fun FBcreateDB(userUUID: String,username:String,userEmail:String) {
     val db = Firebase.firestore
+    Log.d("UserEmail",userEmail)
 
     val UserDb = hashMapOf(
         "UserUUID" to userUUID,
-        "Username" to username.lowercase()
+        "Username" to username.lowercase(),
+        "UserEmail" to userEmail
 
     )
 
@@ -90,17 +95,29 @@ fun FBUserAddGroup(group:String){
 
 }
 
+fun FbGetGroupImage(UUid:String,ImageType: String){
+    val storageRef =   FirebaseStorage.getInstance().reference
+    val task = storageRef.child("$UUid/$ImageType.jpg")
+
+
+
+
+
+
+}
+
 
 
 fun FBCreateGroup(groupModel: GroupModel){
     val db = Firebase.firestore
 
     val GroupDB = hashMapOf(
-        "OwnerUUID" to groupModel.GroupOwner,
-        "GroupName" to groupModel.GroupName
+        "OwnerUUID" to groupModel.OwnerUUID,
+        "GroupName" to groupModel.GroupName,
+
     )
 
-    db.collection("Groups").document( groupModel.GroupOwner)
+    db.collection("Groups").document( groupModel.OwnerUUID)
         .set(GroupDB)
         .addOnSuccessListener {
             Log.d("FirestoreDB", "DB created for groups")
@@ -108,6 +125,19 @@ fun FBCreateGroup(groupModel: GroupModel){
 
     FBUserAddGroup(groupModel.GroupName)
 
+
+}
+
+fun UploadImage(UUid:String,uri:Uri,ImageType:String){
+    val storageRef =   FirebaseStorage.getInstance().reference
+    Log.d("URI",uri.toString())
+
+    val task = storageRef.child("$UUid/$ImageType.jpg").putFile(uri)
+    task.addOnSuccessListener {
+        Log.d("UploadImage","Task Is Successful")
+    }.addOnFailureListener {
+        Log.d("UploadImageFail","Image Upload Failed ${it.printStackTrace()}")
+    }
 
 }
 

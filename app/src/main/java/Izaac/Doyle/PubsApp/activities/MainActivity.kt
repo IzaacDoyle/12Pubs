@@ -9,6 +9,7 @@ import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.ActivityMainBinding
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentCreate
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentDelete
+import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentGroupCreate
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentLogin
 import android.content.Context
 import android.os.Bundle
@@ -240,6 +241,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         val bottomFragment = BottomFragmentLogin()
         val bottomFragmentCreate = BottomFragmentCreate()
         val bottomFragmentDelete = BottomFragmentDelete()
+        val bottomFragmentGroupCreate = BottomFragmentGroupCreate()
         when (sheetActive) {
             "Create" -> {
                 if (!bottomFragmentCreate.isAdded && !bottomFragment.isVisible) {
@@ -268,6 +270,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
                     bottomFragmentDelete.show(supportFragmentManager, "Delete Account")
                 }
             }
+
 
 
         }

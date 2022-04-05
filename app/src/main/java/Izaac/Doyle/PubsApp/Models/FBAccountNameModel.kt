@@ -1,3 +1,10 @@
 package Izaac.Doyle.PubsApp.Models
 
-class FBAccountNameModel(var UUID:String ="", var Username:String="")
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+class FBAccountNameModel(var UserUUID:String ="", var Username:String="",var UserEmail:String=""):
+    Parcelable{
+    constructor():this("","","")
+    }

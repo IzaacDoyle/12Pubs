@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/GroupAddSearch"
+        android:icon="?android:attr/actionModeWebSearchDrawable"
+        android:title="Search"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
+    <item
+        android:icon="@drawable/ic_create_user"
+        android:title="Add to Group"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/Create_group"
+        android:icon="@drawable/ic_addgroup"
+        android:title="Create Group"
+        app:showAsAction="always" />
+</menu>

@@ -56,10 +56,11 @@ var dataPasser:onDataPasser
 
             if (task.isSuccessful){
                 val user = firebaseAuth.currentUser
+
                 //UpDateUI
                     dataPasser.AccountStatus("Task was Successful", Email)
 
-                FBcreateDB(user!!.uid, Username)
+                FBcreateDB(user!!.uid, Username,Email)
                // info = "Task was Successful"
 
                 val navController = Navigation.findNavController(activity,
@@ -198,7 +199,8 @@ fun CheckCurrentUser(): UserInfo? {
                 Log.d("TAG", "signInWithCredential:success")
                 val user = firebaseAuth.currentUser
                 if (task.result.additionalUserInfo?.isNewUser == true) {
-                    FBcreateDB(user!!.uid, user.displayName.toString())
+                    Log.d("New USer", user!!.email.toString())
+                    FBcreateDB(user.uid, user.displayName.toString(), user.email.toString())
                 }
                 if (info == "Delete"){
                 //call ondatapasser

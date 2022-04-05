@@ -24,6 +24,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 
@@ -257,6 +258,15 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
         super.onDestroyView()
       // dataPasser.changeBottomSheet("Login")
         _binding = null
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val behavior = BottomSheetBehavior.from(requireView().parent as View)
+        behavior.isFitToContents
+//        behavior.peekHeight = 1200
+//        behavior.maxHeight = 1400
+
     }
 
     override fun onAttach(context: Context) {

@@ -125,6 +125,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, OnMapsSdkInitializedCallbac
     }
     @SuppressLint("MissingPermission")
     private fun setUpMap() {
+        //add location permision check
         mMap.isMyLocationEnabled =true
         fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) {location->
             if (location !=null){

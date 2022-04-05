@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class GroupModel(
-    val GroupOwner: String,
+    val OwnerUUID: String,
     val GroupId:Int = 0,
     val GroupName:String,
     val GroupLocation:String): Parcelable{
