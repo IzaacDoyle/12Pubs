@@ -11,13 +11,20 @@ import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentCreate
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentDelete
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentGroupCreate
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentLogin
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.View.OnAttachStateChangeListener
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.view.menu.ActionMenuItem
+import androidx.appcompat.view.menu.ActionMenuItemView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.core.view.get
@@ -41,7 +48,11 @@ class MainActivity : AppCompatActivity(), onDataPasser {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
+    lateinit var dataPasser : onDataPasser
     lateinit var app: MainApp
+    var SearchActive:Boolean = false
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +64,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         setSupportActionBar(binding.appBarMain.toolbar)
         app = application as MainApp
         auth = Firebase.auth
+        dataPasser =this as onDataPasser
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
@@ -133,12 +145,79 @@ class MainActivity : AppCompatActivity(), onDataPasser {
     }
 
 
+
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val searchBox = findViewById<ConstraintLayout>(R.id.searchBoxConstraint)
+
+//        if (!SearchActive){
+//            searchBox.visibility = View.GONE
+//        }
+
+//        if (item.isActionViewExpanded){
+//            searchBox.visibility = View.VISIBLE
+//        }
+//       item.collapseActionView()
+
+
+
+
         when (item.itemId) {
             R.id.settings_signout -> {
                 Log.d("settingsActivity", "Log out")
                 app.account.SignOut(this)
             }
+//            R.id.GroupAddSearch->{
+
+//
+//                searchBox.visibility = View.VISIBLE
+
+//                searchBox.isVisible = !searchBox.isVisible
+
+
+
+//                searchBox.setOnFocusChangeListener { v, hasFocus ->
+//                    if (!hasFocus){
+//                        println("Test")
+////                        searchBox.visibility = View.GONE
+//                    }
+//                    if (hasFocus){
+//                        println("Test2")
+////                        searchBox.visibility = View.VISIBLE
+//                    }
+//                }
+
+
+//                searchBox.visibility = View.VISIBLE
+//
+//                if (!SearchActive){
+//                    Log.d("SearchActive", SearchActive.toString())
+//                    searchBox.visibility = View.VISIBLE
+//                }
+
+
+
+
+//                searchBox.visibility = View.VISIBLE
+//
+//                val search = findViewById<ActionMenuItemView>(R.id.GroupAddSearch)
+
+
+//                search.setOnFocusChangeListener { v, hasFocus ->
+//                    if (!hasFocus){
+//                        Log.d("SearchBoc","No Focus")
+//                        searchBox.visibility = View.GONE
+//                    }else{
+//                        Log.d("SearchBoc"," Focus")
+//                    }
+//                }
+//                .setOnFocusChangeListener { v, hasFocus ->
+//
+//                }
+
+               // Log.d("searchBox", searchBox.toString())
+
+//            }
 
         }
         return super.onOptionsItemSelected(item)
@@ -309,6 +388,9 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             }
         }
 
+    }
+
+    override fun PassView(view: Activity) {
     }
 }
 

@@ -3,12 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/GroupAddSearch"
-        android:icon="?android:attr/actionModeWebSearchDrawable"
-        android:title="Search"
-        app:actionViewClass="android.widget.SearchView"
-        app:showAsAction="always|collapseActionView" />
-    <item
+        android:id="@+id/AddToGroup"
         android:icon="@drawable/ic_create_user"
         android:title="Add to Group"
         app:showAsAction="always" />

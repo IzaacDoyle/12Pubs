@@ -297,5 +297,9 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
         }
     }
 
+    override fun PassView(view: Activity) {
+
+    }
+
 
 }

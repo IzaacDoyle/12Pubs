@@ -10,6 +10,7 @@ import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.AccountModel
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.AccountBottomDialogBinding
+import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.os.Bundle
@@ -363,6 +364,10 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             }
         }
 
+
+    }
+
+    override fun PassView(view: Activity) {
 
     }
 
