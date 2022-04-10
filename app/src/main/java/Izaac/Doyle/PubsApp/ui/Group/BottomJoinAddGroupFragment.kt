@@ -2,6 +2,7 @@ package Izaac.Doyle.PubsApp.ui.Group
 
 import Izaac.Doyle.PubsApp.Helpers.UserSearchRecyclerview
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
+import Izaac.Doyle.PubsApp.Models.FBAccountNameModel
 import Izaac.Doyle.PubsApp.databinding.CameraViewBinding
 import Izaac.Doyle.PubsApp.databinding.FragmentJoinAddBinding
 import Izaac.Doyle.PubsApp.ui.home.GroupViewModel
@@ -57,15 +58,19 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment() {
             if (arguments?.containsKey("QRCode") == true) {
                 Log.d("QRCode",this.requireArguments().get("QRCode").toString())
                 Log.d("QRCodeReturn ",groupViewModel.UsersGroupname.value.toString() + " Test")
-    GroupViewModel().QrCodeScanSearch(this.requireArguments().get("QRCode").toString())
-
-
+                groupViewModel.QrCodeScanSearch(this.requireArguments().get("QRCode").toString())
+//                println(GroupViewModel().QrCodeScanSearch(this.requireArguments().get("QRCode").toString()))
+//                val args = this.requireArguments().get("QRCode").toString()
+//                groupViewModel.QrCodeScanSearch(args)
 
             }
             }
 
         groupViewModel.qrcodeSearch.observe(viewLifecycleOwner){it ->
             Log.d("QRCodeSearch Observed Data",it.toString())
+            myAdapter = UserSearchRecyclerview(it as ArrayList<FBAccountNameModel>)
+            binding.userSearchRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+            binding.userSearchRecyclerView.adapter = myAdapter
 
         }
 

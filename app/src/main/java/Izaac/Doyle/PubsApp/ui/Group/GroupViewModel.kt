@@ -99,7 +99,7 @@ class GroupViewModel : ViewModel() {
     }
 
     fun QrCodeScanSearch(QRCode: String) {
-//        val profile = MutableLiveData(ArrayList<FBAccountNameModel>())
+        val profile = mutableListOf<FBAccountNameModel>()
         db.collection("UserProfiles")
             .orderBy("UserUUID")
             .startAt(QRCode)
@@ -118,13 +118,16 @@ class GroupViewModel : ViewModel() {
                                 "QrSearchProfile",
                                 groupUser.UserEmail + " " + groupUser.Username + " " + groupUser.UserUUID
                             )
+//                            profile.value!!.add(groupUser)
+                            profile.add(groupUser)
 
-                            QrcodeSearch.value!!.add(groupUser)
-                            qrcodeSearch.notifyObserver()
 //                            profile.value!!.add(groupUser)
 //                            groupUser = profile.toList()
                         }
+
                     }
+                    QrcodeSearch.value = profile
+                    qrcodeSearch.notifyObserver()
 //                    QrcodeSearch.value?.add(profile)
 //                    QrcodeSearch.notifyObserver()
 //                    qrcodeSearch.notifyObserver()

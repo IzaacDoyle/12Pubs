@@ -1,6 +1,7 @@
 package Izaac.Doyle.PubsApp.ui.pubs
 
 import Izaac.Doyle.PubsApp.BuildConfig
+import Izaac.Doyle.PubsApp.Helpers.PlacesDragtoRearage
 import Izaac.Doyle.PubsApp.Helpers.PlacesSwipeLeft
 import Izaac.Doyle.PubsApp.Helpers.PlacesSwiperight
 import Izaac.Doyle.PubsApp.Helpers.PubsRecycelerView
@@ -39,7 +40,7 @@ class PubsFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint("MissingPermission", "NotifyDataSetChanged")
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -137,16 +138,26 @@ class PubsFragment : Fragment() {
                 myAdapter = PubsRecycelerView(result as ArrayList<GooglePlacesModel>)
                 binding.pubsPlacesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
                 binding.pubsPlacesRecyclerView.adapter = myAdapter
-
-
+                myAdapter.notifyDataSetChanged()
 
                 val itemTouchHelperLeft = ItemTouchHelper(PlacesSwipeLeft(myAdapter,requireContext()))
                 itemTouchHelperLeft.attachToRecyclerView(binding.pubsPlacesRecyclerView)
                 val itemTouchHelperRight = ItemTouchHelper(PlacesSwiperight(myAdapter,requireContext()))
                 itemTouchHelperRight.attachToRecyclerView(binding.pubsPlacesRecyclerView)
+                val itemTouchHelperMove = ItemTouchHelper(PlacesDragtoRearage(myAdapter,requireContext(),result))
+                itemTouchHelperMove.attachToRecyclerView(binding.pubsPlacesRecyclerView)
+
+
+
 
 
             }
+
+//            binding.placesSwipetoRefresh.setOnRefreshListener {
+//
+//                myAdapter.notifyDataSetChanged()
+//                binding.placesSwipetoRefresh.isRefreshing = false
+//            }
 
 //        println(test+ "======================D")
 
