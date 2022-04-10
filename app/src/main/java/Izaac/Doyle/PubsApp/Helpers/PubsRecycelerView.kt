@@ -60,7 +60,7 @@ class PubsRecycelerView(private val pubs:ArrayList<GooglePlacesModel>): Recycler
                 val position = adapterPosition
                 //add user to textview to add
                 Log.d("recylerView","$position")
-            }
+            }   
 
 
 
