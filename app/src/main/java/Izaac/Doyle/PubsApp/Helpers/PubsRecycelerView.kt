@@ -3,7 +3,6 @@ package Izaac.Doyle.PubsApp.Helpers
 
 import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
 import Izaac.Doyle.PubsApp.R
-import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -27,15 +26,10 @@ class PubsRecycelerView(private val pubs:ArrayList<GooglePlacesModel>): Recycler
     }
 
 
-    @SuppressLint("NotifyDataSetChanged")
     fun deleteItem(pos: Int){
         pubs.removeAt(pos)
         notifyItemRemoved(pos)
         notifyDataSetChanged()
-    }
-
-    fun saveLocation(pos: Int,pubs: GooglePlacesModel){
-
     }
 
 
@@ -65,14 +59,8 @@ class PubsRecycelerView(private val pubs:ArrayList<GooglePlacesModel>): Recycler
                     v: View ->
                 val position = adapterPosition
                 //add user to textview to add
-<<<<<<< HEAD
                 Log.d("recylerView","$position")
-            }   
-=======
-                Log.d("recylerView","$position" + itemView as GooglePlacesModel)
-
             }
->>>>>>> 12Pubs_CameraScanner
 
 
 
@@ -85,7 +73,6 @@ class PubsRecycelerView(private val pubs:ArrayList<GooglePlacesModel>): Recycler
     }
 
     override fun getItemCount(): Int {
-
         return pubs.size
     }
 
