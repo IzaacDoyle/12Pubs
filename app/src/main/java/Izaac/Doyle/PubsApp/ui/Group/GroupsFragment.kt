@@ -16,6 +16,7 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.core.view.isEmpty
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -23,7 +24,7 @@ import com.google.firebase.storage.FirebaseStorage
 
 class GroupsFragment : Fragment(), onDataPasser {
 
-    private lateinit var groupViewModel: GroupViewModel
+    private val groupViewModel: GroupViewModel by viewModels()
     private var _binding: FragmentGroupBinding? = null
     lateinit var app: MainApp
     lateinit var myAdapter:UserSearchRecyclerview
@@ -42,8 +43,8 @@ class GroupsFragment : Fragment(), onDataPasser {
         val root: View = binding.root
 
         if (CheckCurrentUser() !=null){
-            groupViewModel =
-                ViewModelProvider(this)[GroupViewModel::class.java]
+//            groupViewModel =
+//                ViewModelProvider(this)[GroupViewModel::class.java]
 
 
 
@@ -87,8 +88,8 @@ class GroupsFragment : Fragment(), onDataPasser {
 
                     }else{
                         Log.d("Search","$query")
-//                        groupViewModel.SearchAddusersToGroup(query.lowercase())
-                        groupViewModel.QrCodeScanSearch(query)
+                        groupViewModel.SearchAddusersToGroup(query.lowercase())
+//                        groupViewModel.QrCodeScanSearch(query)
                     }
                     return true
                 }
@@ -100,8 +101,8 @@ class GroupsFragment : Fragment(), onDataPasser {
 
                     }else{
                         Log.d("Search","$query")
-//                        groupViewModel.SearchAddusersToGroup(query.lowercase())
-                        groupViewModel.QrCodeScanSearch(query)
+                        groupViewModel.SearchAddusersToGroup(query.lowercase())
+//                        groupViewModel.QrCodeScanSearch(query)
 
                     }
                     return true
@@ -109,7 +110,7 @@ class GroupsFragment : Fragment(), onDataPasser {
             })
 
 
-
+//            groupViewModel.QrCodeScanSearch()
             groupViewModel.qrcodeSearch.observe(viewLifecycleOwner){result->
                     Log.d("UserGroups", result.toString())
                     myAdapter = UserSearchRecyclerview(result as ArrayList<FBAccountNameModel>)
