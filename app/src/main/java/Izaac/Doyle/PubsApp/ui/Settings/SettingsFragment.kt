@@ -6,7 +6,6 @@ import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.SettingsActivityBinding
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentDelete
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentLogin
-import Izaac.Doyle.PubsApp.ui.BottomSheet.settings_update_info
 import android.content.Context
 import android.os.Bundle
 import android.util.Log

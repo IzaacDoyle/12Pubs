@@ -3,6 +3,7 @@
     package="Izaac.Doyle.PubsApp">
 
 
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:required="true" />
     <uses-permission android:name="android.permission.INTERNET" android:required="true" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" android:required="true" />
@@ -27,7 +28,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="${google_maps_key}" />
+            android:value="${google_api_key}" />
 
 
 

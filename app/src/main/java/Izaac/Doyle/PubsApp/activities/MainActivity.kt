@@ -7,23 +7,18 @@ import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.ActivityMainBinding
-import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentCreate
-import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentDelete
-import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentGroupCreate
-import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentLogin
+import Izaac.Doyle.PubsApp.ui.BottomSheet.*
+import Izaac.Doyle.PubsApp.ui.Group.BottomCameraFragment
+import Izaac.Doyle.PubsApp.ui.Group.BottomFragmentGroupCreate
+import Izaac.Doyle.PubsApp.ui.Group.BottomJoinAddGroupFragment
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.View.OnAttachStateChangeListener
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.view.menu.ActionMenuItem
-import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
@@ -32,15 +27,16 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
-import androidx.navigation.navArgument
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 
 class MainActivity : AppCompatActivity(), onDataPasser {
 
@@ -99,6 +95,10 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             binding.navView.menu[2].isEnabled = true
             binding.navView.menu[1].subMenu[1].isVisible = true
             FBGetDB(CheckCurrentUser()!!.uid, this)
+
+
+
+
 //>>>>>>> 4e3c07637217810eb2b9107dc18be93947d77770
         }
 
@@ -236,6 +236,8 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         CheckCurrentUser()
         val email = findViewById<TextView>(R.id.Drawer_Email)
         val name = findViewById<TextView>(R.id.Drawer_Name)
+        val profileImage = findViewById<ImageView>(R.id.Drawer_Account_Image)
+
 
         //val profileimage = findViewById<ImageView>(R.id.Drawer_Account_Image)
 
@@ -247,6 +249,15 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             drawerDropDown.isVisible = false
             drawerDropDown.isEnabled = false
         } else {
+
+            val FBprofileImage = FirebaseStorage.getInstance().reference.child("${CheckCurrentUser()!!.uid}/ProfileImage.jpg")
+
+            FBprofileImage.downloadUrl.addOnSuccessListener { Uri ->
+                val imageURL = Uri.toString()
+                Glide.with(this).load(imageURL).into(profileImage)
+            }.addOnFailureListener {
+                profileImage.setImageResource(R.drawable.ic_pubs)
+            }
 
             val sharedPrefInfo =
                 getSharedPreferences(CheckCurrentUser()!!.uid, Context.MODE_PRIVATE)
@@ -321,6 +332,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         val bottomFragmentCreate = BottomFragmentCreate()
         val bottomFragmentDelete = BottomFragmentDelete()
         val bottomFragmentGroupCreate = BottomFragmentGroupCreate()
+
         when (sheetActive) {
             "Create" -> {
                 if (!bottomFragmentCreate.isAdded && !bottomFragment.isVisible) {
@@ -352,11 +364,14 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
 
 
+
         }
     }
 
 
-    override fun AccountStatus(info: String, email: String) {
+    override fun AccountStatus(info: String, Extra: String) {
+        val bottomJoinAddGroupFragment = BottomJoinAddGroupFragment()
+        val bottomCameraFragment = BottomCameraFragment()
         when (info) {
             "Task was Successful" -> {
                 //restart UI
@@ -374,19 +389,37 @@ class MainActivity : AppCompatActivity(), onDataPasser {
                         "Error Email Already in Use Try logging In",
                         Toast.LENGTH_SHORT
                     ).show()
-                    bottomFragment.arguments = bundleOf("Email" to email)
+                    bottomFragment.arguments = bundleOf("Email" to Extra)
                     bottomFragment.show(supportFragmentManager, "Bottom Login")
                 }
             }
             "Login Failed" -> {
                 val bottomFragment = BottomFragmentLogin()
                 if (!bottomFragment.isAdded && !bottomFragment.isVisible) {
-                    bottomFragment.arguments = bundleOf("Email" to email)
+                    bottomFragment.arguments = bundleOf("Email" to Extra)
                     bottomFragment.show(supportFragmentManager, "Bottom Login")
 
                 }
             }
+
+            "Camera" ->{
+                if (!bottomCameraFragment.isAdded && !bottomCameraFragment.isVisible){
+                    bottomJoinAddGroupFragment.isHidden
+                    bottomCameraFragment.isCancelable = false
+                    bottomCameraFragment.show(supportFragmentManager,"Camera Fragment")
+                }
+            }
+            "Group"->{
+                if(!bottomJoinAddGroupFragment.isAdded && !bottomJoinAddGroupFragment.isVisible){
+                    bottomCameraFragment.isHidden
+                    if (Extra.isNotBlank()){
+                        bottomJoinAddGroupFragment.arguments = bundleOf("QRCode" to Extra)
+                    }
+                    bottomJoinAddGroupFragment.show(supportFragmentManager,"Group Join")
+                }
+            }
         }
+
 
     }
 

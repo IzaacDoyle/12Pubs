@@ -3,6 +3,7 @@ package Izaac.Doyle.PubsApp.ui.home
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.Models.AccountModel
 import Izaac.Doyle.PubsApp.Models.FBAccountNameModel
+import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
 
 import Izaac.Doyle.PubsApp.Models.GroupModel
 import android.content.Context
@@ -18,7 +19,10 @@ class GroupViewModel : ViewModel() {
     private lateinit var db: FirebaseFirestore
     private lateinit var CUuid:String
     private var GroupNames: MutableLiveData<ArrayList<GroupModel>> = MutableLiveData<ArrayList<GroupModel>>()
+
     private var Username: MutableLiveData<ArrayList<FBAccountNameModel>> = MutableLiveData<ArrayList<FBAccountNameModel>>()
+
+    private var QrcodeSearch:  MutableLiveData<MutableList<FBAccountNameModel>> = MutableLiveData(ArrayList<FBAccountNameModel>())
 
     init {
         db = FirebaseFirestore.getInstance()
@@ -58,7 +62,7 @@ class GroupViewModel : ViewModel() {
 
 
 
-     fun SearchAddusersToGroup(SearchName: String?){
+     public fun SearchAddusersToGroup(SearchName: String?){
          if (SearchName.isNullOrEmpty()){
              Username.value!!.clear()
              Log.d("SearchName","Search Is Empty")
@@ -67,14 +71,15 @@ class GroupViewModel : ViewModel() {
 
 
          Log.d("SearchUser", SearchName!!.lowercase())
+             val username = ArrayList<FBAccountNameModel>()
         db.collection("UserProfiles").orderBy("Username")
             .startAt(SearchName)
             .endAt("$SearchName\uf8ff")
-            .limit(10)
+            .limit(5)
             .get()
             .addOnSuccessListener { snapshot ->
                 Log.d("Searchuser Document", "${snapshot.documents}")
-                val username = ArrayList<FBAccountNameModel>()
+
                 if (snapshot != null) {
                     Log.d("SearchuserInside", "${snapshot.documents}")
                     val document = snapshot.documents
@@ -82,7 +87,7 @@ class GroupViewModel : ViewModel() {
                         val groupuser = it.toObject(FBAccountNameModel::class.java)
                         if (groupuser != null) {
                             Log.d("SearchUsername", "${groupuser.UserEmail + groupuser.Username}")
-                            username.add(groupuser!!)
+                            username.add(groupuser)
                         }
 
                     }
@@ -93,8 +98,55 @@ class GroupViewModel : ViewModel() {
             }
     }
 
+    fun QrCodeScanSearch(QRCode: String) {
+//        val profile = MutableLiveData(ArrayList<FBAccountNameModel>())
+        db.collection("UserProfiles")
+            .orderBy("UserUUID")
+            .startAt(QRCode)
+            .endAt("$QRCode\uf8ff")
+            .limit(5)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                if (snapshot != null) {
+                    Log.d("QRSearchProfileAll", "${snapshot.documents}")
+                    val document = snapshot.documents
+                    document.forEach {
+                        val groupUser = it.toObject(FBAccountNameModel::class.java)
+                        Log.d("QrUser", groupUser.toString())
+                        if (groupUser != null) {
+                            Log.d(
+                                "QrSearchProfile",
+                                groupUser.UserEmail + " " + groupUser.Username + " " + groupUser.UserUUID
+                            )
+
+                            QrcodeSearch.value!!.add(groupUser)
+                            qrcodeSearch.notifyObserver()
+//                            profile.value!!.add(groupUser)
+//                            groupUser = profile.toList()
+                        }
+                    }
+//                    QrcodeSearch.value?.add(profile)
+//                    QrcodeSearch.notifyObserver()
+//                    qrcodeSearch.notifyObserver()
+                }
+            }
+    }
 
 
+
+
+    private fun <T> MutableLiveData<T>.notifyObserver() {
+        this.value = this.value
+    }
+
+//    Log.d("QR Searchuser Document", "${snapshot.documents}")
+//    Log.d("QR Search", profile.toString())
+
+
+
+    internal  var qrcodeSearch:MutableLiveData<MutableList<FBAccountNameModel>>
+        get() { return QrcodeSearch}
+        set(value) {QrcodeSearch =  value}
 
 
     internal var gNames: MutableLiveData<ArrayList<GroupModel>>
@@ -102,6 +154,6 @@ class GroupViewModel : ViewModel() {
         set(value) { GroupNames = value }
 
     internal var UsersGroupname: MutableLiveData<ArrayList<FBAccountNameModel>>
-        get(){return Username}
-        set(value){Username = value}
+        get(){ return Username
+        } set(value){ Username = value}
 }

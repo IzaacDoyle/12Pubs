@@ -4,30 +4,22 @@ import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.Helpers.UserSearchRecyclerview
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
+import Izaac.Doyle.PubsApp.Models.FBAccountNameModel
 import Izaac.Doyle.PubsApp.R
-import Izaac.Doyle.PubsApp.activities.MainActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import Izaac.Doyle.PubsApp.databinding.FragmentGroupBinding
-import Izaac.Doyle.PubsApp.databinding.FragmentJoinAddBinding
-import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentGroupCreate
-import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomJoinAddGroupFragment
 import Izaac.Doyle.PubsApp.ui.home.GroupViewModel
 import android.app.Activity
-import android.app.SearchManager
 import android.util.Log
 import android.view.*
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isEmpty
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.android.datatransport.runtime.scheduling.persistence.SQLiteEventStore_Factory
 import com.google.firebase.storage.FirebaseStorage
-import java.io.Serializable
-import kotlin.math.log
 
 class GroupsFragment : Fragment(), onDataPasser {
 
@@ -95,8 +87,8 @@ class GroupsFragment : Fragment(), onDataPasser {
 
                     }else{
                         Log.d("Search","$query")
-                        groupViewModel.SearchAddusersToGroup(query.lowercase())
-
+//                        groupViewModel.SearchAddusersToGroup(query.lowercase())
+                        groupViewModel.QrCodeScanSearch(query)
                     }
                     return true
                 }
@@ -108,21 +100,28 @@ class GroupsFragment : Fragment(), onDataPasser {
 
                     }else{
                         Log.d("Search","$query")
-                        groupViewModel.SearchAddusersToGroup(query.lowercase())
+//                        groupViewModel.SearchAddusersToGroup(query.lowercase())
+                        groupViewModel.QrCodeScanSearch(query)
 
                     }
                     return true
                 }
             })
 
-            groupViewModel.UsersGroupname.observe(viewLifecycleOwner){it->
 
-                Log.d("UserGroups", it.toString())
+
+            groupViewModel.qrcodeSearch.observe(viewLifecycleOwner){result->
+                    Log.d("UserGroups", result.toString())
+                    myAdapter = UserSearchRecyclerview(result as ArrayList<FBAccountNameModel>)
+                    binding.useraddRecyclerview.layoutManager = LinearLayoutManager(requireContext())
+                    binding.useraddRecyclerview.adapter = myAdapter
+                }
+
 
 
 //                binding.groupAddSearch.Item
-                binding.groupAddSearch.suggestionsAdapter
-                binding.groupAddSearch.queryHint = it[0].Username
+//                binding.groupAddSearch.suggestionsAdapter
+//                binding.groupAddSearch.queryHint = it[0].Username
 
 
 
@@ -144,14 +143,6 @@ class GroupsFragment : Fragment(), onDataPasser {
 
 
 
-        }
-
-
-
-
-
-
-
             app = requireActivity().application as MainApp
 
 
@@ -164,9 +155,7 @@ class GroupsFragment : Fragment(), onDataPasser {
 //        }
 
 
-//        groupViewModel.groupName.observe(viewLifecycleOwner, Observer {
-//            binding.groupName.text = it.toString()
-//        })
+
 
 
 //        homeViewModel.text.observe(viewLifecycleOwner, Observer {
@@ -213,41 +202,8 @@ class GroupsFragment : Fragment(), onDataPasser {
 //
 //
 //
-//        searchView.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
-//
-//
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                if (binding.groupAddSearch.isEmpty()) {
-//                    groupViewModel.SearchAddusersToGroup(null)
-//                    myAdapter.notifyDataSetChanged()
-//                }else if (query.isNullOrEmpty()){
-//                    groupViewModel.SearchAddusersToGroup(null)
-//                    myAdapter.notifyDataSetChanged()
-//                }else{
-//                    Log.d("Search","$query")
-//                    groupViewModel.SearchAddusersToGroup(query.lowercase())
-//
-//                }
-//                return true
-//            }
-//
-//            override fun onQueryTextChange(query: String?): Boolean {
-//                Log.d("SearchView",query.toString())
-//                if (binding.groupAddSearch.isEmpty()){
-//                   myAdapter.notifyDataSetChanged()
-//                    groupViewModel.SearchAddusersToGroup(null)
-//
-//                }else if (query.isNullOrBlank()){
-//                   myAdapter.notifyDataSetChanged()
-//                    groupViewModel.SearchAddusersToGroup(null)
-//                }else{
-//                    Log.d("Search","$query")
-//                    groupViewModel.SearchAddusersToGroup(query.lowercase())
-//
-//                }
-//                return true
-//            }
-//        })
+
+
 
 
 

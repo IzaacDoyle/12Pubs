@@ -1,4 +1,4 @@
-package Izaac.Doyle.PubsApp.ui.BottomSheet
+package Izaac.Doyle.PubsApp.ui.Group
 
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.Firebase.UploadImage
@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class BottomFragmentGroupCreate:BottomSheetDialogFragment() {
@@ -41,6 +40,8 @@ class BottomFragmentGroupCreate:BottomSheetDialogFragment() {
             ImageLauncher.launch("image/*")
            // ShowImagePicker(requireActivity(),IMAGE_REQUEST,"Group")
        }
+
+
 
 
 

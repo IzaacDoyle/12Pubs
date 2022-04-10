@@ -1,21 +1,23 @@
-package Izaac.Doyle.PubsApp.ui.BottomSheet
+package Izaac.Doyle.PubsApp.ui.Settings
 
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+import Izaac.Doyle.PubsApp.Firebase.UploadImage
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.AccountModel
-import Izaac.Doyle.PubsApp.databinding.AccountBottomDialogBinding
 import Izaac.Doyle.PubsApp.databinding.SettingUpdateInfoBinding
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class settings_update_info: BottomSheetDialogFragment() {
 
     private var _binding: SettingUpdateInfoBinding? = null
+    private lateinit var ImageUri:Uri
 
     lateinit var app: MainApp
 
@@ -23,6 +25,7 @@ class settings_update_info: BottomSheetDialogFragment() {
 
 
     private val binding get() = _binding!!
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,6 +36,8 @@ class settings_update_info: BottomSheetDialogFragment() {
         val root: View = binding.root
         app = requireActivity().application as MainApp
 
+        binding.accountImageUpdate.isEnabled = false
+
 
 
         val sharedPrefInfo = requireContext().getSharedPreferences(CheckCurrentUser()!!.uid, Context.MODE_PRIVATE)
@@ -41,12 +46,14 @@ class settings_update_info: BottomSheetDialogFragment() {
 
         binding.accountToggleUpdate.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked){
-                binding.accountImageUpdate.isClickable = true
+                binding.accountImageUpdate.isEnabled = true
                 binding.accountUsername1.isEnabled = true
+                binding.accountInfoUpdate.isEnabled = true
             }
             if (!isChecked){
                 binding.accountImageUpdate.isClickable = false
                 binding.accountUsername1.isEnabled = false
+               binding.accountInfoUpdate.isEnabled = false
             }
         }
 
@@ -54,7 +61,9 @@ class settings_update_info: BottomSheetDialogFragment() {
         binding.accountInfoUpdate.setOnClickListener {
 
             app.account.UpdateAccountDB(AccountModel(CheckCurrentUser()!!.uid,binding.accountUsernameUpdate.text.toString().trim(),""))
+            UploadImage(CheckCurrentUser()!!.uid,ImageUri,"ProfileImage")
             val datastore = requireActivity().getSharedPreferences(CheckCurrentUser()!!.uid,Context.MODE_PRIVATE)
+
             val editor = datastore.edit()
             //editor.putString("Email", result.data!!["Username"] as String?)
             editor.putString("Username",binding.accountUsernameUpdate.text.toString().trim())
@@ -62,10 +71,25 @@ class settings_update_info: BottomSheetDialogFragment() {
 
         }
 
+        binding.accountImageUpdate.setOnClickListener {
+            ImageLauncher.launch("image/*")
+            // ShowImagePicker(requireActivity(),IMAGE_REQUEST,"Group")
+        }
+
+
+
+
+
 
         return root
     }
 
 
+    private val ImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()){ uri: Uri? ->
+        uri?.let {
+            binding.accountImageUpdate.setImageURI(uri)
+            ImageUri = uri
+        }
+    }
 
 }

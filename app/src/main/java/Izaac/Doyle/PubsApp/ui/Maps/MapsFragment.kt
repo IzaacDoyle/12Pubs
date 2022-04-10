@@ -1,6 +1,8 @@
 package Izaac.Doyle.PubsApp.ui.Maps
 
 
+
+import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.FragmentMapsBinding
 import android.annotation.SuppressLint
@@ -28,6 +30,10 @@ import com.google.android.gms.maps.MapsInitializer.Renderer
 import com.google.android.gms.maps.OnMapsSdkInitializedCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 import java.util.jar.Manifest
 
 
@@ -63,9 +69,17 @@ class MapsFragment : Fragment(), OnMapReadyCallback, OnMapsSdkInitializedCallbac
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
 
+        GlobalScope.launch {
+            val task = async { CheckCurrentUser()}
+            task.join()
+            task.await()
+
+        }
+
 
         return root
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MapsInitializer.initialize(requireActivity(), MapsInitializer.Renderer.LATEST, this)
@@ -80,12 +94,12 @@ class MapsFragment : Fragment(), OnMapReadyCallback, OnMapsSdkInitializedCallbac
                 Log.d("MapsDemo", "The latest version of the renderer is used.")
 
                 GoogleMapOptions().apply {
-                   // mapId(resources.getString(R.string.map_id))
+                    // mapId(resources.getString(R.string.map_id))
                 }
             }
             Renderer.LEGACY -> {
 
-               // mMap.setMapStyle( MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.google_maps_custom_pub))
+                // mMap.setMapStyle( MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.google_maps_custom_pub))
 
 
                 Log.d("MapsDemo", "The legacy version of the renderer is used.")
@@ -101,13 +115,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback, OnMapsSdkInitializedCallbac
     }
 
 
-
-
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-       mMap.setMapStyle(
-           MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.google_maps_custom_pub)
-       )
+        mMap.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.google_maps_custom_pub)
+        )
 //        val options = GoogleMapOptions()
 //            .mapId("eb8a43f33bd36507")
 //
@@ -121,22 +133,27 @@ class MapsFragment : Fragment(), OnMapReadyCallback, OnMapsSdkInitializedCallbac
 //        val myLocation = LatLng(1.0, 1.0)
 //        mMap.addMarker(MarkerOptions().position(myLocation))
 //        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,10f))
-           // mapId(resources.getString(R.string.map_id))
+        // mapId(resources.getString(R.string.map_id))
     }
+
     @SuppressLint("MissingPermission")
     private fun setUpMap() {
         //add location permision check
-        mMap.isMyLocationEnabled =true
-        fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) {location->
-            if (location !=null){
+        mMap.isMyLocationEnabled = true
+        fusedLocationClient.lastLocation.addOnSuccessListener(requireActivity()) { location ->
+            if (location != null) {
                 lastlocation = location
                 val currentLatLong = LatLng(location.latitude, location.longitude)
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong,10f))
+
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 10f))
             }
 
         }
 
     }
+
 }
+
+
 
 
