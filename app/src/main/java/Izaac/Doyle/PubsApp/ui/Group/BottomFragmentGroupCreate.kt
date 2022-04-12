@@ -20,7 +20,7 @@ class BottomFragmentGroupCreate:BottomSheetDialogFragment() {
 
     private val binding get() = _binding!!
     lateinit var app: MainApp
-    private lateinit var ImageUri:Uri
+    private  var ImageUri:Uri? = null
 
 
 
@@ -57,8 +57,12 @@ class BottomFragmentGroupCreate:BottomSheetDialogFragment() {
                         ""
                     )
                 )
+                if (ImageUri != null){
+                    UploadImage(CheckCurrentUser()!!.uid,ImageUri!!,"GroupImage")
+                }
 
-                UploadImage(CheckCurrentUser()!!.uid,ImageUri,"GroupImage")
+                dismiss()
+
                 //make to bottom sheet
             }
         }

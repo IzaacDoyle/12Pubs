@@ -12,12 +12,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.storage.FirebaseStorage
 
 class settings_update_info: BottomSheetDialogFragment() {
 
     private var _binding: SettingUpdateInfoBinding? = null
-    private lateinit var ImageUri:Uri
+    private  var ImageUri:Uri? = null
 
     lateinit var app: MainApp
 
@@ -61,14 +63,26 @@ class settings_update_info: BottomSheetDialogFragment() {
         binding.accountInfoUpdate.setOnClickListener {
 
             app.account.UpdateAccountDB(AccountModel(CheckCurrentUser()!!.uid,binding.accountUsernameUpdate.text.toString().trim(),""))
-            UploadImage(CheckCurrentUser()!!.uid,ImageUri,"ProfileImage")
+
+            if (ImageUri != null) {
+                UploadImage(CheckCurrentUser()!!.uid, ImageUri!!, "ProfileImage")
+            }
             val datastore = requireActivity().getSharedPreferences(CheckCurrentUser()!!.uid,Context.MODE_PRIVATE)
 
             val editor = datastore.edit()
             //editor.putString("Email", result.data!!["Username"] as String?)
             editor.putString("Username",binding.accountUsernameUpdate.text.toString().trim())
             editor.apply()
+            dismiss()
 
+        }
+        val profileImage = binding.accountImageUpdate
+
+        val FBprofileImage = FirebaseStorage.getInstance().reference.child("${CheckCurrentUser()!!.uid}/ProfileImage.jpg")
+
+        FBprofileImage.downloadUrl.addOnSuccessListener { Uri ->
+            val imageURL = Uri.toString()
+            Glide.with(this).load(imageURL).into(profileImage)
         }
 
         binding.accountImageUpdate.setOnClickListener {

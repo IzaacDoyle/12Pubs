@@ -19,10 +19,9 @@ class GroupViewModel : ViewModel() {
     private lateinit var db: FirebaseFirestore
     private lateinit var CUuid:String
     private var GroupNames: MutableLiveData<ArrayList<GroupModel>> = MutableLiveData<ArrayList<GroupModel>>()
-
     private var Username: MutableLiveData<ArrayList<FBAccountNameModel>> = MutableLiveData<ArrayList<FBAccountNameModel>>()
-
     private var QrcodeSearch:  MutableLiveData<MutableList<FBAccountNameModel>> = MutableLiveData(ArrayList<FBAccountNameModel>())
+    private var GooglePlaces: MutableLiveData<MutableList<GooglePlacesModel>> = MutableLiveData(ArrayList<GooglePlacesModel>())
 
     init {
         db = FirebaseFirestore.getInstance()
@@ -133,6 +132,12 @@ class GroupViewModel : ViewModel() {
 //                    qrcodeSearch.notifyObserver()
                 }
             }
+    }
+
+    fun PubsOverseve(GroupCode:GroupViewModel){
+        val pubs = mutableListOf<GooglePlacesModel>()
+      //  db.collection("Groups")
+
     }
 
 

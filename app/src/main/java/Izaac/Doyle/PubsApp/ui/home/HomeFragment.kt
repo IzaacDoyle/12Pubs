@@ -9,8 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import Izaac.Doyle.PubsApp.R
+import Izaac.Doyle.PubsApp.activities.RuleAdd
 import Izaac.Doyle.PubsApp.databinding.FragmentHomeBinding
+import android.content.Intent
 import android.widget.Toast
+import com.google.android.gms.common.internal.safeparcel.SafeParcelable.Class
 
 class HomeFragment : Fragment() {
 
@@ -31,6 +34,13 @@ class HomeFragment : Fragment() {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+
+
+        binding.RuleAdd.setOnClickListener {
+            val intent = Intent(requireContext(), RuleAdd::class.java)
+            startActivity(intent)
+        }
 
 
         if (arguments != null){

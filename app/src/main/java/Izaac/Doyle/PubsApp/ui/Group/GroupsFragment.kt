@@ -2,6 +2,7 @@ package Izaac.Doyle.PubsApp.ui.Group
 
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.Helpers.UserSearchRecyclerview
+import Izaac.Doyle.PubsApp.Helpers.ViewPagerAdaptor
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.FBAccountNameModel
@@ -10,6 +11,8 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import Izaac.Doyle.PubsApp.databinding.FragmentGroupBinding
+import Izaac.Doyle.PubsApp.ui.Group.viewpager.PubsViewpager
+import Izaac.Doyle.PubsApp.ui.Group.viewpager.RulesViewpager
 import Izaac.Doyle.PubsApp.ui.home.GroupViewModel
 import android.app.Activity
 import android.util.Log
@@ -19,7 +22,9 @@ import androidx.core.view.isEmpty
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.storage.FirebaseStorage
 
 class GroupsFragment : Fragment(), onDataPasser {
@@ -68,73 +73,28 @@ class GroupsFragment : Fragment(), onDataPasser {
                     }
                     Log.d("GroupImage", "$firebaseImageReg  $it")
 
+                    binding.groupGroupName.text = it[0].GroupName
+
                 }else{
                     binding.GroupImage.setImageResource(R.drawable.ic_group)
                 }
-            }
 
 
-
-
-
-
-
-            binding.groupAddSearch.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
-
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    if (binding.groupAddSearch.isEmpty()) {
-
-                    }else if (query.isNullOrEmpty()){
-
-                    }else{
-                        Log.d("Search","$query")
-                        groupViewModel.SearchAddusersToGroup(query.lowercase())
-//                        groupViewModel.QrCodeScanSearch(query)
-                    }
-                    return true
-                }
-
-                override fun onQueryTextChange(query: String?): Boolean {
-                    if (binding.groupAddSearch.isEmpty()){
-
-                    }else if (query.isNullOrBlank()){
-
-                    }else{
-                        Log.d("Search","$query")
-                        groupViewModel.SearchAddusersToGroup(query.lowercase())
-//                        groupViewModel.QrCodeScanSearch(query)
-
-                    }
-                    return true
-                }
-            })
-
-
-//            groupViewModel.QrCodeScanSearch()
-            groupViewModel.qrcodeSearch.observe(viewLifecycleOwner){result->
-                    Log.d("UserGroups", result.toString())
-                    myAdapter = UserSearchRecyclerview(result as ArrayList<FBAccountNameModel>)
-                    binding.useraddRecyclerview.layoutManager = LinearLayoutManager(requireContext())
-                    binding.useraddRecyclerview.adapter = myAdapter
-                }
-
-
-
-//                binding.groupAddSearch.Item
-//                binding.groupAddSearch.suggestionsAdapter
-//                binding.groupAddSearch.queryHint = it[0].Username
-
-
-
-//
-//                myAdapter = UserSearchRecyclerview(it)
-//                binding.useraddRecyclerview.layoutManager = LinearLayoutManager(requireContext())
-//                binding.useraddRecyclerview.adapter = myAdapter
 
 
 
 
             }
+
+
+            setUpTabs()
+
+
+
+
+            }else{
+
+        }
 
 
 
@@ -165,6 +125,27 @@ class GroupsFragment : Fragment(), onDataPasser {
         return root
     }
 
+    private fun setUpTabs() {
+
+        val adaptor = ViewPagerAdaptor(childFragmentManager,lifecycle)
+        binding.viewPager.adapter = adaptor
+
+        TabLayoutMediator(binding.viewpagerTabL,binding.viewPager){tab, position->
+
+            when(position){
+                0->{
+                    tab.text = "Pubs"
+                }
+                1->{
+                    tab.text = "Rules"
+                }
+            }
+
+
+        }.attach()
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
@@ -175,74 +156,15 @@ class GroupsFragment : Fragment(), onDataPasser {
         inflater.inflate(R.menu.add_to_group,menu)
 
         groupViewModel.gNames.observe(viewLifecycleOwner) { it ->
-            if (it.isNotEmpty()){
-                menu.findItem(R.id.Create_group).isVisible = false
-            }
+            menu.findItem(R.id.Create_group).isVisible = !it.isNotEmpty()
+            menu.findItem(R.id.AddToGroup).isVisible = it.isNotEmpty()
         }
-
-//        val search = menu.findItem(R.id.GroupAddSearch)
-//        val searchView = search.actionView as SearchView
-
-//        searchView.queryHint = "Search Users"
-        val searchbox =
-
-//        searchView.setOnQueryTextFocusChangeListener { v, hasFocus ->
-//            if (hasFocus){
-//                Log.d("SearchView","has Focus $v ")
-//
-////                searchbox.visibility = View.VISIBLE
-//              //  println(searchbox)
-////                MainActivity().searchBox.visibility = View.VISIBLE
-//              // MainActivity().SearchActive= true
-//            }
-//            if (!hasFocus){
-//             //   MainActivity().SearchActive= false
-//             //   searchbox.visibility = View.GONE
-//            }
-//        }
-//
-//
-//
-
-
-
 
 
 
 
         groupViewModel.UsersGroupname.observe(viewLifecycleOwner){it->
 
-
-
-
-
-
-
-
-
-//            val searchManager = requireContext().getSystemService(Context.SEARCH_SERVICE) as SearchManager
-
-//            searchView.setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
-
-
-
-//            searchView.suggestionsAdapter = SimpleCursorAdapter(requireContext(),R.layout.support_simple_spinner_dropdown_item,null,
-//                arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1),
-//                intArrayOf(R.id.name),CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER)
-
-
-
-
-           // searchView.setSearchableInfo(it)
-
-
-
-//            Log.d("UserGroups", it.toString())
-
-
-//            myAdapter = UserSearchRecyclerview(it)
-//            binding.useraddRecyclerview.layoutManager = LinearLayoutManager(requireContext())
-//            binding.useraddRecyclerview.adapter = myAdapter
 
 
         }

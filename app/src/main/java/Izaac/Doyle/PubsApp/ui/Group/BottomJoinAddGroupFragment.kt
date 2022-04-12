@@ -47,7 +47,7 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment() {
             ViewModelProvider(this)[GroupViewModel::class.java]
 
 
-       binding.searchView.isIconified = false
+       binding.profileSearchview.isIconified = false
 
         root.requestFocus()
 
@@ -109,10 +109,10 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment() {
             dismiss()
         }
 
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        binding.profileSearchview.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
 
             override fun onQueryTextSubmit(query: String?): Boolean {
-                if (binding.searchView.isEmpty()) {
+                if (binding.profileSearchview.isEmpty()) {
 
                 }else if (query.isNullOrEmpty()){
 
@@ -125,7 +125,7 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment() {
             }
 
             override fun onQueryTextChange(query: String?): Boolean {
-                if (binding.searchView.isEmpty()){
+                if (binding.profileSearchview.isEmpty()){
 
                 }else if (query.isNullOrBlank()){
 
@@ -139,12 +139,13 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment() {
         })
 
 
-//        groupViewModel.UsersGroupname.observe(viewLifecycleOwner) { it ->
-//            Log.d("QR SearchUser",it.toString())
-//
-//
-//
-//        }
+        groupViewModel.UsersGroupname.observe(viewLifecycleOwner) { it ->
+            Log.d("QR SearchUser",it.toString())
+            myAdapter = UserSearchRecyclerview(it as ArrayList<FBAccountNameModel>)
+            binding.userSearchRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+            binding.userSearchRecyclerView.adapter = myAdapter
+
+        }
 
 
 

@@ -1,16 +1,20 @@
 package Izaac.Doyle.PubsApp.Helpers
 
+import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+import Izaac.Doyle.PubsApp.Firebase.savePlaceAsFav
+import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
 import Izaac.Doyle.PubsApp.R
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-class PlacesSwiperight(var adapter: PubsRecycelerView, context:Context): ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT ) {
+class PlacesSwiperight(var adapter: PubsRecycelerView,var context:Context): ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT ) {
 
 
     private val saveicon = ContextCompat.getDrawable(context, R.drawable.ic_save)
@@ -39,15 +43,13 @@ class PlacesSwiperight(var adapter: PubsRecycelerView, context:Context): ItemTou
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
 
-        val pos = viewHolder.adapterPosition
-        when (direction) {
-//            ItemTouchHelper.LEFT->{
-//                adapter.deleteItem(pos)
-//            }
-            ItemTouchHelper.RIGHT -> {
-                adapter.deleteItem(pos)
-            }
-        }
+             val pos = viewHolder.adapterPosition
+            val pubs = viewHolder.itemView.tag as GooglePlacesModel
+            println(pubs)
+
+            savePlaceAsFav(context, CheckCurrentUser()!!.uid,pubs)
+            adapter.notifyItemChanged(pos)
+        //save to Account
 
 
     }
@@ -76,38 +78,17 @@ class PlacesSwiperight(var adapter: PubsRecycelerView, context:Context): ItemTou
 //                }
                 View.LAYOUT_DIRECTION_RTL -> {
                     clearCanvas(c, itemView.left + dX, itemView.top.toFloat(), itemView.left.toFloat(), itemView.bottom.toFloat())
-                    super.onChildDraw(
-                        c,
-                        recyclerView,
-                        viewHolder,
-                        dX,
-                        dY,
-                        actionState,
-                        isCurrentlyActive
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive
                     )
                     return
+                }
+                View.LAYOUT_DIRECTION_LTR -> {
                 }
             }
         }
 
         when (itemView.layoutDirection) {
-//            itemView.left->{
-//                //Delete
-//                Lbackground.color = LbackgroundColor
-//                Lbackground.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
-//                Lbackground.draw(c)
-//
-//                val deleteIconTop = itemView.top + (itemHeight - LintrinsicHeight!!) / 2
-//                val deleteIconMargin = (itemHeight - LintrinsicHeight) / 2
-//                val deleteIconLeft = itemView.right - deleteIconMargin - LintrinsicWidth!!
-//                val deleteIconRight = itemView.right - deleteIconMargin
-//                val deleteIconBottom = deleteIconTop + LintrinsicHeight
-//
-//
-//                // Draw the delete icon
-//                deleteIcon?.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom)
-//                deleteIcon?.draw(c)
-//            }
+
             itemView.right -> {
                Rbackground.color = RbackgroundColor
                 Rbackground.setBounds(itemView.left + dX.toInt(), itemView.top, itemView.left, itemView.bottom)
@@ -123,6 +104,7 @@ class PlacesSwiperight(var adapter: PubsRecycelerView, context:Context): ItemTou
                 // Draw the edit icon
                 saveicon?.setBounds(editIconLeft, editIconTop, editIconRight, editIconBottom)
                 saveicon?.draw(c)
+
 
             }
             View.LAYOUT_DIRECTION_LTR -> {

@@ -1,10 +1,9 @@
 package Izaac.Doyle.PubsApp.ui.pubs
 
 import Izaac.Doyle.PubsApp.BuildConfig
-import Izaac.Doyle.PubsApp.Helpers.PlacesDragtoRearage
-import Izaac.Doyle.PubsApp.Helpers.PlacesSwipeLeft
-import Izaac.Doyle.PubsApp.Helpers.PlacesSwiperight
-import Izaac.Doyle.PubsApp.Helpers.PubsRecycelerView
+import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+import Izaac.Doyle.PubsApp.Firebase.savePlaceAsFav
+import Izaac.Doyle.PubsApp.Helpers.*
 import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
 import Izaac.Doyle.PubsApp.R
 import android.os.Bundle
@@ -17,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import Izaac.Doyle.PubsApp.databinding.FragmentPubsBinding
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -29,7 +29,7 @@ import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 
-class PubsFragment : Fragment() {
+class PubsFragment : Fragment(), PubsClickListener {
 
     private lateinit var pubsViewModel: PubsViewModel
     private var _binding: FragmentPubsBinding? = null
@@ -42,9 +42,9 @@ class PubsFragment : Fragment() {
 
     @SuppressLint("MissingPermission", "NotifyDataSetChanged")
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         pubsViewModel =
             ViewModelProvider(this)[PubsViewModel::class.java]
@@ -53,7 +53,7 @@ class PubsFragment : Fragment() {
         val root: View = binding.root
 
 
-        Places.initialize(root.context,BuildConfig.google_api_key)
+        Places.initialize(root.context, BuildConfig.google_api_key)
 
         val placesClient = Places.createClient(root.context)
 
@@ -62,11 +62,11 @@ class PubsFragment : Fragment() {
 
 
         if (Places.isInitialized()) {
-            val autocompleteFragment = childFragmentManager.findFragmentById(R.id.placesSearch)as AutocompleteSupportFragment
+            val autocompleteFragment =
+                childFragmentManager.findFragmentById(R.id.placesSearch) as AutocompleteSupportFragment
+
+
             val array2 = arrayListOf<GooglePlacesModel>()
-
-
-
 
 
 
@@ -77,8 +77,20 @@ class PubsFragment : Fragment() {
             autocompleteFragment.setHint("Pubs")
             autocompleteFragment.setTypeFilter(TypeFilter.CITIES)
             fusedLocationClient.lastLocation.addOnSuccessListener { Location ->
-
-                autocompleteFragment.setLocationBias(RectangularBounds.newInstance(LatLngBounds(com.google.android.gms.maps.model.LatLng(Location.longitude+0.01,Location.longitude+0.01),com.google.android.gms.maps.model.LatLng(Location.latitude-.01,Location.longitude-.01))))
+                autocompleteFragment.setLocationBias(
+                    RectangularBounds.newInstance(
+                        LatLngBounds(
+                            com.google.android.gms.maps.model.LatLng(
+                                Location.longitude + 0.001,
+                                Location.longitude + 0.001
+                            ),
+                            com.google.android.gms.maps.model.LatLng(
+                                Location.latitude - .01,
+                                Location.longitude - .01
+                            )
+                        )
+                    )
+                )
             }
 
 
@@ -96,35 +108,25 @@ class PubsFragment : Fragment() {
                 )
             )
 
-
-
-
             autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+
                 override fun onPlaceSelected(place: Place) {
 
-
-                    Log.d("Place", "${place.name}, ${place.id}, ${place.latLng}, ${place.address}, ${place.openingHours} ${place.phoneNumber}")
-                    val pubsModel = GooglePlacesModel(place.id,
+                    Log.d(
+                        "Place",
+                        "${place.name}, ${place.id}, ${place.latLng}, ${place.address}, ${place.openingHours} ${place.phoneNumber}"
+                    )
+                    val pubsModel = GooglePlacesModel(
+                        place.id,
                         place.name,
                         place.latLng?.latitude,
-                        place.latLng?.longitude, place.address, place.phoneNumber,place.openingHours?.weekdayText)
-
+                        place.latLng?.longitude,
+                        place.address,
+                        place.phoneNumber,
+                        place.openingHours?.weekdayText
+                    )
 //                    pubsViewModel.test.value?.add(pubsModel)
-                    pubsViewModel.test.value!!.add(pubsModel)
-
-
-
-//                    val array = arrayListOf<GooglePlacesModel>(pubsModel)
-//                    array2.add(pubsModel)
-
-
-
-
-
-
-
-
-
+                    pubsViewModel.PlacesObv.value!!.add(pubsModel)
 
 
                 }
@@ -133,40 +135,37 @@ class PubsFragment : Fragment() {
                     Log.d("PlacesError", "$p0")
                 }
             })
-            pubsViewModel.test2.observe(viewLifecycleOwner){result->
+            pubsViewModel.PlacesObv.observe(viewLifecycleOwner) { result ->
                 println(result)
-                myAdapter = PubsRecycelerView(result as ArrayList<GooglePlacesModel>)
+                myAdapter = PubsRecycelerView(result as ArrayList<GooglePlacesModel>, this)
                 binding.pubsPlacesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
                 binding.pubsPlacesRecyclerView.adapter = myAdapter
+
                 myAdapter.notifyDataSetChanged()
 
-                val itemTouchHelperLeft = ItemTouchHelper(PlacesSwipeLeft(myAdapter,requireContext()))
-                itemTouchHelperLeft.attachToRecyclerView(binding.pubsPlacesRecyclerView)
-                val itemTouchHelperRight = ItemTouchHelper(PlacesSwiperight(myAdapter,requireContext()))
-                itemTouchHelperRight.attachToRecyclerView(binding.pubsPlacesRecyclerView)
-                val itemTouchHelperMove = ItemTouchHelper(PlacesDragtoRearage(myAdapter,requireContext(),result))
-                itemTouchHelperMove.attachToRecyclerView(binding.pubsPlacesRecyclerView)
-
-
-
-
-
+                if (CheckCurrentUser() !=null) {
+                    val itemTouchHelperLeft =
+                        ItemTouchHelper(PlacesSwipeLeft(myAdapter, requireContext()))
+                    itemTouchHelperLeft.attachToRecyclerView(binding.pubsPlacesRecyclerView)
+                    val itemTouchHelperRight =
+                        ItemTouchHelper(PlacesSwiperight(myAdapter, requireContext()))
+                    itemTouchHelperRight.attachToRecyclerView(binding.pubsPlacesRecyclerView)
+                    val itemTouchHelperMove =
+                        ItemTouchHelper(PlacesDragtoRearage(myAdapter, requireContext(), result))
+                    itemTouchHelperMove.attachToRecyclerView(binding.pubsPlacesRecyclerView)
+                }else{
+                    myAdapter = PubsRecycelerView(arrayListOf(GooglePlacesModel("0","Your Local Pub",0.0,0.0,"made Easy to Find","0",null)), this)
+                    binding.pubsPlacesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+                    binding.pubsPlacesRecyclerView.adapter = myAdapter
+                }
             }
 
-//            binding.placesSwipetoRefresh.setOnRefreshListener {
-//
-//                myAdapter.notifyDataSetChanged()
-//                binding.placesSwipetoRefresh.isRefreshing = false
-//            }
 
-//        println(test+ "======================D")
-
-
-        }
-
-          else {
+        } else {
             Log.d("PlacesNotWorking", "Not Initalized")
         }
+
+
 
 
 
@@ -177,4 +176,13 @@ class PubsFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    override fun onPubsClicked(pubs: GooglePlacesModel) {
+
+        Log.d("Pubs Click", pubs.toString())
+        if (pubs.ID == "0"){
+            Toast.makeText(requireContext(), "Please Log in to Gain full range of Features", Toast.LENGTH_LONG).show()
+        }
+
+            }
 }

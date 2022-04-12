@@ -20,11 +20,7 @@ class PlacesSwipeLeft(var adapter: PubsRecycelerView, context:Context): ItemTouc
     private val Lbackground = ColorDrawable()
     private val LbackgroundColor = Color.parseColor("#f44336")
 
-    private val editIcon = ContextCompat.getDrawable(context, R.drawable.ic_save)
-    private val RintrinsicWidth = editIcon?.intrinsicWidth
-    private val RintrinsicHeight = editIcon?.intrinsicHeight
-    private val Rbackground = ColorDrawable()
-    private val RbackgroundColor = Color.parseColor("#ffffff")
+
 
 
     private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }

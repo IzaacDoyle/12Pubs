@@ -8,12 +8,12 @@ import androidx.lifecycle.ViewModel
 
 class PubsViewModel : ViewModel() {
 
-    var test : MutableLiveData<MutableList<GooglePlacesModel>> = MutableLiveData(ArrayList<GooglePlacesModel>())
+    var Places : MutableLiveData<MutableList<GooglePlacesModel>> = MutableLiveData(ArrayList<GooglePlacesModel>())
 
 
     fun test(googleplaces: GooglePlacesModel){
 
-         test.value!!.add(googleplaces)
+        Places.value!!.add(googleplaces)
 
     }
 
@@ -24,9 +24,7 @@ class PubsViewModel : ViewModel() {
 
 
 
-    internal  var test2: MutableLiveData<MutableList<GooglePlacesModel>>
-        get() { return test}
-        set(value) {test =  value}
-
-
+    internal  var PlacesObv: MutableLiveData<MutableList<GooglePlacesModel>>
+        get() { return Places}
+        set(value) {Places =  value}
 }

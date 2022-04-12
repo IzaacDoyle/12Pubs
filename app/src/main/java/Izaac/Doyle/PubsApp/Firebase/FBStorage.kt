@@ -1,6 +1,7 @@
 package Izaac.Doyle.PubsApp.Firebase
 
 import Izaac.Doyle.PubsApp.Models.AccountModel
+import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
 import Izaac.Doyle.PubsApp.Models.GroupModel
 import Izaac.Doyle.PubsApp.activities.MainActivity
 import android.app.Activity
@@ -8,6 +9,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.core.content.edit
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -140,6 +142,28 @@ fun UploadImage(UUid:String,uri:Uri,ImageType:String){
     }
 
 }
+
+
+fun savePlaceAsFav(context: Context,UUid: String,Pub:GooglePlacesModel){
+    val db = Firebase.firestore
+
+    val places = hashMapOf(
+        "PubName" to Pub.Name,
+        "PubID" to Pub.ID,
+        "PubPhoneNum" to Pub.PhoneNumber,
+        "PubAddress" to Pub.Address,
+        "PubLat" to Pub.LocationLat,
+        "PubLng" to Pub.LocationLng,
+        "PubOpeningHours" to Pub.OpeningHours
+    )
+    db.collection("UserProfiles").document(UUid).collection("Places").document(Pub.Name!!)
+        .set(places)
+        .addOnSuccessListener {
+            Toast.makeText(context, "Pub Added to Favourite ${Pub.Name}", Toast.LENGTH_SHORT).show()
+        }
+
+}
+
 
 
 //fun FBGetGroupName(userUUID: String): Flow<List<GroupModel>> {
