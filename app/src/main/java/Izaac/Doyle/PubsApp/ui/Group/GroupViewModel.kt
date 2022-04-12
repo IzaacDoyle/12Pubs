@@ -133,7 +133,7 @@ class GroupViewModel : ViewModel() {
 //                    qrcodeSearch.notifyObserver()
                 }
             }
-    }
+    }   
 
 
 
