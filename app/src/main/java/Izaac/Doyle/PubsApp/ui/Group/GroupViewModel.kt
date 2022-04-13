@@ -132,7 +132,7 @@ class GroupViewModel : ViewModel() {
 //                    qrcodeSearch.notifyObserver()
                 }
             }
-    }
+    }   
 
     fun PubsOverseve(GroupCode:GroupViewModel){
         val pubs = mutableListOf<GooglePlacesModel>()
