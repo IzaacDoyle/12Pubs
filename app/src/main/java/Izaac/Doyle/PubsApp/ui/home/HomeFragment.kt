@@ -32,10 +32,7 @@ class HomeFragment : Fragment() {
 
 
 
-        binding.RuleAdd.setOnClickListener {
-            val intent = Intent(requireContext(), RuleAdd::class.java)
-            startActivity(intent)
-        }
+
 
 
         if (arguments != null){

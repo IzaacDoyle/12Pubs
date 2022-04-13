@@ -24,6 +24,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.*
 import java.util.prefs.Preferences
+import kotlin.collections.ArrayList
+import kotlin.math.log
+import kotlin.random.Random
 
 
 fun FBcreateDB(userUUID: String,username:String,userEmail:String) {
@@ -101,68 +104,116 @@ fun FbGetGroupImage(UUid:String,ImageType: String){
     val storageRef =   FirebaseStorage.getInstance().reference
     val task = storageRef.child("$UUid/$ImageType.jpg")
 
-
-
-
-
-
 }
 
 
-
-fun FBCreateGroup(groupModel: GroupModel){
+ fun RandomRules(UUid: String){
     val db = Firebase.firestore
+    db.collection("PubRules").document("0").get()
 
-    val GroupDB = hashMapOf(
-        "OwnerUUID" to groupModel.OwnerUUID,
-        "GroupName" to groupModel.GroupName,
+        .addOnSuccessListener { result->
+            if (result.exists()){
+                val RuleNum = result.getString("RuleAmount")
+                Log.d("RuleNum","Rule Number is : $RuleNum")
+                RandomNumberRule(RuleNum,UUid)
 
-    )
-
-    db.collection("Groups").document( groupModel.OwnerUUID)
-        .set(GroupDB)
-        .addOnSuccessListener {
-            Log.d("FirestoreDB", "DB created for groups")
+            }
         }
-
-    FBUserAddGroup(groupModel.GroupName)
-
-
 }
 
-fun UploadImage(UUid:String,uri:Uri,ImageType:String){
-    val storageRef =   FirebaseStorage.getInstance().reference
-    Log.d("URI",uri.toString())
-
-    val task = storageRef.child("$UUid/$ImageType.jpg").putFile(uri)
-    task.addOnSuccessListener {
-        Log.d("UploadImage","Task Is Successful")
-    }.addOnFailureListener {
-        Log.d("UploadImageFail","Image Upload Failed ${it.printStackTrace()}")
+fun RandomNumberRule(ruleNum: String?,UUid: String) {
+    val db = Firebase.firestore
+    val IntArray = ArrayList<Int>()
+    var randomNumber: Int = 0
+    for (i in 1..16) {
+        Log.d("RuleNum", i.toString())
+        randomNumber = (1..ruleNum!!.toInt()).random()
+        if (IntArray.contains(randomNumber)) {
+            randomNumber = (1..ruleNum.toInt()).random()
+            println(randomNumber)
+            while (!IntArray.contains(randomNumber)) {
+                IntArray.add(randomNumber)
+                break
+            }
+        } else {
+            IntArray.add(randomNumber)
+            println(randomNumber)
+        }
+        println("Before db Call "+IntArray.size)
     }
 
+
+     if(IntArray.size >= 14){
+        println(IntArray.size)
+        val groupRules = hashMapOf(
+            "RuleNumbers" to IntArray
+        )
+        db.collection("Groups").document(UUid)
+            .update("GroupRules", groupRules)
+
+    }
+
+
+
 }
 
 
-fun savePlaceAsFav(context: Context,UUid: String,Pub:GooglePlacesModel){
-    val db = Firebase.firestore
+    fun FBCreateGroup(groupModel: GroupModel) {
+        val db = Firebase.firestore
 
-    val places = hashMapOf(
-        "PubName" to Pub.Name,
-        "PubID" to Pub.ID,
-        "PubPhoneNum" to Pub.PhoneNumber,
-        "PubAddress" to Pub.Address,
-        "PubLat" to Pub.LocationLat,
-        "PubLng" to Pub.LocationLng,
-        "PubOpeningHours" to Pub.OpeningHours
-    )
-    db.collection("UserProfiles").document(UUid).collection("Places").document(Pub.Name!!)
-        .set(places)
-        .addOnSuccessListener {
-            Toast.makeText(context, "Pub Added to Favourite ${Pub.Name}", Toast.LENGTH_SHORT).show()
+        val GroupDB = hashMapOf(
+            "OwnerUUID" to groupModel.OwnerUUID,
+            "GroupName" to groupModel.GroupName,
+
+            )
+
+        db.collection("Groups").document(groupModel.OwnerUUID)
+            .set(GroupDB)
+            .addOnSuccessListener {
+                RandomRules(groupModel.OwnerUUID)
+                Log.d("FirestoreDB", "DB created for groups")
+            }
+
+        FBUserAddGroup(groupModel.GroupName)
+
+
+    }
+
+    fun UploadImage(UUid: String, uri: Uri, ImageType: String) {
+        val storageRef = FirebaseStorage.getInstance().reference
+        Log.d("URI", uri.toString())
+
+        val task = storageRef.child("$UUid/$ImageType.jpg").putFile(uri)
+        task.addOnSuccessListener {
+            Log.d("UploadImage", "Task Is Successful")
+        }.addOnFailureListener {
+            Log.d("UploadImageFail", "Image Upload Failed ${it.printStackTrace()}")
         }
 
-}
+    }
+
+
+    fun savePlaceAsFav(context: Context, UUid: String, Pub: GooglePlacesModel) {
+        val db = Firebase.firestore
+
+        val places = hashMapOf(
+            "PubName" to Pub.Name,
+            "PubID" to Pub.ID,
+            "PubPhoneNum" to Pub.PhoneNumber,
+            "PubAddress" to Pub.Address,
+            "PubLat" to Pub.LocationLat,
+            "PubLng" to Pub.LocationLng,
+            "PubOpeningHours" to Pub.OpeningHours
+        )
+        db.collection("UserProfiles").document(UUid).collection("Places").document(Pub.Name!!)
+            .set(places)
+            .addOnSuccessListener {
+                Toast.makeText(context, "Pub Added to Favourite ${Pub.Name}", Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+    }
+
 
 
 

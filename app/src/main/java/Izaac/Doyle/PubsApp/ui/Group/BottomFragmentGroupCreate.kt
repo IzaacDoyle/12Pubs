@@ -1,6 +1,8 @@
 package Izaac.Doyle.PubsApp.ui.Group
 
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+
+import Izaac.Doyle.PubsApp.Firebase.RandomRules
 import Izaac.Doyle.PubsApp.Firebase.UploadImage
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.GroupModel
@@ -61,6 +63,8 @@ class BottomFragmentGroupCreate:BottomSheetDialogFragment() {
                     UploadImage(CheckCurrentUser()!!.uid,ImageUri!!,"GroupImage")
                 }
 
+//                RandomRules(CheckCurrentUser()!!.uid)
+
                 dismiss()
 
                 //make to bottom sheet
@@ -73,7 +77,8 @@ class BottomFragmentGroupCreate:BottomSheetDialogFragment() {
         return root
     }
 
-   private val ImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()){ uri: Uri? ->
+
+    private val ImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()){ uri: Uri? ->
        uri?.let { binding.GroupImageAdd.setImageURI(uri)
        ImageUri = uri
        }
