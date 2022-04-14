@@ -1,28 +1,22 @@
 package Izaac.Doyle.PubsApp.ui.Group
 
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+import Izaac.Doyle.PubsApp.Helpers.GroupRulesRecycleView
 import Izaac.Doyle.PubsApp.Helpers.UserSearchRecyclerview
 import Izaac.Doyle.PubsApp.Helpers.ViewPagerAdaptor
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
-import Izaac.Doyle.PubsApp.Models.FBAccountNameModel
 import Izaac.Doyle.PubsApp.R
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import Izaac.Doyle.PubsApp.databinding.FragmentGroupBinding
-import Izaac.Doyle.PubsApp.ui.Group.viewpager.PubsViewpager
-import Izaac.Doyle.PubsApp.ui.Group.viewpager.RulesViewpager
 import Izaac.Doyle.PubsApp.ui.home.GroupViewModel
 import android.app.Activity
 import android.util.Log
 import android.view.*
-import android.widget.*
-import androidx.core.view.isEmpty
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.viewpager.widget.ViewPager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.storage.FirebaseStorage
@@ -33,6 +27,7 @@ class GroupsFragment : Fragment(), onDataPasser {
     private var _binding: FragmentGroupBinding? = null
     lateinit var app: MainApp
     lateinit var myAdapter:UserSearchRecyclerview
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -75,9 +70,23 @@ class GroupsFragment : Fragment(), onDataPasser {
 
                     binding.groupGroupName.text = it[0].GroupName
 
+
+
+
+
                 }else{
                     binding.GroupImage.setImageResource(R.drawable.ic_group)
                 }
+
+
+
+
+
+                //get the numbers and get the Rules from db and push to recyclerview
+
+
+
+
 
 
 
@@ -138,6 +147,11 @@ class GroupsFragment : Fragment(), onDataPasser {
                 }
                 1->{
                     tab.text = "Rules"
+
+
+
+
+
                 }
             }
 

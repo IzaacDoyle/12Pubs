@@ -1,11 +1,8 @@
 package Izaac.Doyle.PubsApp.ui.home
 
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
-import Izaac.Doyle.PubsApp.Models.AccountModel
-import Izaac.Doyle.PubsApp.Models.FBAccountNameModel
-import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
+import Izaac.Doyle.PubsApp.Models.*
 
-import Izaac.Doyle.PubsApp.Models.GroupModel
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -22,6 +19,7 @@ class GroupViewModel : ViewModel() {
     private var Username: MutableLiveData<ArrayList<FBAccountNameModel>> = MutableLiveData<ArrayList<FBAccountNameModel>>()
     private var QrcodeSearch:  MutableLiveData<MutableList<FBAccountNameModel>> = MutableLiveData(ArrayList<FBAccountNameModel>())
     private var GooglePlaces: MutableLiveData<MutableList<GooglePlacesModel>> = MutableLiveData(ArrayList<GooglePlacesModel>())
+    private var Rules:MutableLiveData<MutableList<RulesModel>> = MutableLiveData(ArrayList<RulesModel>())
 
     init {
         db = FirebaseFirestore.getInstance()
@@ -69,7 +67,7 @@ class GroupViewModel : ViewModel() {
          }else{
 
 
-         Log.d("SearchUser", SearchName!!.lowercase())
+         Log.d("SearchUser", SearchName.lowercase())
              val username = ArrayList<FBAccountNameModel>()
         db.collection("UserProfiles").orderBy("Username")
             .startAt(SearchName)
@@ -140,6 +138,33 @@ class GroupViewModel : ViewModel() {
 
     }
 
+     fun Rules(rule: ArrayList<Int>){
+        val rules = ArrayList<RulesModel>()
+         Log.d("RulesList",rule.toString())
+        for (i in rule) {
+            println("Rules $i")
+            db.collection("PubRules").document(i.toString())
+                .get()
+                .addOnSuccessListener { it ->
+                    println("Rules On Success $it")
+                    if (it.exists()) {
+                        val grouprule = it.toObject(RulesModel::class.java)
+                        println(grouprule)
+//                        rules.add(grouprule!!)
+                        if (grouprule != null) {
+                            rules.add(grouprule)
+                        }
+                    }
+                    if (rules.size >= 14){
+                        Rules.value = rules
+                    }
+
+                }
+
+        }
+
+    }
+
 
 
 
@@ -149,6 +174,11 @@ class GroupViewModel : ViewModel() {
 
 //    Log.d("QR Searchuser Document", "${snapshot.documents}")
 //    Log.d("QR Search", profile.toString())
+
+
+    internal var groupRule:MutableLiveData<MutableList<RulesModel>>
+        get() {return Rules}
+        set(value) {Rules = value}
 
 
 

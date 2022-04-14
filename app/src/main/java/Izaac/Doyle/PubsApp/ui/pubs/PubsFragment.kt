@@ -17,6 +17,8 @@ import Izaac.Doyle.PubsApp.databinding.FragmentPubsBinding
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
+import androidx.core.os.bundleOf
+import androidx.core.os.persistableBundleOf
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -136,6 +138,7 @@ class PubsFragment : Fragment(), PubsClickListener {
                 }
             })
             pubsViewModel.PlacesObv.observe(viewLifecycleOwner) { result ->
+
                 println(result)
                 myAdapter = PubsRecycelerView(result as ArrayList<GooglePlacesModel>, this)
                 binding.pubsPlacesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -182,6 +185,18 @@ class PubsFragment : Fragment(), PubsClickListener {
         Log.d("Pubs Click", pubs.toString())
         if (pubs.ID == "0"){
             Toast.makeText(requireContext(), "Please Log in to Gain full range of Features", Toast.LENGTH_LONG).show()
+        }else{
+            val bottomFragment = BottomPubsInfoFragment()
+            bottomFragment.arguments = bundleOf(
+                "1" to pubs.Name,
+                "2" to pubs.PhoneNumber,
+                "3" to pubs.Address,
+                "4" to pubs.OpeningHours
+                        )
+//            bottomFragment.arguments = bundleOf("PubNumber" to pubs.PhoneNumber)
+//            bottomFragment.arguments = bundleOf("PubAddress" to pubs.Address)
+//           bottomFragment.arguments = bundleOf("PubHours" to pubs.OpeningHours)
+            bottomFragment.show(childFragmentManager, "Pubs Info")
         }
 
             }

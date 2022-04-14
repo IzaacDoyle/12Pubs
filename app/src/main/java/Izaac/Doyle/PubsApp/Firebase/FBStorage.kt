@@ -14,6 +14,7 @@ import androidx.core.content.edit
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -112,10 +113,12 @@ fun FbGetGroupImage(UUid:String,ImageType: String){
     db.collection("PubRules").document("0").get()
 
         .addOnSuccessListener { result->
+
             if (result.exists()){
                 val RuleNum = result.getString("RuleAmount")
-                Log.d("RuleNum","Rule Number is : $RuleNum")
                 RandomNumberRule(RuleNum,UUid)
+                Log.d("RuleNum","Rule Number is : $RuleNum")
+
 
             }
         }
@@ -125,11 +128,13 @@ fun RandomNumberRule(ruleNum: String?,UUid: String) {
     val db = Firebase.firestore
     val IntArray = ArrayList<Int>()
     var randomNumber: Int = 0
-    for (i in 1..16) {
+    for (i in 0..15) {
         Log.d("RuleNum", i.toString())
-        randomNumber = (1..ruleNum!!.toInt()).random()
+//        randomNumber = (1..ruleNum!!.toInt()).random()
+        randomNumber = random(ruleNum)
         if (IntArray.contains(randomNumber)) {
-            randomNumber = (1..ruleNum.toInt()).random()
+//            randomNumber = (1..ruleNum.toInt()).random()
+            randomNumber = random(ruleNum)
             println(randomNumber)
             while (!IntArray.contains(randomNumber)) {
                 IntArray.add(randomNumber)
@@ -149,10 +154,13 @@ fun RandomNumberRule(ruleNum: String?,UUid: String) {
             "RuleNumbers" to IntArray
         )
         db.collection("Groups").document(UUid)
-            .update("GroupRules", groupRules)
-
+            .set(groupRules, SetOptions.merge())
     }
-
+}
+fun random(ruleNum: String?):Int{
+    val random =(1..ruleNum!!.toInt()).random()
+    println(random)
+    return random
 
 
 }
@@ -163,7 +171,8 @@ fun RandomNumberRule(ruleNum: String?,UUid: String) {
 
         val GroupDB = hashMapOf(
             "OwnerUUID" to groupModel.OwnerUUID,
-            "GroupName" to groupModel.GroupName,
+            "GroupName" to groupModel.GroupName
+
 
             )
 

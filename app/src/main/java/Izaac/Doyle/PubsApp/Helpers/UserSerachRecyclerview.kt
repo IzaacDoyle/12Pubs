@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 
-class UserSearchRecyclerview(private val accounts:ArrayList<FBAccountNameModel>):RecyclerView.Adapter<UserSearchRecyclerview.ViewHolder>(){
+class UserSearchRecyclerview(private val accounts: ArrayList<FBAccountNameModel>):RecyclerView.Adapter<UserSearchRecyclerview.ViewHolder>(){
 
 
 

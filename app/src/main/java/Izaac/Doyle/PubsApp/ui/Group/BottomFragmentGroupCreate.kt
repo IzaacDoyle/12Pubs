@@ -56,7 +56,7 @@ class BottomFragmentGroupCreate:BottomSheetDialogFragment() {
                         CheckCurrentUser()!!.uid,
                         0,
                         binding.GroupNameAdd.text.toString(),
-                        ""
+                        ArrayList()
                     )
                 )
                 if (ImageUri != null){

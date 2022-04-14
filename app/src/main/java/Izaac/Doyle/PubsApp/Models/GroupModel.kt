@@ -9,6 +9,7 @@ data class GroupModel(
     val OwnerUUID: String,
     val GroupId:Int = 0,
     val GroupName:String,
-    val GroupLocation:String): Parcelable{
-      constructor():this("",0,"","")
+    val RuleNumbers: ArrayList<Int>
+    ): Parcelable{
+      constructor():this("",0,"",ArrayList() )
     }
