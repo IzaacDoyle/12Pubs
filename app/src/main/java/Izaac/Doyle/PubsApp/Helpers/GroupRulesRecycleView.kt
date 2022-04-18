@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import org.w3c.dom.Text
+import java.util.*
 
 
 interface  RulesClickListener{
@@ -23,6 +25,7 @@ class GroupRulesRecycleView(private val rule: MutableList<RulesModel>, private v
         val v  = LayoutInflater.from(parent.context).inflate(
             R.layout.rule_cardview,parent,false
         )
+
         return ViewHolder(v)
     }
 
@@ -30,9 +33,9 @@ class GroupRulesRecycleView(private val rule: MutableList<RulesModel>, private v
 
         class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
             fun bindAccounts(grourule: RulesModel, listener: RulesClickListener){
-                for (i in 0..14){
+//                for (i in 0..14){
                     itemView.findViewById<TextView>(R.id.group_rulename).text = grourule.RuleName
-
+                    itemView.findViewById<TextView>(R.id.group_number).text = grourule.RuleID
 
                     itemView.setOnClickListener {
                         listener.onRulesClicked(grourule)
@@ -41,7 +44,7 @@ class GroupRulesRecycleView(private val rule: MutableList<RulesModel>, private v
                         //itemView.setBackgroundColor(R.color.white)
 
                     }
-                }
+//                }
 
 
 
@@ -52,7 +55,7 @@ class GroupRulesRecycleView(private val rule: MutableList<RulesModel>, private v
 
 
     override fun onBindViewHolder(holder: GroupRulesRecycleView.ViewHolder, position: Int) {
-        holder.bindAccounts(rule[position],listener)
+            holder.bindAccounts(rule[position],listener)
     }
 
     override fun getItemCount(): Int {

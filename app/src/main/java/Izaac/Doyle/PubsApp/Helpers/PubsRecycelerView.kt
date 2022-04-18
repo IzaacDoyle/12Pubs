@@ -67,14 +67,6 @@ class PubsRecycelerView constructor(private val pubs:ArrayList<GooglePlacesModel
 
             }
 
-
-//            itemView.findViewById<TextView>(R.id.username).text = pubs.Name.toString()
-//            itemView.findViewById<TextView>(R.id.email).text = pubs.Address.toString()
-
-
-//            itemView.findViewById<TextView>(R.id.username).text = accounts.Username.substring(0,1).uppercase()+accounts.Username.substring(1)
-//            itemView.findViewById<TextView>(R.id.email).text = accounts.UserEmail
-
         }
 
 

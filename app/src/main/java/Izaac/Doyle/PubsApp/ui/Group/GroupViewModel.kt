@@ -9,6 +9,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.firebase.ui.auth.data.model.User
 import com.google.firebase.firestore.*
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlin.collections.ArrayList
 import kotlin.coroutines.coroutineContext
 
@@ -20,6 +22,7 @@ class GroupViewModel : ViewModel() {
     private var QrcodeSearch:  MutableLiveData<MutableList<FBAccountNameModel>> = MutableLiveData(ArrayList<FBAccountNameModel>())
     private var GooglePlaces: MutableLiveData<MutableList<GooglePlacesModel>> = MutableLiveData(ArrayList<GooglePlacesModel>())
     private var Rules:MutableLiveData<MutableList<RulesModel>> = MutableLiveData(ArrayList<RulesModel>())
+    private var Invitations:MutableLiveData<MutableList<InvitationsModel>> = MutableLiveData(ArrayList<InvitationsModel>())
 
     init {
         db = FirebaseFirestore.getInstance()
@@ -113,21 +116,11 @@ class GroupViewModel : ViewModel() {
                         if (groupUser != null) {
                             Log.d(
                                 "QrSearchProfile",
-                                groupUser.UserEmail + " " + groupUser.Username + " " + groupUser.UserUUID
-                            )
-//                            profile.value!!.add(groupUser)
+                                groupUser.UserEmail + " " + groupUser.Username + " " + groupUser.UserUUID)
                             profile.add(groupUser)
-
-//                            profile.value!!.add(groupUser)
-//                            groupUser = profile.toList()
                         }
-
                     }
                     QrcodeSearch.value = profile
-                    qrcodeSearch.notifyObserver()
-//                    QrcodeSearch.value?.add(profile)
-//                    QrcodeSearch.notifyObserver()
-//                    qrcodeSearch.notifyObserver()
                 }
             }
     }   
@@ -139,41 +132,56 @@ class GroupViewModel : ViewModel() {
     }
 
      fun Rules(rule: ArrayList<Int>){
-        val rules = ArrayList<RulesModel>()
+        val rules = mutableListOf<RulesModel>()
          Log.d("RulesList",rule.toString())
         for (i in rule) {
             println("Rules $i")
             db.collection("PubRules").document(i.toString())
                 .get()
-                .addOnSuccessListener { it ->
-                    println("Rules On Success $it")
-                    if (it.exists()) {
-                        val grouprule = it.toObject(RulesModel::class.java)
+                .addOnSuccessListener { result ->
+                    println("Rules On Success $result")
+                    if (result.exists()) {
+                        val grouprule = result.toObject(RulesModel::class.java)
                         println(grouprule)
 //                        rules.add(grouprule!!)
                         if (grouprule != null) {
                             rules.add(grouprule)
                         }
                     }
-                    if (rules.size >= 14){
+                    if (rules.size == 14) {
+                        //need to filter list to be in order of rule<Int>
                         Rules.value = rules
+
                     }
 
                 }
-
         }
 
     }
 
+    fun CheckInvitations(UUID:String){
+        val db = Firebase.firestore
 
+        val invos = mutableListOf<InvitationsModel>()
+        db.collection("PendingInvitation").document(UUID).get()
+            .addOnSuccessListener { it->
+                if (it.exists()){
+                    val invo = it.toObject(InvitationsModel::class.java)
+                    println(invo)
+                    invos.add(invo!!)
+                }
+                Invitations.value = invos
+            }
 
-
-    private fun <T> MutableLiveData<T>.notifyObserver() {
-        this.value = this.value
     }
 
-//    Log.d("QR Searchuser Document", "${snapshot.documents}")
-//    Log.d("QR Search", profile.toString())
+
+
+
+
+    internal var Invites:MutableLiveData<MutableList<InvitationsModel>>
+        get() {return Invitations}
+        set(value) {Invitations = value}
 
 
     internal var groupRule:MutableLiveData<MutableList<RulesModel>>

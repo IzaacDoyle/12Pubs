@@ -1,25 +1,29 @@
 package Izaac.Doyle.PubsApp.ui.Group
 
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
-import Izaac.Doyle.PubsApp.Helpers.GroupRulesRecycleView
 import Izaac.Doyle.PubsApp.Helpers.UserSearchRecyclerview
 import Izaac.Doyle.PubsApp.Helpers.ViewPagerAdaptor
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.R
-import android.os.Bundle
-import androidx.fragment.app.Fragment
 import Izaac.Doyle.PubsApp.databinding.FragmentGroupBinding
 import Izaac.Doyle.PubsApp.ui.home.GroupViewModel
 import android.app.Activity
+import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.storage.FirebaseStorage
+import com.nex3z.notificationbadge.NotificationBadge
+
 
 class GroupsFragment : Fragment(), onDataPasser {
 
@@ -27,6 +31,8 @@ class GroupsFragment : Fragment(), onDataPasser {
     private var _binding: FragmentGroupBinding? = null
     lateinit var app: MainApp
     lateinit var myAdapter:UserSearchRecyclerview
+    var notificationBadge: NotificationBadge? = null
+
 
 
     // This property is only valid between onCreateView and
@@ -46,7 +52,7 @@ class GroupsFragment : Fragment(), onDataPasser {
 //            groupViewModel =
 //                ViewModelProvider(this)[GroupViewModel::class.java]
 
-
+            groupViewModel.CheckInvitations(CheckCurrentUser()!!.uid)
 
 
             groupViewModel.gNames.observe(viewLifecycleOwner) { it ->
@@ -70,30 +76,14 @@ class GroupsFragment : Fragment(), onDataPasser {
 
                     binding.groupGroupName.text = it[0].GroupName
 
-
-
-
-
                 }else{
                     binding.GroupImage.setImageResource(R.drawable.ic_group)
                 }
-
-
-
-
-
                 //get the numbers and get the Rules from db and push to recyclerview
 
-
-
-
-
-
-
-
-
-
             }
+
+
 
 
             setUpTabs()
@@ -134,6 +124,18 @@ class GroupsFragment : Fragment(), onDataPasser {
         return root
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+
+
+
+
+
+
+
+
+
+    }
+
     private fun setUpTabs() {
 
         val adaptor = ViewPagerAdaptor(childFragmentManager,lifecycle)
@@ -169,12 +171,30 @@ class GroupsFragment : Fragment(), onDataPasser {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.add_to_group,menu)
 
+
+
+
         groupViewModel.gNames.observe(viewLifecycleOwner) { it ->
             menu.findItem(R.id.Create_group).isVisible = !it.isNotEmpty()
             menu.findItem(R.id.AddToGroup).isVisible = it.isNotEmpty()
         }
 
 
+
+        groupViewModel.Invites.observe(viewLifecycleOwner){it->
+            println(it)
+            if (it.isNotEmpty()){
+                val bell = menu.findItem(R.id.Group_join).actionView
+                notificationBadge = bell.findViewById(R.id.badge) as NotificationBadge
+
+                bell!!.setOnClickListener {
+                    Toast.makeText(requireContext(), "Notification $it", Toast.LENGTH_SHORT).show()
+                }
+                notificationBadge!!.isVisible = true
+                notificationBadge!!.setText("1")
+
+            }
+        }
 
 
         groupViewModel.UsersGroupname.observe(viewLifecycleOwner){it->

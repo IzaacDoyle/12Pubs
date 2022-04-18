@@ -3,9 +3,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/Group_join"
+        android:icon="@drawable/ic_group_invite"
+        android:title="Item"
+        app:actionLayout="@layout/notification_bell"
+
+        android:visible="true"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/AddToGroup"
         android:icon="@drawable/ic_create_user"
         android:title="Add to Group"
+        android:visible="false"
         app:showAsAction="always" />
     <item
         android:id="@+id/Create_group"

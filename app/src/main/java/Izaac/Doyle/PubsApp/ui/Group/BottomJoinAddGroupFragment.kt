@@ -1,26 +1,32 @@
 package Izaac.Doyle.PubsApp.ui.Group
 
+import Izaac.Doyle.PubsApp.Firebase.AddUserToGroup
+import Izaac.Doyle.PubsApp.Helpers.ProfileClickListener
 import Izaac.Doyle.PubsApp.Helpers.UserSearchRecyclerview
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Models.FBAccountNameModel
+import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.CameraViewBinding
 import Izaac.Doyle.PubsApp.databinding.FragmentJoinAddBinding
 import Izaac.Doyle.PubsApp.ui.home.GroupViewModel
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isEmpty
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class BottomJoinAddGroupFragment:BottomSheetDialogFragment() {
+class BottomJoinAddGroupFragment:BottomSheetDialogFragment(), ProfileClickListener {
 
 
 
@@ -28,6 +34,7 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment() {
     private var camera_binding: CameraViewBinding? = null
     lateinit var dataPasser : onDataPasser
     lateinit var myAdapter:UserSearchRecyclerview
+    var account:FBAccountNameModel? = null
 
     private var camera = false
     private lateinit var groupViewModel: GroupViewModel
@@ -67,7 +74,7 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment() {
 
         groupViewModel.qrcodeSearch.observe(viewLifecycleOwner){it ->
             Log.d("QRCodeSearch Observed Data",it.toString())
-            myAdapter = UserSearchRecyclerview(it as ArrayList<FBAccountNameModel>)
+            myAdapter = UserSearchRecyclerview(it as ArrayList<FBAccountNameModel>,this,requireContext())
             binding.userSearchRecyclerView.layoutManager = LinearLayoutManager(requireContext())
             binding.userSearchRecyclerView.adapter = myAdapter
 
@@ -97,6 +104,16 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment() {
 //
 
 //        })
+        binding.button6add.setOnClickListener {
+            if (account == null){
+                Toast.makeText(requireContext(), "Please Select A User to Add", Toast.LENGTH_SHORT).show()
+            }else{
+                AddUserToGroup(account!!,
+                    groupViewModel.gNames.value?.get(0)?.OwnerUUID.toString(),requireContext(),requireDialog()
+                    )
+
+            }
+        }
 
 
 
@@ -140,7 +157,8 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment() {
 
         groupViewModel.UsersGroupname.observe(viewLifecycleOwner) { it ->
             Log.d("QR SearchUser",it.toString())
-            myAdapter = UserSearchRecyclerview(it as ArrayList<FBAccountNameModel>)
+
+            myAdapter = UserSearchRecyclerview(it as ArrayList<FBAccountNameModel>,this,requireContext())
             binding.userSearchRecyclerView.layoutManager = LinearLayoutManager(requireContext())
             binding.userSearchRecyclerView.adapter = myAdapter
 
@@ -148,41 +166,6 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment() {
 
 
 
-//        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
-//
-//
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                if (binding.groupAddSearch.isEmpty()) {
-//                    groupViewModel.SearchAddusersToGroup(null)
-//                    myAdapter.notifyDataSetChanged()
-//                }else if (query.isNullOrEmpty()){
-//                    groupViewModel.SearchAddusersToGroup(null)
-//                    myAdapter.notifyDataSetChanged()
-//                }else{
-//                    Log.d("Search","$query")
-//                    groupViewModel.SearchAddusersToGroup(query.lowercase())
-//
-//                }
-//                return true
-//            }
-//
-//            override fun onQueryTextChange(query: String?): Boolean {
-//                Log.d("SearchView",query.toString())
-//                if (binding.groupAddSearch.isEmpty()){
-//                   myAdapter.notifyDataSetChanged()
-//                    groupViewModel.SearchAddusersToGroup(null)
-//
-//                }else if (query.isNullOrBlank()){
-//                   myAdapter.notifyDataSetChanged()
-//                    groupViewModel.SearchAddusersToGroup(null)
-//                }else{
-//                    Log.d("Search","$query")
-//                    groupViewModel.SearchAddusersToGroup(query.lowercase())
-//
-//                }
-//                return true
-//            }
-//        })
 
 
 
@@ -204,6 +187,27 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         dataPasser = context as onDataPasser
+    }
+
+    override fun onProfileClicked(accounts: FBAccountNameModel,itemView:View) {
+        Log.d("AccountClicked",accounts.toString())
+
+
+        if (!itemView.isSelected){
+            itemView.isSelected = true
+            itemView.setBackgroundColor(Color.BLACK)
+            itemView.defaultFocusHighlightEnabled = true
+            account = accounts
+
+        }
+        if (itemView.isSelected && account == accounts){
+
+//            itemView.setBackgroundColor(ResourcesCompat.getColor(resources, R.color.Background_color,null))
+
+        }
+
+
+
     }
 
 

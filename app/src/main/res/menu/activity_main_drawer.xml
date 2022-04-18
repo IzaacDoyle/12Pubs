@@ -63,10 +63,9 @@
 
 
     <item
-        android:icon="@drawable/ic_account"
-        android:title="@string/account"
-        android:id="@+id/Menu_Account">
-
+        android:id="@+id/Menu_Account_QR"
+        android:icon="@drawable/ic_qr_code"
+        android:title="@string/account">
 
 
     </item>

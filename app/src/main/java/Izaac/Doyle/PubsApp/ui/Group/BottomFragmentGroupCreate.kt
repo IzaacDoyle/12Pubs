@@ -55,7 +55,7 @@ class BottomFragmentGroupCreate:BottomSheetDialogFragment() {
                     GroupModel(
                         CheckCurrentUser()!!.uid,
                         0,
-                        binding.GroupNameAdd.text.toString(),
+                        binding.GroupNameAdd.text.toString().trim(),
                         ArrayList()
                     )
                 )

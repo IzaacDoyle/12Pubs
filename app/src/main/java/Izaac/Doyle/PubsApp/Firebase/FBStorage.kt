@@ -1,14 +1,17 @@
 package Izaac.Doyle.PubsApp.Firebase
 
 import Izaac.Doyle.PubsApp.Models.AccountModel
+import Izaac.Doyle.PubsApp.Models.FBAccountNameModel
 import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
 import Izaac.Doyle.PubsApp.Models.GroupModel
 import Izaac.Doyle.PubsApp.activities.MainActivity
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.core.content.edit
 import com.google.firebase.database.ktx.database
@@ -93,11 +96,12 @@ fun FBUpdateDB(userUUID: String, username: String){
 
 }
 
-fun FBUserAddGroup(group:String){
+fun FBUserAddGroup(group:String,ownerUuid :String){
     val db = Firebase.firestore
 
     db.collection("UserProfiles").document(CheckCurrentUser()!!.uid)
         .update("Group", group)
+
 
 }
 
@@ -128,7 +132,7 @@ fun RandomNumberRule(ruleNum: String?,UUid: String) {
     val db = Firebase.firestore
     val IntArray = ArrayList<Int>()
     var randomNumber: Int = 0
-    for (i in 0..15) {
+    for (i in 1..18) {
         Log.d("RuleNum", i.toString())
 //        randomNumber = (1..ruleNum!!.toInt()).random()
         randomNumber = random(ruleNum)
@@ -148,8 +152,8 @@ fun RandomNumberRule(ruleNum: String?,UUid: String) {
     }
 
 
-     if(IntArray.size >= 14){
-        println(IntArray.size)
+     if (IntArray.size == 15){
+        println(" Size of IntArray " + IntArray.size)
         val groupRules = hashMapOf(
             "RuleNumbers" to IntArray
         )
@@ -165,6 +169,40 @@ fun random(ruleNum: String?):Int{
 
 }
 
+fun AddUserToGroup(accountModel: FBAccountNameModel,UUid: String,context: Context,dialog: Dialog){
+    val db = Firebase.firestore
+
+    val UserAdd = hashMapOf(
+        "User" to accountModel.UserUUID,
+        "UserName" to accountModel.Username,
+        "UserPending" to true
+    )
+    //do if Exists
+    db.collection("Groups").document(UUid).collection("Users").document(accountModel.Username)
+        .set(UserAdd, SetOptions.merge())
+        .addOnSuccessListener {
+            CreatePendingAdd(UUid,accountModel.UserUUID)
+            Toast.makeText(context, "${accountModel.Username} has been added to the group", Toast.LENGTH_SHORT)
+                .show()
+            dialog.dismiss()
+        }
+
+}
+
+fun CreatePendingAdd(GroupUUID:String,NewUserUUID:String){
+
+    val db = Firebase.firestore
+
+    val invitation = hashMapOf(
+        "GroupUUID" to GroupUUID,
+        "NewUser" to NewUserUUID
+    )
+
+    db.collection("PendingInvitation").document(NewUserUUID)
+        .set(invitation)
+
+
+}
 
     fun FBCreateGroup(groupModel: GroupModel) {
         val db = Firebase.firestore
@@ -183,7 +221,7 @@ fun random(ruleNum: String?):Int{
                 Log.d("FirestoreDB", "DB created for groups")
             }
 
-        FBUserAddGroup(groupModel.GroupName)
+        FBUserAddGroup(groupModel.GroupName,groupModel.OwnerUUID)
 
 
     }
@@ -215,7 +253,7 @@ fun random(ruleNum: String?):Int{
             "PubOpeningHours" to Pub.OpeningHours
         )
         db.collection("UserProfiles").document(UUid).collection("Places").document(Pub.Name!!)
-            .set(places)
+            .set(places, SetOptions.merge())
             .addOnSuccessListener {
                 Toast.makeText(context, "Pub Added to Favourite ${Pub.Name}", Toast.LENGTH_SHORT)
                     .show()

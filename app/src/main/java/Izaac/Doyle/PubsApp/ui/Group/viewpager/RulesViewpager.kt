@@ -41,10 +41,11 @@ class RulesViewpager : Fragment(), RulesClickListener {
         }
 
         groupViewModel.groupRule.observe(viewLifecycleOwner){it->
-            println("2")
+
             val RuleRecycleView = view?.findViewById<RecyclerView>(R.id.group_RulesVote)
+
             myRuleAdaptor = GroupRulesRecycleView(it,this)
-            println("observer Rules ${it.toString()}")
+           // println("observer Rules ${}")
             RuleRecycleView!!.layoutManager = LinearLayoutManager(requireContext())
             RuleRecycleView.adapter = myRuleAdaptor
         }
@@ -59,7 +60,6 @@ class RulesViewpager : Fragment(), RulesClickListener {
         Log.d("RuleClicked",rules.toString())
         val bottomFragment = BottomPubsInfoFragment()
         bottomFragment.arguments = bundleOf(
-
             "2" to rules.RuleName,
             "3" to rules.RuleDescription
         )

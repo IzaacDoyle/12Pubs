@@ -3,6 +3,7 @@ package Izaac.Doyle.PubsApp.activities
 
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.Firebase.FBGetDB
+import Izaac.Doyle.PubsApp.Helpers.QrCodeDispay
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.R
@@ -12,10 +13,14 @@ import Izaac.Doyle.PubsApp.ui.Group.BottomCameraFragment
 import Izaac.Doyle.PubsApp.ui.Group.BottomFragmentGroupCreate
 import Izaac.Doyle.PubsApp.ui.Group.BottomJoinAddGroupFragment
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -37,6 +42,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.WriterException
+import com.google.zxing.qrcode.QRCodeWriter
 
 class MainActivity : AppCompatActivity(), onDataPasser {
 
@@ -44,6 +52,8 @@ class MainActivity : AppCompatActivity(), onDataPasser {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
+
+
     lateinit var dataPasser : onDataPasser
     lateinit var app: MainApp
     var SearchActive:Boolean = false
@@ -106,6 +116,12 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 //            navView.findViewById<androidx.appcompat.widget.LinearLayoutCompat>(R.id.drawer_setting)
         val loginBtn = navView.findViewById<LinearLayout>(R.id.Drawer_Login)
         val createAccountBtn = navView.findViewById<LinearLayout>(R.id.Drawer_CreateA)
+        val QRView = navView.menu[2].subMenu[1]
+            QRView.setOnMenuItemClickListener {
+                QrCodeDispay(this)
+
+                true
+            }
 //        settingsBtn.setOnClickListener {
 //
 //            //if account avalable show Settings if not make it Gone
@@ -166,6 +182,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
                 Log.d("settingsActivity", "Log out")
                 app.account.SignOut(this)
             }
+
 //            R.id.GroupAddSearch->{
 
 //
@@ -236,6 +253,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         val email = findViewById<TextView>(R.id.Drawer_Email)
         val name = findViewById<TextView>(R.id.Drawer_Name)
         val profileImage = findViewById<ImageView>(R.id.Drawer_Account_Image)
+
 
 
         //val profileimage = findViewById<ImageView>(R.id.Drawer_Account_Image)
