@@ -209,7 +209,8 @@ fun CreatePendingAdd(GroupUUID:String,NewUserUUID:String){
 
         val GroupDB = hashMapOf(
             "OwnerUUID" to groupModel.OwnerUUID,
-            "GroupName" to groupModel.GroupName
+            "GroupName" to groupModel.GroupName,
+
 
 
             )

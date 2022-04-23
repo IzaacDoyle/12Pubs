@@ -8,5 +8,7 @@ import kotlinx.parcelize.Parcelize
 data class AccountModel(var id: String ="",
                         var username: String = "",
                         var email: String = "",
-                        var group: String? =""): Parcelable
+                        var group: String? ="",
+                        var GroupUUID:String? = ""
+                        ): Parcelable
 

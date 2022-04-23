@@ -28,7 +28,7 @@ class GroupViewModel : ViewModel() {
         db = FirebaseFirestore.getInstance()
         db.firestoreSettings = FirebaseFirestoreSettings.Builder().build()
         CUuid = CheckCurrentUser()!!.uid
-        getUserGroup()
+        getUserGroup(CUuid)
        // getGroupName()
 
     }
@@ -36,7 +36,7 @@ class GroupViewModel : ViewModel() {
         super.onCleared()
     }
 
- private  fun getUserGroup(){
+   fun getUserGroup(UUID: String){
 
          db.collection("Groups").document(CUuid)
              .addSnapshotListener { snapshot, error ->
@@ -165,7 +165,7 @@ class GroupViewModel : ViewModel() {
         val invos = mutableListOf<InvitationsModel>()
         db.collection("PendingInvitation").document(UUID).get()
             .addOnSuccessListener { it->
-                if (it.exists()){
+                if (it.exists() && it != null){
                     val invo = it.toObject(InvitationsModel::class.java)
                     println(invo)
                     invos.add(invo!!)

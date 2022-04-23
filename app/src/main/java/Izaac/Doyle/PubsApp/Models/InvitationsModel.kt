@@ -5,5 +5,5 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class InvitationsModel(var GroupUUID:String,var NewUser:String) : Parcelable{
-    constructor():this("","" )
+    constructor():this("","")
 }

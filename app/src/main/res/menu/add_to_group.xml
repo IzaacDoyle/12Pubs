@@ -6,9 +6,9 @@
         android:id="@+id/Group_join"
         android:icon="@drawable/ic_group_invite"
         android:title="Item"
-        app:actionLayout="@layout/notification_bell"
+        android:visible="false"
 
-        android:visible="true"
+        app:actionLayout="@layout/notification_bell"
         app:showAsAction="always" />
     <item
         android:id="@+id/AddToGroup"

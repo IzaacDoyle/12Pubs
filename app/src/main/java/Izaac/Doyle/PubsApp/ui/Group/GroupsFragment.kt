@@ -52,13 +52,15 @@ class GroupsFragment : Fragment(), onDataPasser {
 //            groupViewModel =
 //                ViewModelProvider(this)[GroupViewModel::class.java]
 
+            // check if user has invitations on run when the screen is drawn and now always checking. Save app load wont check always but Firebase Functions could help with this
             groupViewModel.CheckInvitations(CheckCurrentUser()!!.uid)
+
+
 
 
             groupViewModel.gNames.observe(viewLifecycleOwner) { it ->
                 Log.d("Observe group", "$it")
                 if (it.isNotEmpty()) {
-
                    // binding.groupName.text = it[0].GroupName
                        Log.d("Group",it.toString())
 
@@ -76,8 +78,22 @@ class GroupsFragment : Fragment(), onDataPasser {
 
                     binding.groupGroupName.text = it[0].GroupName
 
+
+
+
                 }else{
                     binding.GroupImage.setImageResource(R.drawable.ic_group)
+
+
+                }
+
+
+                groupViewModel.Invites.observe(viewLifecycleOwner) { result ->
+
+                    println("Invite $result")
+                    if (!result.isNullOrEmpty()){
+                        setHasOptionsMenu(true)
+                    }
                 }
                 //get the numbers and get the Rules from db and push to recyclerview
 
@@ -96,42 +112,14 @@ class GroupsFragment : Fragment(), onDataPasser {
         }
 
 
-
-
-
-
-
-
-
             app = requireActivity().application as MainApp
 
 
-
-
-//        groupViewModel.gNames.observe(viewLifecycleOwner) { it ->
-//            binding.editTextTextPersonName.setText(it.toString())
-//
-//            //fix retun type
-//        }
-
-
-
-
-
-//        homeViewModel.text.observe(viewLifecycleOwner, Observer {
-//        })
 
         return root
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
-
-
-
-
-
-
-
 
 
     }
@@ -150,10 +138,6 @@ class GroupsFragment : Fragment(), onDataPasser {
                 1->{
                     tab.text = "Rules"
 
-
-
-
-
                 }
             }
 
@@ -168,6 +152,10 @@ class GroupsFragment : Fragment(), onDataPasser {
     }
 
 
+
+
+
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.add_to_group,menu)
 
@@ -175,29 +163,54 @@ class GroupsFragment : Fragment(), onDataPasser {
 
 
         groupViewModel.gNames.observe(viewLifecycleOwner) { it ->
-            menu.findItem(R.id.Create_group).isVisible = !it.isNotEmpty()
-            menu.findItem(R.id.AddToGroup).isVisible = it.isNotEmpty()
-        }
+
+            val bell = menu.findItem(R.id.Group_join)
 
 
-
-        groupViewModel.Invites.observe(viewLifecycleOwner){it->
-            println(it)
-            if (it.isNotEmpty()){
-                val bell = menu.findItem(R.id.Group_join).actionView
-                notificationBadge = bell.findViewById(R.id.badge) as NotificationBadge
-
-                bell!!.setOnClickListener {
-                    Toast.makeText(requireContext(), "Notification $it", Toast.LENGTH_SHORT).show()
-                }
-                notificationBadge!!.isVisible = true
-                notificationBadge!!.setText("1")
-
+            if (!it.isNullOrEmpty()) {
+                menu.findItem(R.id.Create_group).isVisible = !it.isNotEmpty()
+                menu.findItem(R.id.AddToGroup).isVisible = it.isNotEmpty()
+                bell.isVisible =false
+//                bellAction.isVisible = false
             }
+            if (it.isNullOrEmpty()){
+                println(it)
+                val bellAction = bell.actionView
+                groupViewModel.Invites.observe(viewLifecycleOwner){result->
+                    println(result)
+                    if (!result.isNullOrEmpty()){
+                        bell.isVisible = true
+                        notificationBadge = bellAction.findViewById(R.id.badge) as NotificationBadge
+                        bellAction!!.setOnClickListener {
+
+                            Toast.makeText(requireContext(), "Notification USer Group UUID  ${result[0].GroupUUID}", Toast.LENGTH_SHORT).show()
+                            val bottomjoin = BottomJoinGroupFragment()
+                            bottomjoin.show(childFragmentManager,"Join Group")
+                        }
+                        notificationBadge!!.isVisible = true
+                        notificationBadge!!.setText("1")
+                    }
+                }
+            }
+
+
+
+
         }
+
+
+
+
+
+
+
+
+
 
 
         groupViewModel.UsersGroupname.observe(viewLifecycleOwner){it->
+            println("Test Group "+ it[0].GroupUUID)
+
 
 
 
