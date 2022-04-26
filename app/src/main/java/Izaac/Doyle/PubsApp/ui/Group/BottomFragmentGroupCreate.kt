@@ -7,6 +7,8 @@ import Izaac.Doyle.PubsApp.Firebase.UploadImage
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.GroupModel
 import Izaac.Doyle.PubsApp.databinding.FragmentGroupCreateBinding
+import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -58,7 +60,10 @@ class BottomFragmentGroupCreate:BottomSheetDialogFragment() {
                         binding.GroupNameAdd.text.toString().trim(),
                         ArrayList()
                     )
-                )
+                ,
+                    CheckCurrentUser()!!.uid,
+                    requireActivity().getSharedPreferences(CheckCurrentUser()!!.uid, Context.MODE_PRIVATE).getString("Username", "")
+                        .toString())
                 if (ImageUri != null){
                     UploadImage(CheckCurrentUser()!!.uid,ImageUri!!,"GroupImage")
                 }

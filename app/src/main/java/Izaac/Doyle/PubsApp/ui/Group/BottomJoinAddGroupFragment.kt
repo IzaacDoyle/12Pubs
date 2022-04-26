@@ -109,7 +109,9 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment(), ProfileClickListen
                 Toast.makeText(requireContext(), "Please Select A User to Add", Toast.LENGTH_SHORT).show()
             }else{
                 AddUserToGroup(account!!,
-                    groupViewModel.gNames.value?.get(0)?.OwnerUUID.toString(),requireContext(),requireDialog()
+                    groupViewModel.gNames.value?.get(0)?.OwnerUUID.toString(),requireContext(),requireDialog(),
+                    Extra = true,
+                    IsAdmin = false
                     )
 
             }

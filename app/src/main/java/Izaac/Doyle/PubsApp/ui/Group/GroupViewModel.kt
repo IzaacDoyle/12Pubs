@@ -38,7 +38,7 @@ class GroupViewModel : ViewModel() {
 
    fun getUserGroup(UUID: String){
 
-         db.collection("Groups").document(CUuid)
+         db.collection("Groups").document(UUID)
              .addSnapshotListener { snapshot, error ->
                  Log.d("GVM snapshot", "$snapshot")
                  if (error != null) {

@@ -26,6 +26,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.net.CacheResponse
 import java.util.*
 import java.util.prefs.Preferences
 import kotlin.collections.ArrayList
@@ -169,24 +170,55 @@ fun random(ruleNum: String?):Int{
 
 }
 
-fun AddUserToGroup(accountModel: FBAccountNameModel,UUid: String,context: Context,dialog: Dialog){
+fun AddUserToGroup(accountModel: FBAccountNameModel,UUid: String,context: Context?,dialog: Dialog?,Extra:Boolean,IsAdmin:Boolean){
     val db = Firebase.firestore
 
     val UserAdd = hashMapOf(
         "User" to accountModel.UserUUID,
         "UserName" to accountModel.Username,
-        "UserPending" to true
+        "UserPending" to Extra,
+        "IsAdmin" to IsAdmin
     )
     //do if Exists
     db.collection("Groups").document(UUid).collection("Users").document(accountModel.Username)
         .set(UserAdd, SetOptions.merge())
         .addOnSuccessListener {
-            CreatePendingAdd(UUid,accountModel.UserUUID)
-            Toast.makeText(context, "${accountModel.Username} has been added to the group", Toast.LENGTH_SHORT)
-                .show()
-            dialog.dismiss()
+
+           if (Extra) {
+               CreatePendingAdd(UUid,accountModel.UserUUID)
+               Toast.makeText(
+                   context,
+                   "${accountModel.Username} has been added to the group",
+                   Toast.LENGTH_SHORT
+               )
+                   .show()
+               dialog?.dismiss()
+           }
         }
 
+}
+fun InviteResponce(GroupUUID: String,Username: String,userUUID: String,response: Boolean) {
+    val db = Firebase.firestore
+
+    if (response) {
+        println(Username)
+        db.collection("Groups").document(GroupUUID).collection("Users")
+            .document(Username)
+            .update("UserPending", false)
+            .addOnSuccessListener {
+                db.collection("PendingInvitation").document(userUUID).delete()
+                    .addOnSuccessListener { Log.d("Delete Invitation", "DocumentSnapshot successfully deleted!") }
+            }
+            .addOnFailureListener { it->
+                Log.d("ResponceFailed",it.message.toString())
+            }
+    }else if (!response){
+        db.collection("Groups").document(GroupUUID).collection("Users").document(Username).delete()
+            .addOnSuccessListener {
+                db.collection("PendingInvitation").document(userUUID).delete()
+                    .addOnSuccessListener { Log.d("Delete Invitation", "DocumentSnapshot successfully deleted!") }
+            }
+    }
 }
 
 fun CreatePendingAdd(GroupUUID:String,NewUserUUID:String){
@@ -204,20 +236,29 @@ fun CreatePendingAdd(GroupUUID:String,NewUserUUID:String){
 
 }
 
-    fun FBCreateGroup(groupModel: GroupModel) {
+
+
+    fun FBCreateGroup(groupModel: GroupModel,Username:String?,UUid: String?) {
         val db = Firebase.firestore
 
         val GroupDB = hashMapOf(
             "OwnerUUID" to groupModel.OwnerUUID,
             "GroupName" to groupModel.GroupName,
-
-
-
             )
 
         db.collection("Groups").document(groupModel.OwnerUUID)
             .set(GroupDB)
             .addOnSuccessListener {
+                if (!Username.isNullOrBlank()) {
+                    AddUserToGroup(
+                        FBAccountNameModel(UUid!!, Username, "", "", ""),
+                        UUid,
+                        null,
+                        null,
+                        Extra = false,
+                        IsAdmin = true
+                    )
+                }
                 RandomRules(groupModel.OwnerUUID)
                 Log.d("FirestoreDB", "DB created for groups")
             }

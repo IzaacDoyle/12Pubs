@@ -14,6 +14,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -65,7 +66,6 @@ class GroupsFragment : Fragment(), onDataPasser {
                        Log.d("Group",it.toString())
 
                     val firebaseImageReg = FirebaseStorage.getInstance().reference.child("${it[0].OwnerUUID}/GroupImage.jpg")
-
                     firebaseImageReg.downloadUrl.addOnSuccessListener { Uri ->
                         val imageURL = Uri.toString()
                         Glide.with(this).load(imageURL).into(binding.GroupImage)
@@ -183,9 +183,10 @@ class GroupsFragment : Fragment(), onDataPasser {
                         notificationBadge = bellAction.findViewById(R.id.badge) as NotificationBadge
                         bellAction!!.setOnClickListener {
 
-                            Toast.makeText(requireContext(), "Notification USer Group UUID  ${result[0].GroupUUID}", Toast.LENGTH_SHORT).show()
+//                            Toast.makeText(requireContext(), "Notification USer Group UUID  ${result[0].GroupUUID}", Toast.LENGTH_SHORT).show()
                             val bottomjoin = BottomJoinGroupFragment()
-                            bottomjoin.show(childFragmentManager,"Join Group")
+                            bottomjoin.arguments = bundleOf("GroupUUID" to result[0].GroupUUID)
+                            bottomjoin.show(childFragmentManager,"JoinGroup")
                         }
                         notificationBadge!!.isVisible = true
                         notificationBadge!!.setText("1")
