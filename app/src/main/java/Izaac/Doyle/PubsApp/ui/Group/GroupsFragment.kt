@@ -55,6 +55,22 @@ class GroupsFragment : Fragment(), onDataPasser {
 
             // check if user has invitations on run when the screen is drawn and now always checking. Save app load wont check always but Firebase Functions could help with this
             groupViewModel.CheckInvitations(CheckCurrentUser()!!.uid)
+            groupViewModel.QrCodeScanSearch(CheckCurrentUser()!!.uid)
+
+
+            groupViewModel.qrcodeSearch.observe(viewLifecycleOwner){result->
+                if (result != null) {
+                    if (result.isNotEmpty()) {
+
+                        if (!result[0].Group.isNullOrBlank()) {
+                            println(result[0].Group.toString())
+                       groupViewModel.getUserGroup(result[0].Group.toString())
+                            println("Test " + result.toString())
+                            Log.d("GroupUUID From User", result[0].Group.toString())
+                        }
+                    }
+                }
+            }
 
 
 
@@ -210,7 +226,7 @@ class GroupsFragment : Fragment(), onDataPasser {
 
 
         groupViewModel.UsersGroupname.observe(viewLifecycleOwner){it->
-            println("Test Group "+ it[0].GroupUUID)
+//            println("Test Group "+ it[0].GroupUUID)
 
 
 
@@ -260,7 +276,7 @@ class GroupsFragment : Fragment(), onDataPasser {
     override fun AccountStatus(info: String, email: String) {
     }
 
-    override fun PassView(view: Activity) {
+    override fun PassView(view: Boolean) {
         println(view.toString())
 
 

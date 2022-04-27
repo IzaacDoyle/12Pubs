@@ -56,8 +56,6 @@ fun FBcreateDB(userUUID: String,username:String,userEmail:String) {
 
 fun FBGetDB(userUUID: String,activity: Activity){
     val db = Firebase.firestore
-
-
     db.collection("UserProfiles").document(userUUID)
         .get()
         .addOnSuccessListener { result ->
@@ -71,10 +69,7 @@ fun FBGetDB(userUUID: String,activity: Activity){
                 val datastore = activity.getSharedPreferences(userUUID,Context.MODE_PRIVATE)
                 val editor = datastore.edit()
                     //editor.putString("Email", result.data!!["Username"] as String?)
-
-
                     editor.putString("Username",result.data!!["Username"].toString())
-
                 //if group is empty wont local save
                     if (result.data!!["Group"].toString().isNotEmpty()) {
                         editor.putString("GroupName", result.data!!["Group"].toString())
@@ -97,11 +92,11 @@ fun FBUpdateDB(userUUID: String, username: String){
 
 }
 
-fun FBUserAddGroup(group:String,ownerUuid :String){
+fun FBUserAddGroup(groupUUID:String,ownerUuid :String){
     val db = Firebase.firestore
 
-    db.collection("UserProfiles").document(CheckCurrentUser()!!.uid)
-        .update("Group", group)
+    db.collection("UserProfiles").document(ownerUuid)
+        .update("Group", groupUUID)
 
 
 }
@@ -206,6 +201,7 @@ fun InviteResponce(GroupUUID: String,Username: String,userUUID: String,response:
             .document(Username)
             .update("UserPending", false)
             .addOnSuccessListener {
+                FBUserAddGroup(GroupUUID,userUUID)
                 db.collection("PendingInvitation").document(userUUID).delete()
                     .addOnSuccessListener { Log.d("Delete Invitation", "DocumentSnapshot successfully deleted!") }
             }
@@ -250,20 +246,13 @@ fun CreatePendingAdd(GroupUUID:String,NewUserUUID:String){
             .set(GroupDB)
             .addOnSuccessListener {
                 if (!Username.isNullOrBlank()) {
-                    AddUserToGroup(
-                        FBAccountNameModel(UUid!!, Username, "", "", ""),
-                        UUid,
-                        null,
-                        null,
-                        Extra = false,
-                        IsAdmin = true
-                    )
+                    AddUserToGroup(FBAccountNameModel(UUid!!, Username, "", "", ""), UUid, null, null, Extra = false, IsAdmin = true)
                 }
                 RandomRules(groupModel.OwnerUUID)
                 Log.d("FirestoreDB", "DB created for groups")
             }
 
-        FBUserAddGroup(groupModel.GroupName,groupModel.OwnerUUID)
+        FBUserAddGroup(groupModel.OwnerUUID,groupModel.OwnerUUID)
 
 
     }

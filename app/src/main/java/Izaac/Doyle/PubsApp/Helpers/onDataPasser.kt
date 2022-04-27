@@ -10,6 +10,6 @@ abstract interface onDataPasser {
    // fun passView(view:View)
    fun changeBottomSheet(sheetActive:String)
    fun AccountStatus(info:String,email:String)
-   fun PassView(view: Activity)
+   fun PassView(view: Boolean)
    // fun dialogBoxShare(dialog: Dialog)
 }

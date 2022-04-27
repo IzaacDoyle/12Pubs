@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         val createAccountBtn = navView.findViewById<LinearLayout>(R.id.Drawer_CreateA)
         val QRView = navView.menu[2].subMenu[1]
             QRView.setOnMenuItemClickListener {
-                QrCodeDispay(this)
+                QrCodeDispay(this,this)
 
                 true
             }
@@ -163,19 +163,6 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val searchBox = findViewById<ConstraintLayout>(R.id.searchBoxConstraint)
-
-//        if (!SearchActive){
-//            searchBox.visibility = View.GONE
-//        }
-
-//        if (item.isActionViewExpanded){
-//            searchBox.visibility = View.VISIBLE
-//        }
-//       item.collapseActionView()
-
-
-
 
         when (item.itemId) {
             R.id.settings_signout -> {
@@ -183,57 +170,6 @@ class MainActivity : AppCompatActivity(), onDataPasser {
                 app.account.SignOut(this)
             }
 
-//            R.id.GroupAddSearch->{
-
-//
-//                searchBox.visibility = View.VISIBLE
-
-//                searchBox.isVisible = !searchBox.isVisible
-
-
-
-//                searchBox.setOnFocusChangeListener { v, hasFocus ->
-//                    if (!hasFocus){
-//                        println("Test")
-////                        searchBox.visibility = View.GONE
-//                    }
-//                    if (hasFocus){
-//                        println("Test2")
-////                        searchBox.visibility = View.VISIBLE
-//                    }
-//                }
-
-
-//                searchBox.visibility = View.VISIBLE
-//
-//                if (!SearchActive){
-//                    Log.d("SearchActive", SearchActive.toString())
-//                    searchBox.visibility = View.VISIBLE
-//                }
-
-
-
-
-//                searchBox.visibility = View.VISIBLE
-//
-//                val search = findViewById<ActionMenuItemView>(R.id.GroupAddSearch)
-
-
-//                search.setOnFocusChangeListener { v, hasFocus ->
-//                    if (!hasFocus){
-//                        Log.d("SearchBoc","No Focus")
-//                        searchBox.visibility = View.GONE
-//                    }else{
-//                        Log.d("SearchBoc"," Focus")
-//                    }
-//                }
-//                .setOnFocusChangeListener { v, hasFocus ->
-//
-//                }
-
-               // Log.d("searchBox", searchBox.toString())
-
-//            }
 
         }
         return super.onOptionsItemSelected(item)
@@ -440,7 +376,13 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
     }
 
-    override fun PassView(view: Activity) {
+    override fun PassView(view: Boolean) {
+
+        if (view){
+            recreate()
+        }
+
+
     }
 }
 

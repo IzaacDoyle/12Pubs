@@ -2,6 +2,7 @@ package Izaac.Doyle.PubsApp.Helpers
 
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.R
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
@@ -12,7 +13,7 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
 
-public fun QrCodeDispay(context: Context){
+public fun QrCodeDispay(context: Context,activity: Activity){
 
     val view = View.inflate(context, R.layout.qrcode_dispay,null)
 
@@ -39,5 +40,10 @@ public fun QrCodeDispay(context: Context){
 
     }catch (e: WriterException){
         e.printStackTrace()
+    }
+
+    dialog.setOnDismissListener {
+        activity.recreate()
+
     }
 }

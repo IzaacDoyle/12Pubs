@@ -4,7 +4,9 @@ package Izaac.Doyle.PubsApp.ui.Group
 
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.Firebase.InviteResponce
+import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.R
+import Izaac.Doyle.PubsApp.activities.MainActivity
 import Izaac.Doyle.PubsApp.databinding.GroupJoiningGroupBinding
 import Izaac.Doyle.PubsApp.ui.home.GroupViewModel
 import android.content.Context
@@ -23,6 +25,7 @@ class BottomJoinGroupFragment:BottomSheetDialogFragment() {
 
     private var _binding: GroupJoiningGroupBinding? = null
     private val groupViewModel: GroupViewModel by viewModels()
+    lateinit var dataPasser : onDataPasser
 
     private val binding get() = _binding!!
     override fun onCreateView(
@@ -68,12 +71,27 @@ class BottomJoinGroupFragment:BottomSheetDialogFragment() {
                 InviteResponce(arguments?.getString("GroupUUID").toString(),requireActivity().getSharedPreferences(
                     CheckCurrentUser()!!.uid, Context.MODE_PRIVATE).getString("Username", "")
                     .toString(), CheckCurrentUser()!!.uid,true)
+                groupViewModel.getUserGroup(arguments?.getString("GroupUUID").toString())
+                arguments?.clear()
+                groupViewModel.Invitations.value!!.clear()
+                groupViewModel.Invites.value!!.clear()
+                dataPasser.PassView(true)
+                dismiss()
+
             }
 
             binding.joinDeclineGroup.setOnClickListener {
                 InviteResponce(arguments?.getString("GroupUUID").toString(),requireActivity().getSharedPreferences(
                     CheckCurrentUser()!!.uid, Context.MODE_PRIVATE).getString("Username", "")
                     .toString(), CheckCurrentUser()!!.uid,false)
+
+                arguments?.clear()
+                groupViewModel.Invitations.value!!.clear()
+                groupViewModel.Invites.value!!.clear()
+                dataPasser.PassView(true)
+
+                dismiss()
+
             }
 
 
@@ -98,6 +116,11 @@ class BottomJoinGroupFragment:BottomSheetDialogFragment() {
 
 
         return  root
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        dataPasser = context as onDataPasser
     }
 
 

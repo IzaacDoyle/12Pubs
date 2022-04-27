@@ -22,13 +22,15 @@ class GroupViewModel : ViewModel() {
     private var QrcodeSearch:  MutableLiveData<MutableList<FBAccountNameModel>> = MutableLiveData(ArrayList<FBAccountNameModel>())
     private var GooglePlaces: MutableLiveData<MutableList<GooglePlacesModel>> = MutableLiveData(ArrayList<GooglePlacesModel>())
     private var Rules:MutableLiveData<MutableList<RulesModel>> = MutableLiveData(ArrayList<RulesModel>())
-    private var Invitations:MutableLiveData<MutableList<InvitationsModel>> = MutableLiveData(ArrayList<InvitationsModel>())
+    var Invitations:MutableLiveData<MutableList<InvitationsModel>> = MutableLiveData(ArrayList<InvitationsModel>())
 
     init {
         db = FirebaseFirestore.getInstance()
         db.firestoreSettings = FirebaseFirestoreSettings.Builder().build()
         CUuid = CheckCurrentUser()!!.uid
         getUserGroup(CUuid)
+        CheckInvitations(CheckCurrentUser()!!.uid)
+        QrCodeScanSearch(CheckCurrentUser()!!.uid)
        // getGroupName()
 
     }
@@ -37,7 +39,7 @@ class GroupViewModel : ViewModel() {
     }
 
    fun getUserGroup(UUID: String){
-
+       println(UUID)
          db.collection("Groups").document(UUID)
              .addSnapshotListener { snapshot, error ->
                  Log.d("GVM snapshot", "$snapshot")
@@ -54,7 +56,7 @@ class GroupViewModel : ViewModel() {
                  }
                  //usergroupname = usergroup
                  GroupNames.value = usergroup
-                // Log.d("GVM final", "$usergroupname")
+                 Log.d("GVM final", "${GroupNames.value}")
              }
      }
 
@@ -114,10 +116,9 @@ class GroupViewModel : ViewModel() {
                         val groupUser = it.toObject(FBAccountNameModel::class.java)
                         Log.d("QrUser", groupUser.toString())
                         if (groupUser != null) {
-                            Log.d(
-                                "QrSearchProfile",
-                                groupUser.UserEmail + " " + groupUser.Username + " " + groupUser.UserUUID)
+                            Log.d("QrSearchProfile", groupUser.UserEmail + " " + groupUser.Username + " " + groupUser.UserUUID + " " + groupUser.Group)
                             profile.add(groupUser)
+
                         }
                     }
                     QrcodeSearch.value = profile
@@ -132,8 +133,8 @@ class GroupViewModel : ViewModel() {
     }
 
      fun Rules(rule: ArrayList<Int>){
+         Log.d("rulesList","TestRules" + rule.toString())
         val rules = mutableListOf<RulesModel>()
-         Log.d("RulesList",rule.toString())
         for (i in rule) {
             println("Rules $i")
             db.collection("PubRules").document(i.toString())
@@ -153,10 +154,8 @@ class GroupViewModel : ViewModel() {
                         Rules.value = rules
 
                     }
-
                 }
         }
-
     }
 
     fun CheckInvitations(UUID:String){

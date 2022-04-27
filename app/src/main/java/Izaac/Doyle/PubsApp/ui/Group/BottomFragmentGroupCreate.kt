@@ -54,16 +54,12 @@ class BottomFragmentGroupCreate:BottomSheetDialogFragment() {
 
             if (!binding.GroupNameAdd.text?.isEmpty()!!) {
                 app.group.CreateGroup(
-                    GroupModel(
-                        CheckCurrentUser()!!.uid,
-                        0,
-                        binding.GroupNameAdd.text.toString().trim(),
-                        ArrayList()
-                    )
-                ,
+                    GroupModel(CheckCurrentUser()!!.uid, 0, binding.GroupNameAdd.text.toString().trim(), ArrayList()),
                     CheckCurrentUser()!!.uid,
-                    requireActivity().getSharedPreferences(CheckCurrentUser()!!.uid, Context.MODE_PRIVATE).getString("Username", "")
-                        .toString())
+                    requireActivity().getSharedPreferences(CheckCurrentUser()!!.uid, Context.MODE_PRIVATE).getString("Username", "").toString())
+
+
+
                 if (ImageUri != null){
                     UploadImage(CheckCurrentUser()!!.uid,ImageUri!!,"GroupImage")
                 }

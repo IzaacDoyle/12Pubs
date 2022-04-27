@@ -367,7 +367,7 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
 
     }
 
-    override fun PassView(view: Activity) {
+    override fun PassView(view:Boolean) {
 
     }
 
