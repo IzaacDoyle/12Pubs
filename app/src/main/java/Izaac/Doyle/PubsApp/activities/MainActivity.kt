@@ -6,6 +6,7 @@ import Izaac.Doyle.PubsApp.Firebase.FBGetDB
 import Izaac.Doyle.PubsApp.Helpers.QrCodeDispay
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
+import Izaac.Doyle.PubsApp.Models.RulesModel
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.ActivityMainBinding
 import Izaac.Doyle.PubsApp.ui.BottomSheet.*
@@ -382,6 +383,10 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             recreate()
         }
 
+
+    }
+
+    override fun Rules(Rules: MutableList<RulesModel>) {
 
     }
 }

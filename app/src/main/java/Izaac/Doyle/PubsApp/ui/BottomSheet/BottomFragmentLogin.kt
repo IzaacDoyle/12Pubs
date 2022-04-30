@@ -8,6 +8,7 @@ import Izaac.Doyle.PubsApp.Firebase.FBcreateDB
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.AccountModel
+import Izaac.Doyle.PubsApp.Models.RulesModel
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.AccountBottomDialogBinding
 import android.app.Activity
@@ -368,6 +369,10 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
     }
 
     override fun PassView(view:Boolean) {
+
+    }
+
+    override fun Rules(Rules: MutableList<RulesModel>) {
 
     }
 

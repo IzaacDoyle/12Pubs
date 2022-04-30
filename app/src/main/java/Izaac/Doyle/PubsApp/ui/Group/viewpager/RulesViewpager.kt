@@ -3,7 +3,7 @@ package Izaac.Doyle.PubsApp.ui.Group.viewpager
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.Helpers.GroupRulesRecycleView
 import Izaac.Doyle.PubsApp.Helpers.RulesClickListener
-import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
+import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Models.RulesModel
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -13,23 +13,31 @@ import android.view.ViewGroup
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.ui.home.GroupViewModel
 import Izaac.Doyle.PubsApp.ui.pubs.BottomPubsInfoFragment
+import android.content.Context
 import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class RulesViewpager : Fragment(), RulesClickListener {
+
+
+class RulesViewpager() : Fragment(), RulesClickListener,onDataPasser{
 
     private val groupViewModel: GroupViewModel by viewModels()
-    lateinit var myRuleAdaptor: GroupRulesRecycleView
+    public lateinit var myRuleAdaptor: GroupRulesRecycleView
+    lateinit var dataPasser : onDataPasser
+
+
+
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+
+
         groupViewModel.QrCodeScanSearch(CheckCurrentUser()!!.uid)
 
 
@@ -56,16 +64,26 @@ class RulesViewpager : Fragment(), RulesClickListener {
             Log.d("RulesGNAME ",result.toString())
         }
 
-        groupViewModel.groupRule.observe(viewLifecycleOwner){it->
-            Log.d("Rules GroupRules",it.toString())
+        groupViewModel.groupRule.observe(viewLifecycleOwner) { it ->
 
-            val RuleRecycleView = view?.findViewById<RecyclerView>(R.id.group_RulesVote)
-
-            myRuleAdaptor = GroupRulesRecycleView(it,this)
-           // println("observer Rules ${}")
-            RuleRecycleView!!.layoutManager = LinearLayoutManager(requireContext())
-            RuleRecycleView.adapter = myRuleAdaptor
+            if (it.isNotEmpty()) {
+                Log.d("Rules GroupRules", it.toString())
+                val RuleRecycleView = view?.findViewById<RecyclerView>(R.id.group_RulesVote)
+                myRuleAdaptor = GroupRulesRecycleView(it, this)
+                // println("observer Rules ${}")
+                RuleRecycleView!!.layoutManager = LinearLayoutManager(requireContext())
+                RuleRecycleView.adapter = myRuleAdaptor
+            }else{
+                it.clear()
+                val RuleRecycleView = view?.findViewById<RecyclerView>(R.id.group_RulesVote)
+                myRuleAdaptor = GroupRulesRecycleView(it, this)
+                // println("observer Rules ${}")
+                RuleRecycleView!!.layoutManager = LinearLayoutManager(requireContext())
+                RuleRecycleView.adapter = myRuleAdaptor
+            }
         }
+
+
 
 
 
@@ -81,6 +99,32 @@ class RulesViewpager : Fragment(), RulesClickListener {
             "3" to rules.RuleDescription
         )
         bottomFragment.show(childFragmentManager, "Rules Info")
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+    }
+
+
+    override fun onAttach(context: Context) {
+        dataPasser = context as onDataPasser
+        super.onAttach(context)
+    }
+
+    override fun changeBottomSheet(sheetActive: String) {
+    }
+
+    override fun AccountStatus(info: String, email: String) {
+    }
+
+    override fun PassView(view: Boolean) {
+    }
+
+    override fun Rules(Rules: MutableList<RulesModel>) {
+        if (Rules.isNotEmpty()) {
+
+        }
     }
 
 

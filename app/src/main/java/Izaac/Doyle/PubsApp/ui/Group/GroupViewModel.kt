@@ -2,27 +2,25 @@ package Izaac.Doyle.PubsApp.ui.home
 
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.Models.*
-
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.firebase.ui.auth.data.model.User
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlin.collections.ArrayList
-import kotlin.coroutines.coroutineContext
 
 class GroupViewModel : ViewModel() {
     private lateinit var db: FirebaseFirestore
     private lateinit var CUuid:String
-    private var GroupNames: MutableLiveData<ArrayList<GroupModel>> = MutableLiveData<ArrayList<GroupModel>>()
+    var GroupNames: MutableLiveData<ArrayList<GroupModel>> = MutableLiveData<ArrayList<GroupModel>>()
     private var Username: MutableLiveData<ArrayList<FBAccountNameModel>> = MutableLiveData<ArrayList<FBAccountNameModel>>()
     private var QrcodeSearch:  MutableLiveData<MutableList<FBAccountNameModel>> = MutableLiveData(ArrayList<FBAccountNameModel>())
     private var GooglePlaces: MutableLiveData<MutableList<GooglePlacesModel>> = MutableLiveData(ArrayList<GooglePlacesModel>())
-    private var Rules:MutableLiveData<MutableList<RulesModel>> = MutableLiveData(ArrayList<RulesModel>())
+    var Rules:MutableLiveData<MutableList<RulesModel>> = MutableLiveData(ArrayList<RulesModel>())
     var Invitations:MutableLiveData<MutableList<InvitationsModel>> = MutableLiveData(ArrayList<InvitationsModel>())
+    private var GroupUsersList:MutableLiveData<MutableList<GroupUserModel>> = MutableLiveData(ArrayList<GroupUserModel>())
+    private var placesList: MutableLiveData<MutableList<GooglePlacesModel>> = MutableLiveData(ArrayList<GooglePlacesModel>())
+    private var GroupsPlaces: MutableLiveData<MutableList<GooglePlacesModel>> = MutableLiveData(ArrayList<GooglePlacesModel>())
 
     init {
         db = FirebaseFirestore.getInstance()
@@ -31,11 +29,18 @@ class GroupViewModel : ViewModel() {
         getUserGroup(CUuid)
         CheckInvitations(CheckCurrentUser()!!.uid)
         QrCodeScanSearch(CheckCurrentUser()!!.uid)
+
        // getGroupName()
 
     }
     override fun onCleared() {
         super.onCleared()
+    }
+
+    fun Update(){
+        getUserGroup(CUuid)
+        CheckInvitations(CUuid)
+        QrCodeScanSearch(CUuid)
     }
 
    fun getUserGroup(UUID: String){
@@ -58,7 +63,28 @@ class GroupViewModel : ViewModel() {
                  GroupNames.value = usergroup
                  Log.d("GVM final", "${GroupNames.value}")
              }
+
      }
+
+    fun CheckGroupAdmin(UUID: String){
+        val db = Firebase.firestore
+        val GroupUsers = ArrayList<GroupUserModel>()
+
+        db.collection("Groups").document(UUID).collection("Users").document(CheckCurrentUser()!!.uid).get()
+            .addOnSuccessListener {it->
+                if (it != null){
+                    val groupusers = it.toObject(GroupUserModel::class.java)
+                    if (groupusers != null){
+                        Log.d("CheckAdmin","$UUID Is Admin $it")
+                        GroupUsers.add(groupusers)
+                    }
+                }
+                GroupUsersList.value = GroupUsers
+            }
+
+
+
+    }
 
     //search someting to get marks
 
@@ -124,13 +150,63 @@ class GroupViewModel : ViewModel() {
                     QrcodeSearch.value = profile
                 }
             }
+
     }   
 
     fun PubsOverseve(GroupCode:GroupViewModel){
         val pubs = mutableListOf<GooglePlacesModel>()
-      //  db.collection("Groups")
+//      db.collection("Groups")
+    }
+
+
+    fun getUsersPubsList(){
+        val db = Firebase.firestore
+        val placeList= ArrayList<GooglePlacesModel>()
+
+        db.collection("UserProfiles").document(CUuid).collection("Places").get()
+            .addOnSuccessListener {places->
+                if (places != null){
+
+                    if (!places.isEmpty){
+                        val document = places.documents
+                        document.forEach {
+                            Log.d("Places", it.toString())
+                            val place = it.toObject(GooglePlacesModel::class.java)
+                            if (place != null) {
+                                placeList.add(place)
+                            }
+                        }
+                    }
+                }
+                placesList.value = placeList
+            }
 
     }
+
+    fun getGroupPlaces(GroupOwner:String){
+        val db = Firebase.firestore
+        val placeList= ArrayList<GooglePlacesModel>()
+
+        db.collection("Groups").document(GroupOwner).collection("Pubs").get()
+            .addOnSuccessListener {places->
+                if (places != null){
+
+                    if (!places.isEmpty){
+                        val document = places.documents
+                        document.forEach {
+                            Log.d("Places", it.toString())
+                            val place = it.toObject(GooglePlacesModel::class.java)
+                            if (place != null) {
+                                placeList.add(place)
+                            }
+                        }
+                    }
+                }
+                GroupsPlaces.value = placeList
+            }
+
+    }
+
 
      fun Rules(rule: ArrayList<Int>){
          Log.d("rulesList","TestRules" + rule.toString())
@@ -174,7 +250,18 @@ class GroupViewModel : ViewModel() {
 
     }
 
+    internal var groupPlaces :MutableLiveData<MutableList<GooglePlacesModel>>
+        get(){return GroupsPlaces}
+        set(value){GroupsPlaces = value}
 
+    internal var Places :MutableLiveData<MutableList<GooglePlacesModel>>
+        get(){return placesList}
+        set(value){placesList = value}
+
+
+    internal var GUsers:MutableLiveData<MutableList<GroupUserModel>>
+        get(){return GroupUsersList}
+        set(value){GroupUsersList = value}
 
 
 

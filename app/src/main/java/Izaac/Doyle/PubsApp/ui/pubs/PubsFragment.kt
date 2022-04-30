@@ -183,15 +183,15 @@ class PubsFragment : Fragment(), PubsClickListener {
     override fun onPubsClicked(pubs: GooglePlacesModel) {
 
         Log.d("Pubs Click", pubs.toString())
-        if (pubs.ID == "0"){
+        if (pubs.PubsID == "0"){
             Toast.makeText(requireContext(), "Please Log in to Gain full range of Features", Toast.LENGTH_LONG).show()
         }else{
             val bottomFragment = BottomPubsInfoFragment()
             bottomFragment.arguments = bundleOf(
-                "1" to pubs.Name,
-                "2" to pubs.PhoneNumber,
-                "3" to pubs.Address,
-                "4" to pubs.OpeningHours
+                "1" to pubs.PubName,
+                "2" to pubs.PubPhoneNum,
+                "3" to pubs.PubAddress,
+                "4" to pubs.PubOpeningHours
                         )
 //            bottomFragment.arguments = bundleOf("PubNumber" to pubs.PhoneNumber)
 //            bottomFragment.arguments = bundleOf("PubAddress" to pubs.Address)

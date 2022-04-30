@@ -16,7 +16,6 @@ import com.google.zxing.qrcode.QRCodeWriter
 public fun QrCodeDispay(context: Context,activity: Activity){
 
     val view = View.inflate(context, R.layout.qrcode_dispay,null)
-
     val builder = AlertDialog.Builder(context)
     builder.setView(view)
     val dialog = builder.create()

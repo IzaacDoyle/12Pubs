@@ -6,7 +6,7 @@
         android:id="@+id/Group_join"
         android:icon="@drawable/ic_group_invite"
         android:title="Item"
-        android:visible="false"
+        android:visible="true"
 
         app:actionLayout="@layout/notification_bell"
         app:showAsAction="always" />
@@ -21,4 +21,10 @@
         android:icon="@drawable/ic_addgroup"
         android:title="Create Group"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/Leave_Group"
+        android:icon="@drawable/ic_group_leave"
+        android:title="Leave Group"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
 </menu>

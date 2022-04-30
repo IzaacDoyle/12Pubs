@@ -52,8 +52,8 @@ class PubsRecycelerView constructor(private val pubs:ArrayList<GooglePlacesModel
             Log.d("RecyclerView",pubs.toString())
             val position = layoutPosition +1
             itemView.findViewById<TextView>(R.id.places_number_selected).text = position.toString()
-            itemView.findViewById<TextView>(R.id.places_location_name).text = pubs.Name
-            itemView.findViewById<TextView>(R.id.places_location_address).text = pubs.Address
+            itemView.findViewById<TextView>(R.id.places_location_name).text = pubs.PubName
+            itemView.findViewById<TextView>(R.id.places_location_address).text = pubs.PubAddress
 
 
 

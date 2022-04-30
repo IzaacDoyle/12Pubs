@@ -16,7 +16,7 @@ interface  RulesClickListener{
     fun onRulesClicked(rules: RulesModel)
 }
 
-class GroupRulesRecycleView(private val rule: MutableList<RulesModel>, private val listener: RulesClickListener): RecyclerView.Adapter<GroupRulesRecycleView.ViewHolder>() {
+class GroupRulesRecycleView(private val rule: MutableList<RulesModel>?, private val listener: RulesClickListener): RecyclerView.Adapter<GroupRulesRecycleView.ViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -55,11 +55,11 @@ class GroupRulesRecycleView(private val rule: MutableList<RulesModel>, private v
 
 
     override fun onBindViewHolder(holder: GroupRulesRecycleView.ViewHolder, position: Int) {
-            holder.bindAccounts(rule[position],listener)
+            holder.bindAccounts(rule?.get(position)!!,listener)
     }
 
     override fun getItemCount(): Int {
-        return rule.size
+        return rule?.size ?:0
     }
 
 

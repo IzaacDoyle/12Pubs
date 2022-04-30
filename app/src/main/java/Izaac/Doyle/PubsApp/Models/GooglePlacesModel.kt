@@ -11,14 +11,16 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class GooglePlacesModel(
-    var ID: String?,
-    var Name:String?,
-    var LocationLat: Double? ,
-    var LocationLng: Double?,
-    var Address:String?,
+    var PubsID: String?,
+    var PubName:String?,
+    var PubLat: Double? ,
+    var PubLng: Double?,
+    var PubAddress:String?,
     //Google Places Requires String
-    var PhoneNumber: String?,
-    var OpeningHours: MutableList<String>?
+    var PubPhoneNum: String?,
+    var PubOpeningHours: MutableList<String>?
 
-) : Parcelable
+) : Parcelable{
+    constructor():this("","",0.0,0.0,"","", mutableListOf())
+}
 

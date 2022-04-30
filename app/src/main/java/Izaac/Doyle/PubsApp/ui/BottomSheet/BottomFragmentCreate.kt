@@ -4,6 +4,7 @@ package Izaac.Doyle.PubsApp.ui.BottomSheet
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.AccountModel
+import Izaac.Doyle.PubsApp.Models.RulesModel
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.activities.MainActivity
 import Izaac.Doyle.PubsApp.databinding.AccountCreateBottomDialogBinding
@@ -283,7 +284,6 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
     }
 
     override fun changeBottomSheet(sheetActive: String) {
-        TODO("Not yet implemented")
     }
 
     override fun AccountStatus(info: String, email: String) {
@@ -298,6 +298,10 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
     }
 
     override fun PassView(view: Boolean) {
+
+    }
+
+    override fun Rules(Rules: MutableList<RulesModel>) {
 
     }
 

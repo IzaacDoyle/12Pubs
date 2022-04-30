@@ -1,5 +1,6 @@
 package Izaac.Doyle.PubsApp.Helpers
 
+import Izaac.Doyle.PubsApp.Models.RulesModel
 import android.app.Activity
 import android.app.Dialog
 import android.view.View
@@ -11,5 +12,6 @@ abstract interface onDataPasser {
    fun changeBottomSheet(sheetActive:String)
    fun AccountStatus(info:String,email:String)
    fun PassView(view: Boolean)
+   fun Rules(Rules: MutableList<RulesModel>)
    // fun dialogBoxShare(dialog: Dialog)
 }

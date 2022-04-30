@@ -20,7 +20,7 @@ import com.google.firebase.auth.*
 
 
 fun FBReAuth(Email:String,password:String,info:String,activity: Activity){
-var dataPasser:onDataPasser
+    var dataPasser:onDataPasser
     val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     firebaseAuth.currentUser!!.reauthenticate(EmailAuthProvider.getCredential(Email,password)).addOnCompleteListener {task ->
         if (task.isSuccessful){
