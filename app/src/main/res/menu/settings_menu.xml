@@ -21,7 +21,9 @@
             </menu>
 
         </item>
-        <item android:title="QR Codes">
+        <item
+            android:title="QR Codes"
+            android:visible="false">
             <menu>
                 <item
                     android:icon="@mipmap/qr_icon_12pubs_foreground"

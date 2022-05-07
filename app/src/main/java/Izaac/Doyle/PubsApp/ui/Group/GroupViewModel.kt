@@ -5,6 +5,7 @@ import Izaac.Doyle.PubsApp.Models.*
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.firebase.ui.auth.data.model.User
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -224,8 +225,14 @@ class GroupViewModel : ViewModel() {
                         }
                     }
                     if (rules.size == 14) {
-                        //need to filter list to be in order of rule<Int>
+                        //filter list to be in order of rule<Int>
+
+                        val hash = rule.withIndex().associateTo(HashMap()){it.value.toString() to it.index}
+                        rules.sortBy { hash[it.RuleID] }
+
                         Rules.value = rules
+
+
 
                     }
                 }

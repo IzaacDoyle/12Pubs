@@ -41,6 +41,7 @@ class MapsFragment : Fragment() {
     private val firebaseloggedin : FirebaseLoggedIn by activityViewModels()
 
 
+    lateinit var toggle: SwitchCompat
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -122,6 +123,14 @@ class MapsFragment : Fragment() {
         item.setActionView(R.layout.togglelayout)
         val toggle: SwitchCompat = item.actionView.findViewById(R.id.toggle_groups)
         toggle.isChecked = false
+        firebaseloggedin.AccountObservable.observe(viewLifecycleOwner) { profile ->
+            if (profile.isNotEmpty()){
+                if (profile[0].Group.isNullOrBlank()){
+                    toggle.isChecked = true
+                }
+            }
+        }
+
 
         toggle.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -191,6 +200,7 @@ class MapsFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
+
         if (CheckCurrentUser() != null){
 
             firebaseloggedin.getAccount(CheckCurrentUser()!!.uid)
@@ -204,7 +214,6 @@ class MapsFragment : Fragment() {
             groupsViewModel.gNames.observe(viewLifecycleOwner) { it ->
                 if (it !=null) {
                     if (it.isNotEmpty()) {
-
                         groupsViewModel.getGroupPlaces(it[0].OwnerUUID)
                     }
                 }
