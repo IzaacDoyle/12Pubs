@@ -97,6 +97,15 @@ fun FBUpdateDB(userUUID: String, username: String){
 
 }
 
+fun FBUpdateGroup(groupUUID:String, GroupName:String){
+    val db = Firebase.firestore
+
+    db.collection("Groups").document(groupUUID)
+        .update("GroupName", GroupName)
+
+
+}
+
 fun FBUserAddGroup(groupUUID:String,ownerUuid :String){
     val db = Firebase.firestore
 
@@ -106,11 +115,6 @@ fun FBUserAddGroup(groupUUID:String,ownerUuid :String){
 
 }
 
-fun FbGetGroupImage(UUid:String,ImageType: String){
-    val storageRef =   FirebaseStorage.getInstance().reference
-    val task = storageRef.child("$UUid/$ImageType.jpg")
-
-}
 
 
  fun RandomRules(UUid: String){

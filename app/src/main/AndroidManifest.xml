@@ -18,9 +18,9 @@
     <application
         android:name=".Main.MainApp"
 
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_12pubs_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/ic_12pubs_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.12Pubs"
         android:allowBackup="false">
@@ -59,9 +59,7 @@
 
         </activity>
 
-        <activity android:name=".activities.RuleAdd">
 
-        </activity>
 
     </application>
 

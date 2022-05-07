@@ -5,6 +5,7 @@ import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.Firebase.FBGetDB
 import Izaac.Doyle.PubsApp.Helpers.QrCodeDispay
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
+import Izaac.Doyle.PubsApp.Helpers.setTheme
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.RulesModel
 import Izaac.Doyle.PubsApp.R
@@ -19,6 +20,7 @@ import Izaac.Doyle.PubsApp.ui.Maps.MapsViewModel
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
@@ -77,7 +79,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.appBarMain.toolbar)
@@ -97,6 +99,52 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         )
 
 
+        binding.navView.menu[3].setOnMenuItemClickListener {
+            val view = View.inflate(this, R.layout.daynightmode_toggle,null)
+            val builder = AlertDialog.Builder(this)
+            builder.setView(view)
+            val dialog = builder.create()
+            dialog.show()
+//            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+            val day = view.findViewById<CheckBox>(R.id.DayMode_toggle)
+            val night = view.findViewById<CheckBox>(R.id.NightMode_toggle)
+            val default = view.findViewById<CheckBox>(R.id.SystemDefaultMode_toggle)
+
+            when (this.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+                Configuration.UI_MODE_NIGHT_YES -> { night.isChecked = true}
+                Configuration.UI_MODE_NIGHT_NO -> { day.isChecked = true}
+                Configuration.UI_MODE_NIGHT_UNDEFINED -> {default.isChecked = true}
+            }
+
+
+            day.setOnCheckedChangeListener{button, b->
+                if (b){
+                    setTheme("day")
+                    dialog.dismiss()
+                }
+            }
+            night.setOnCheckedChangeListener{button, b->
+                if (b){
+                    setTheme("night")
+                    dialog.dismiss()
+                }
+            }
+            default.setOnCheckedChangeListener{button, b->
+                if (b){
+                    setTheme("default")
+                    dialog.dismiss()
+                }
+            }
+
+
+
+
+
+
+
+            true
+        }
 
 
 
@@ -114,16 +162,6 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             binding.navView.menu[2].isEnabled = true
             binding.navView.menu[1].subMenu[1].isVisible = true
             FBGetDB(CheckCurrentUser()!!.uid, this)
-
-
-
-
-
-
-
-
-
-
 
         }
         val loginBtn = navView.findViewById<LinearLayout>(R.id.Drawer_Login)

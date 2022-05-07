@@ -85,8 +85,9 @@
  <group android:checkableBehavior="none">
   <item
       android:checkable="false"
-      android:enabled="false"
-      android:title="" />
+      android:enabled="true"
+      android:icon="@drawable/ic_baseline_mode_night_24"
+      android:title="Toggle Day Night" />
  </group>
 
 

@@ -10,6 +10,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.core.os.bundleOf
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -47,19 +48,6 @@ class SettingsFragment: Fragment() {
 
 
 
-//        binding.navviewMenuitems.menu[2].subMenu[0].setOnMenuItemClickListener {
-//            when(it.isCheckable){
-//                true->{
-//                    app.account.SignOut(requireActivity())
-//                    true
-//                }
-//                false->{
-//
-//                    true
-//                }
-//            }
-//        }
-
         binding.navviewMenuitems.menu[2].subMenu[1].setOnMenuItemClickListener {
 
             //SignOut
@@ -91,45 +79,6 @@ class SettingsFragment: Fragment() {
 
 
 
-//                    bottomFragment.arguments = bundleOf("relogin" to "deleteLogin")
-//                    bottomFragment.show(childFragmentManager, "Bottom Login")
-
-
-
-                   // dataPasser.dialogBoxShare(dialog)
-//                    var dialog:Dialog = Dialog(requireContext())
-//                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-//                    dialog.setCancelable(false)
-//                    dialog.setContentView(R.layout.custom_delete_dialogbox)
-//                    val textbox = dialog.findViewById<EditText>(R.id.dialog_password_box)
-//                    //textbox.hint = CheckCurrentUser()!!.email
-//                    val cancelBtn = dialog.findViewById<Button>(R.id.dialog_cancel)
-//                    val confirmbtn = dialog.findViewById<Button>(R.id.dialog_confirm)
-//
-//                    //Need to login again
-//                    cancelBtn.setOnClickListener {
-//                        dialog.dismiss()
-//                    }
-//                    confirmbtn.setOnClickListener {
-//                        textbox.clearFocus()
-//                        if (!textbox.text.toString().isEmpty()){
-//                            textbox.error = null
-//                            val navController = Navigation.findNavController(requireActivity(),
-//                                R.id.nav_host_fragment_content_main)
-//                            navController.navigate(R.id.nav_home)
-//                            app.account.ReAuth(CheckCurrentUser()!!.email.toString(),textbox.toString(),"Delete",requireActivity())
-////                            app.account.AccountDelete(requireActivity(),dialog)
-//                            dialog.dismiss()
-//                        }else{
-//                            textbox.restoreDefaultFocus()
-//                            textbox.error
-//                            // textbox.error = "Email Does not match"
-//                        }
-//                    }
-
-                    //start up the login again to verify, and then after display dialog box to confirm
-
-
                     true
                 }
                 else -> {true }
@@ -140,27 +89,13 @@ class SettingsFragment: Fragment() {
 
 
 
-
-
-
-
-
-
-
-//        Log.d("reAuthSettings","${MainActivity().reAuth}")
-//        when(MainActivity().reAuth){
-//            "true"->{
-//                Log.d("reAuthSettings","${MainActivity().reAuth}")
-//                //  dialog.show()
-//            }
-//        }
-
         binding.navviewMenuitems.menu[2].subMenu[0].setOnMenuItemClickListener {
             val settings = settings_update_info()
             when(it.itemId){
                 R.id.settings_update_account->{
 
                     if (!settings.isAdded) {
+                        settings.arguments = bundleOf("Delete" to "Delete")
                         settings.show(childFragmentManager, "Bottom Create")
                         settings.isHidden
                     }

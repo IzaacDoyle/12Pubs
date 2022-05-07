@@ -13,6 +13,7 @@ import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.FragmentGroupBinding
 import Izaac.Doyle.PubsApp.ui.BottomSheet.ViewSavedLocations
 import Izaac.Doyle.PubsApp.ui.Maps.MapsViewModel
+import Izaac.Doyle.PubsApp.ui.Settings.settings_update_info
 
 import Izaac.Doyle.PubsApp.ui.home.GroupViewModel
 import android.app.AlertDialog
@@ -265,25 +266,40 @@ class GroupsFragment : Fragment(), onDataPasser {
 
 
 
-        groupViewModel.gNames.observe(viewLifecycleOwner) { it ->
+        groupViewModel.gNames.observe(viewLifecycleOwner) { result ->
 
             val bell = menu.findItem(R.id.Group_join)
             val bellAction = bell.actionView
+
+
+            menu.findItem(R.id.group_update).setOnMenuItemClickListener {
+
+                val update = settings_update_info()
+                update.arguments = bundleOf("GroupUpdate" to "GroupUpdate",
+                    "GroupUUID" to result[0].OwnerUUID,
+                    "GroupName" to result[0].GroupName
+                    )
+                update.show(childFragmentManager,"Group Update")
+
+
+                true
+            }
 
 
             bellAction.setOnClickListener {
                 groupViewModel.CheckInvitations(CheckCurrentUser()!!.uid)
             }
 
-            if (!it.isNullOrEmpty()) {
-                menu.findItem(R.id.Create_group).isVisible = !it.isNotEmpty()
-                menu.findItem(R.id.AddToGroup).isVisible = it.isNotEmpty()
-                menu.findItem(R.id.Leave_Group).isVisible =it.isNotEmpty()
-                bell.isVisible = it.isEmpty()
-                bellAction.isVisible = it.isEmpty()
+            if (!result.isNullOrEmpty()) {
+                menu.findItem(R.id.Create_group).isVisible = !result.isNotEmpty()
+                menu.findItem(R.id.AddToGroup).isVisible = result.isNotEmpty()
+                menu.findItem(R.id.Leave_Group).isVisible =result.isNotEmpty()
+                menu.findItem(R.id.group_update).isVisible = result.isNotEmpty()
+                bell.isVisible = result.isEmpty()
+                bellAction.isVisible = result.isEmpty()
             }
-            if (it.isNullOrEmpty()){
-                println(it)
+            if (result.isNullOrEmpty()){
+                println(result)
 
                 groupViewModel.Invites.observe(viewLifecycleOwner){result->
                     println(result)
