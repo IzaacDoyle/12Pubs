@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/GroupImage"
-        android:layout_width="241dp"
-        android:layout_height="156dp"
+        android:layout_width="350dp"
+        android:layout_height="152dp"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

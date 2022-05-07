@@ -166,7 +166,6 @@ class GroupViewModel : ViewModel() {
         db.collection("UserProfiles").document(CUuid).collection("Places").get()
             .addOnSuccessListener {places->
                 if (places != null){
-
                     if (!places.isEmpty){
                         val document = places.documents
                         document.forEach {
@@ -190,7 +189,6 @@ class GroupViewModel : ViewModel() {
         db.collection("Groups").document(GroupOwner).collection("Pubs").get()
             .addOnSuccessListener {places->
                 if (places != null){
-
                     if (!places.isEmpty){
                         val document = places.documents
                         document.forEach {

@@ -191,6 +191,10 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment(), ProfileClickListen
         dataPasser = context as onDataPasser
     }
 
+    override fun onResume() {
+        myAdapter.notifyItemRemoved(0)
+        super.onResume()
+    }
     override fun onProfileClicked(accounts: FBAccountNameModel,itemView:View) {
         Log.d("AccountClicked",accounts.toString())
 

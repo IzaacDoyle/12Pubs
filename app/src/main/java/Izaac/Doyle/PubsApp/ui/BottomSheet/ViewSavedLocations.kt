@@ -1,6 +1,9 @@
 package Izaac.Doyle.PubsApp.ui.BottomSheet
 
 import Izaac.Doyle.PubsApp.Firebase.AddPlacesToGroup
+import Izaac.Doyle.PubsApp.Firebase.FBRealTimeDB
+import Izaac.Doyle.PubsApp.Firebase.FBRealTimeDB.removeLocation
+import Izaac.Doyle.PubsApp.Firebase.RemovePlacesFromGroup
 import Izaac.Doyle.PubsApp.Helpers.LocationRecycleView
 import Izaac.Doyle.PubsApp.Helpers.PlaceClickListener
 import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
@@ -32,7 +35,7 @@ class ViewSavedLocations:BottomSheetDialogFragment(),PlaceClickListener {
 
         if (requireArguments().containsKey("Places")){
             val RuleRecycleView = binding.viewSavedLocationRecyclerView
-            myRuleAdaptor = LocationRecycleView(requireArguments().getParcelableArrayList("Places"), null,this,requireContext())
+            myRuleAdaptor = LocationRecycleView(requireArguments().getParcelableArrayList("Places"), null,this,requireContext(),"LargeView")
             RuleRecycleView.layoutManager = LinearLayoutManager(requireContext())
             RuleRecycleView.adapter = myRuleAdaptor
         }
@@ -41,7 +44,12 @@ class ViewSavedLocations:BottomSheetDialogFragment(),PlaceClickListener {
             binding.actionButton.text = requireArguments().getString("Add")
         }
         if (requireArguments().containsKey("Remove")){
+            binding.textView7.text = "Remove Pubs From Group"
             binding.actionButton.text = requireArguments().getString("Remove")
+        }
+
+        binding.CancelButton.setOnClickListener {
+            dismiss()
         }
 
 
@@ -55,17 +63,24 @@ class ViewSavedLocations:BottomSheetDialogFragment(),PlaceClickListener {
 //            myRuleAdaptor.notifyItemChanged(position)
         val placesList:ArrayList<GooglePlacesModel> = ArrayList<GooglePlacesModel>()
         myRuleAdaptor.notifyDataSetChanged()
-
         placesList.add(place)
         if (requireArguments().containsKey("Add")) {
             binding.actionButton.setOnClickListener {
 //add
-                AddPlacesToGroup(placesList, requireArguments().getString("GroupOwner").toString())
+//                AddPlacesToGroup(placesList, requireArguments().getString("GroupOwner").toString(),myRuleAdaptor)
+                FBRealTimeDB.AddLocation(requireArguments().getString("GroupOwner").toString(),placesList)
+                myRuleAdaptor.notifyDataSetChanged()
+                dismiss()
             }
         }
         if (requireArguments().containsKey("Remove")) {
             binding.actionButton.setOnClickListener {
 //remove
+//                RemovePlacesFromGroup(placesList,requireArguments().getString("GroupOwner").toString(),myRuleAdaptor)
+                removeLocation(requireArguments().getString("GroupOwner").toString(),placesList)
+                myRuleAdaptor.notifyDataSetChanged()
+                dismiss()
+
             }
         }
 

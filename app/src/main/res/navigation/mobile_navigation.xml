@@ -18,7 +18,8 @@
             app:destination="@id/nav_pubs" />
         <action
             android:id="@+id/action_nav_home_to_nav_maps"
-            app:destination="@id/nav_maps" />
+            app:destination="@id/nav_maps"
+            app:popUpTo="@id/nav_maps" />
     </fragment>
 
     <fragment
@@ -31,7 +32,11 @@
         android:id="@+id/nav_maps"
         android:name="Izaac.Doyle.PubsApp.ui.Maps.MapsFragment"
         android:label="@string/menu_maps"
-        tools:layout="@layout/fragment_maps" />
+        tools:layout="@layout/fragment_maps">
+        <action
+            android:id="@+id/action_nav_maps_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
     <fragment
         android:id="@+id/nav_settings"
         android:name="Izaac.Doyle.PubsApp.ui.Settings.SettingsFragment"

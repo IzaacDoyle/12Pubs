@@ -1,5 +1,6 @@
 package Izaac.Doyle.PubsApp.Firebase
 
+import Izaac.Doyle.PubsApp.Helpers.LocationRecycleView
 import Izaac.Doyle.PubsApp.Models.AccountModel
 import Izaac.Doyle.PubsApp.Models.FBAccountNameModel
 import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
@@ -333,7 +334,7 @@ fun Leavegroup(groupModel: GroupModel,activity: Activity,groupViewModel: GroupVi
 
 }
 
-fun AddPlacesToGroup(placesModel: ArrayList<GooglePlacesModel>,GroupUUID: String){
+fun AddPlacesToGroup(placesModel: ArrayList<GooglePlacesModel>,GroupUUID: String,myRuleAdaptor: LocationRecycleView){
     val db = Firebase.firestore
     for (i in placesModel){
         val places = hashMapOf(
@@ -348,13 +349,22 @@ fun AddPlacesToGroup(placesModel: ArrayList<GooglePlacesModel>,GroupUUID: String
         db.collection("Groups").document(GroupUUID).collection("Pubs").document(i.PubName.toString())
             .set(places, SetOptions.merge())
             .addOnSuccessListener {
-
+                myRuleAdaptor.notifyDataSetChanged()
             }
     }
 }
 
-fun RemovePlacesFromGroup(placesModel: ArrayList<GooglePlacesModel>){
+fun RemovePlacesFromGroup(placesModel: ArrayList<GooglePlacesModel>,GroupUUID: String,myRuleAdaptor: LocationRecycleView){
+    val db = Firebase.firestore
+    for (i in placesModel){
+        db.collection("Groups").document(GroupUUID).collection("Pubs").document(i.PubName.toString()).delete()
+            .addOnSuccessListener {
+                Log.d("PubFromGroup","Pub Is removed from group ${i.PubName}")
+                myRuleAdaptor.notifyDataSetChanged()
+            }
 
+
+    }
 }
 
 

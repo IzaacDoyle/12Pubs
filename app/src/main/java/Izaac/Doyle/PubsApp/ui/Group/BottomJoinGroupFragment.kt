@@ -77,7 +77,7 @@ class BottomJoinGroupFragment:BottomSheetDialogFragment() {
                 groupViewModel.Invites.value!!.clear()
                 dataPasser.PassView(true)
                 groupViewModel.Update()
-                requireActivity().recreate()
+//                requireActivity().recreate()
                 dismiss()
 
             }
@@ -124,6 +124,8 @@ class BottomJoinGroupFragment:BottomSheetDialogFragment() {
         super.onAttach(context)
         dataPasser = context as onDataPasser
     }
+
+
 
 
 }

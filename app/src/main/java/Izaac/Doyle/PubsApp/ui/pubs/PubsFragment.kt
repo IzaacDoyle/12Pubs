@@ -2,27 +2,25 @@ package Izaac.Doyle.PubsApp.ui.pubs
 
 import Izaac.Doyle.PubsApp.BuildConfig
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
-import Izaac.Doyle.PubsApp.Firebase.savePlaceAsFav
 import Izaac.Doyle.PubsApp.Helpers.*
 import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
 import Izaac.Doyle.PubsApp.R
+import Izaac.Doyle.PubsApp.databinding.FragmentPubsBinding
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-
-import Izaac.Doyle.PubsApp.databinding.FragmentPubsBinding
-import android.annotation.SuppressLint
-import android.util.Log
 import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.core.os.persistableBundleOf
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
@@ -30,6 +28,9 @@ import com.google.android.libraries.places.api.model.RectangularBounds
 import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import java.lang.reflect.Type
+import java.util.*
+import kotlin.collections.ArrayList
 
 class PubsFragment : Fragment(), PubsClickListener {
 
@@ -64,8 +65,7 @@ class PubsFragment : Fragment(), PubsClickListener {
 
 
         if (Places.isInitialized()) {
-            val autocompleteFragment =
-                childFragmentManager.findFragmentById(R.id.placesSearch) as AutocompleteSupportFragment
+            val autocompleteFragment = childFragmentManager.findFragmentById(R.id.placesSearch) as AutocompleteSupportFragment
 
 
             val array2 = arrayListOf<GooglePlacesModel>()
@@ -77,26 +77,27 @@ class PubsFragment : Fragment(), PubsClickListener {
 
             autocompleteFragment.setCountry("IE")
             autocompleteFragment.setHint("Pubs")
-            autocompleteFragment.setTypeFilter(TypeFilter.CITIES)
+
+
             fusedLocationClient.lastLocation.addOnSuccessListener { Location ->
                 autocompleteFragment.setLocationBias(
                     RectangularBounds.newInstance(
-                        LatLngBounds(
-                            com.google.android.gms.maps.model.LatLng(
-                                Location.longitude + 0.001,
-                                Location.longitude + 0.001
-                            ),
-                            com.google.android.gms.maps.model.LatLng(
-                                Location.latitude - .01,
-                                Location.longitude - .01
-                            )
-                        )
+                        LatLng(Location.latitude-0.02,Location.longitude-0.02),
+                        LatLng(Location.latitude+0.02,Location.longitude+0.02)
+                    //0.01 is 1 km ish
+
                     )
                 )
+
+                Log.d("LocationBias",
+                    LatLng(Location.latitude-0.02,Location.longitude-0.02).toString() + "  " +LatLng(Location.latitude+0.02,Location.longitude+0.04).toString()
+                )
+
             }
 
-
             autocompleteFragment.setTypeFilter(TypeFilter.ESTABLISHMENT)
+
+
             autocompleteFragment.setPlaceFields(
                 listOf(
                     Place.Field.ID,
@@ -119,6 +120,7 @@ class PubsFragment : Fragment(), PubsClickListener {
                         "${place.name}, ${place.id}, ${place.latLng}, ${place.address}, ${place.openingHours} ${place.phoneNumber}"
                     )
                     val pubsModel = GooglePlacesModel(
+                        "",
                         place.id,
                         place.name,
                         place.latLng?.latitude,
@@ -157,7 +159,7 @@ class PubsFragment : Fragment(), PubsClickListener {
                         ItemTouchHelper(PlacesDragtoRearage(myAdapter, requireContext(), result))
                     itemTouchHelperMove.attachToRecyclerView(binding.pubsPlacesRecyclerView)
                 }else{
-                    myAdapter = PubsRecycelerView(arrayListOf(GooglePlacesModel("0","Your Local Pub",0.0,0.0,"made Easy to Find","0",null)), this)
+                    myAdapter = PubsRecycelerView(arrayListOf(GooglePlacesModel("","0","Your Local Pub",0.0,0.0,"made Easy to Find","0",null)), this)
                     binding.pubsPlacesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
                     binding.pubsPlacesRecyclerView.adapter = myAdapter
                 }

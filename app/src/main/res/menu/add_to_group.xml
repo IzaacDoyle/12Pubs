@@ -26,5 +26,5 @@
         android:icon="@drawable/ic_group_leave"
         android:title="Leave Group"
         android:visible="false"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>

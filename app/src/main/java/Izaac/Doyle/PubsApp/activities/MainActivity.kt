@@ -9,10 +9,13 @@ import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.RulesModel
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.ActivityMainBinding
+import Izaac.Doyle.PubsApp.databinding.FragmentHomeBinding
+import Izaac.Doyle.PubsApp.databinding.FragmentMapsBinding
 import Izaac.Doyle.PubsApp.ui.BottomSheet.*
 import Izaac.Doyle.PubsApp.ui.Group.BottomCameraFragment
 import Izaac.Doyle.PubsApp.ui.Group.BottomFragmentGroupCreate
 import Izaac.Doyle.PubsApp.ui.Group.BottomJoinAddGroupFragment
+import Izaac.Doyle.PubsApp.ui.Maps.MapsViewModel
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -23,6 +26,7 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -32,12 +36,15 @@ import androidx.core.view.get
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -50,9 +57,14 @@ import com.google.zxing.qrcode.QRCodeWriter
 class MainActivity : AppCompatActivity(), onDataPasser {
 
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
+    lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
+
+
+
+
+
 
 
     lateinit var dataPasser : onDataPasser
@@ -86,13 +98,10 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
 
 
-//<<<<<<< HEAD
-        //test
 
 
-        // if (CheckCurrentUser() != null) {
-        //   drawerLayout.findViewById<>()
-//=======
+
+
         if (CheckCurrentUser() == null) {
             binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone =
                 false
@@ -109,12 +118,14 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
 
 
-//>>>>>>> 4e3c07637217810eb2b9107dc18be93947d77770
+
+
+
+
+
+
+
         }
-
-
-//        val settingsBtn =
-//            navView.findViewById<androidx.appcompat.widget.LinearLayoutCompat>(R.id.drawer_setting)
         val loginBtn = navView.findViewById<LinearLayout>(R.id.Drawer_Login)
         val createAccountBtn = navView.findViewById<LinearLayout>(R.id.Drawer_CreateA)
         val QRView = navView.menu[2].subMenu[1]
@@ -123,19 +134,6 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
                 true
             }
-//        settingsBtn.setOnClickListener {
-//
-//            //if account avalable show Settings if not make it Gone
-//            // settings.visibility = View.GONE
-//
-//
-//            // val intent = Intent(this,SettingsActivity::class.java)
-//            //  startActivity(intent)
-//
-//            //Toast.makeText(applicationContext, "This Works", Toast.LENGTH_SHORT).show()
-//
-//            //Change Drawer from here
-//        }
 
         loginBtn.setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
