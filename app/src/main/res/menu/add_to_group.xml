@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/group_update"
+        android:icon="@drawable/ic_update_user_data"
+        android:title="Update Group"
+        android:visible="false"
+        app:showAsAction="always|collapseActionView|withText" />
+    <item
+        android:id="@+id/Group_join"
+        android:icon="@drawable/ic_group_invite"
+        android:title="Item"
+        android:visible="true"
+
+        app:actionLayout="@layout/notification_bell"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/AddToGroup"
+        android:icon="@drawable/ic_create_user"
+        android:title="Add to Group"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/Create_group"
+        android:icon="@drawable/ic_addgroup"
+        android:title="Create Group"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/Leave_Group"
+        android:icon="@drawable/ic_group_leave"
+        android:title="Leave Group"
+        android:visible="false"
+        app:showAsAction="always" />
+</menu>

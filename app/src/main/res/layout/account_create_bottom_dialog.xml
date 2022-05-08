@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="3dp"
+    android:layout_weight="2"
     android:background="@color/Background_color"
     android:gravity="center"
     android:orientation="vertical"
@@ -18,20 +19,20 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/Background_color"
+            android:gravity="center"
             android:orientation="vertical"
             android:padding="15dp"
-            android:gravity="center"
-            android:background="@color/Background_color"
 
             >
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/editTextTextMultiLine2"
+                    android:id="@+id/loginTopText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
@@ -47,7 +48,7 @@
 
                 <TextView
                     android:id="@+id/Login_Account"
-                    android:layout_width="63dp"
+                    android:layout_width="91dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0"
                     android:background="@null"
@@ -66,7 +67,7 @@
                     android:id="@+id/textView8"
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2" />
+                    android:layout_weight="3" />
 
             </LinearLayout>
 
@@ -89,7 +90,7 @@
                     android:layout_height="wrap_content"
                     android:background="@color/Background_color"
                     android:ems="10"
-                    android:inputType="text"
+                    android:inputType="text|textEmailAddress"
                     android:paddingStart="3dp"
                     android:paddingLeft="0dp"
                     app:hintEnabled="true" />
@@ -233,16 +234,17 @@
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.google.android.gms.common.SignInButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/Google_SignIn"
-                android:layout_width="250dp"
+                android:layout_width="240dp"
                 android:layout_height="wrap_content"
-                android:background="@color/Background_color"
+                android:background="@color/white"
                 android:fitsSystemWindows="false"
-                android:text="Continue with Google"
-                android:textAlignment="center">
+                android:text="Other SignIn methods"
+                android:textAlignment="center"
+                android:textColor="#000000">
 
-            </com.google.android.gms.common.SignInButton>
+            </androidx.appcompat.widget.AppCompatButton>
         </LinearLayout>
     </ScrollView>
 

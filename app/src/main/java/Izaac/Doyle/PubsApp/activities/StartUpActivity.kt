@@ -2,6 +2,7 @@ package Izaac.Doyle.PubsApp.activities
 
 import Izaac.Doyle.PubsApp.R
 import android.Manifest
+import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -12,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import kotlin.system.exitProcess
 
 class StartUpActivity: AppCompatActivity() {
     private val PERMISSIONS_GRANTED = 101
@@ -26,7 +28,7 @@ class StartUpActivity: AppCompatActivity() {
     }
 
     private fun requestPermissions(){
-        Toast.makeText(this, "Entered Permission Check", Toast.LENGTH_SHORT).show()
+       // Toast.makeText(this, "Entered Permission Check", Toast.LENGTH_SHORT).show()
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED
             &&
@@ -36,19 +38,22 @@ class StartUpActivity: AppCompatActivity() {
             &&
             ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) !=  PackageManager.PERMISSION_GRANTED
         ){
-            Toast.makeText(this, "Entered Permission Check 2", Toast.LENGTH_SHORT).show()
+         //   Toast.makeText(this, "Entered Permission Check 2", Toast.LENGTH_SHORT).show()
             ActivityCompat.requestPermissions(this, arrayOf(
+                //Manifest.permission.ACCESS_BACKGROUND_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.CAMERA ), PERMISSIONS_GRANTED)
 
 
         }else{
-            Toast.makeText(this, "Else Entered", Toast.LENGTH_SHORT).show()
+         //   Toast.makeText(this, "Else Entered", Toast.LENGTH_SHORT).show()
+
             Handler(Looper.getMainLooper()).postDelayed({
                 val intent = Intent(applicationContext, MainActivity::class.java)
                 startActivity(intent)
                 finish()
-            }, 1000)
+            }, 2000)
+//
         }
         return
     }
@@ -66,15 +71,18 @@ class StartUpActivity: AppCompatActivity() {
             for (i in grantResults.indices) {
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                     Log.d("Permissions", "${permissions[i]} Granted")
+
                     Handler(Looper.getMainLooper()).postDelayed({
                         val intent = Intent(applicationContext, MainActivity::class.java)
                         startActivity(intent)
                         finish()
-                    }, 1000)
-
-
+                    }, 2000)
+                }else{
+                    exitProcess(-1)
                 }
             }
+        }else{
+            exitProcess(-1)
         }
 
     }

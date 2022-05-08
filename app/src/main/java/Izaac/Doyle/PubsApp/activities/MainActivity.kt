@@ -1,63 +1,91 @@
 package Izaac.Doyle.PubsApp.activities
 
+
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+import Izaac.Doyle.PubsApp.Firebase.FBGetDB
+import Izaac.Doyle.PubsApp.Helpers.QrCodeDispay
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
-
-
+import Izaac.Doyle.PubsApp.Helpers.setTheme
 import Izaac.Doyle.PubsApp.Main.MainApp
-import Izaac.Doyle.PubsApp.Models.AccountModel
+import Izaac.Doyle.PubsApp.Models.RulesModel
 import Izaac.Doyle.PubsApp.R
+import Izaac.Doyle.PubsApp.databinding.ActivityMainBinding
+import Izaac.Doyle.PubsApp.databinding.FragmentHomeBinding
+import Izaac.Doyle.PubsApp.databinding.FragmentMapsBinding
+import Izaac.Doyle.PubsApp.ui.BottomSheet.*
+import Izaac.Doyle.PubsApp.ui.Group.BottomCameraFragment
+import Izaac.Doyle.PubsApp.ui.Group.BottomFragmentGroupCreate
+import Izaac.Doyle.PubsApp.ui.Group.BottomJoinAddGroupFragment
+import Izaac.Doyle.PubsApp.ui.Maps.MapsViewModel
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
+import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
-import android.view.Menu
-
-import com.google.android.material.navigation.NavigationView
+import android.util.Log
+import android.view.MenuItem
+import android.view.View
+import android.widget.*
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.os.bundleOf
+import androidx.core.view.GravityCompat
+import androidx.core.view.get
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import Izaac.Doyle.PubsApp.databinding.ActivityMainBinding
-import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentCreate
-import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentLogin
-import android.util.Log
-import android.widget.ImageButton
-import android.widget.ImageView
-
-import android.widget.TextView
-
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.GravityCompat
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-
+import com.bumptech.glide.Glide
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.WriterException
+import com.google.zxing.qrcode.QRCodeWriter
 
 class MainActivity : AppCompatActivity(), onDataPasser {
 
 
-
-    lateinit var app: MainApp
-    private lateinit var appBarConfiguration: AppBarConfiguration
+    lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
 
 
+
+
+
+
+
+    lateinit var dataPasser : onDataPasser
+    lateinit var app: MainApp
+    var SearchActive:Boolean = false
+
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         super.onCreate(savedInstanceState)
-        app = application as MainApp
+
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        auth = Firebase.auth
-
         setSupportActionBar(binding.appBarMain.toolbar)
-
+        app = application as MainApp
+        auth = Firebase.auth
+        dataPasser =this as onDataPasser
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
@@ -66,28 +94,84 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_pubs, R.id.nav_maps
+                R.id.nav_home, R.id.nav_pubs, R.id.nav_maps, R.id.nav_settings, R.id.nav_group
             ), drawerLayout
         )
 
 
-        val settingsBtn =
-            navView.findViewById<androidx.appcompat.widget.LinearLayoutCompat>(R.id.drawer_setting)
-        val loginBtn = navView.findViewById<TextView>(R.id.Drawer_Login)
-        val createAccountBtn = navView.findViewById<TextView>(R.id.Drawer_CreateA)
-        settingsBtn.setOnClickListener {
+        binding.navView.menu[3].setOnMenuItemClickListener {
+            val view = View.inflate(this, R.layout.daynightmode_toggle,null)
+            val builder = AlertDialog.Builder(this)
+            builder.setView(view)
+            val dialog = builder.create()
+            dialog.show()
+//            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-            //if account avalable show Settings if not make it Gone
-            // settings.visibility = View.GONE
+            val day = view.findViewById<CheckBox>(R.id.DayMode_toggle)
+            val night = view.findViewById<CheckBox>(R.id.NightMode_toggle)
+            val default = view.findViewById<CheckBox>(R.id.SystemDefaultMode_toggle)
+
+            when (this.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+                Configuration.UI_MODE_NIGHT_YES -> { night.isChecked = true}
+                Configuration.UI_MODE_NIGHT_NO -> { day.isChecked = true}
+                Configuration.UI_MODE_NIGHT_UNDEFINED -> {default.isChecked = true}
+            }
 
 
-            // val intent = Intent(this,SettingsActivity::class.java)
-            //  startActivity(intent)
+            day.setOnCheckedChangeListener{button, b->
+                if (b){
+                    setTheme("day")
+                    dialog.dismiss()
+                }
+            }
+            night.setOnCheckedChangeListener{button, b->
+                if (b){
+                    setTheme("night")
+                    dialog.dismiss()
+                }
+            }
+            default.setOnCheckedChangeListener{button, b->
+                if (b){
+                    setTheme("default")
+                    dialog.dismiss()
+                }
+            }
 
-            //Toast.makeText(applicationContext, "This Works", Toast.LENGTH_SHORT).show()
 
-            //Change Drawer from here
+
+
+
+
+
+            true
         }
+
+
+
+
+
+        if (CheckCurrentUser() == null) {
+            binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone =
+                false
+            binding.navView.menu[2].isVisible = false
+            binding.navView.menu[2].isEnabled = false
+            binding.navView.menu[1].subMenu[1].isVisible = false
+        } else {
+            binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone = true
+            binding.navView.menu[2].isVisible = true
+            binding.navView.menu[2].isEnabled = true
+            binding.navView.menu[1].subMenu[1].isVisible = true
+            FBGetDB(CheckCurrentUser()!!.uid, this)
+
+        }
+        val loginBtn = navView.findViewById<LinearLayout>(R.id.Drawer_Login)
+        val createAccountBtn = navView.findViewById<LinearLayout>(R.id.Drawer_CreateA)
+        val QRView = navView.menu[2].subMenu[1]
+            QRView.setOnMenuItemClickListener {
+                QrCodeDispay(this,this)
+
+                true
+            }
 
         loginBtn.setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -100,27 +184,32 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         createAccountBtn.setOnClickListener {
             // change off and rebrand the Create account button with the drawer.
             drawerLayout.closeDrawer(GravityCompat.START)
+            val bottomFragment = BottomFragmentCreate()
+            bottomFragment.show(supportFragmentManager, "Bottom Login")
 
-            val googleSignInClient: GoogleSignInClient
-
-            val gso = GoogleSignInOptions
-                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build()
-
-            googleSignInClient = GoogleSignIn.getClient(this, gso)
-
-            googleSignInClient.signOut()
-            app.account.SignOut()
-
-            Toast.makeText(applicationContext, "Create Works", Toast.LENGTH_SHORT).show()
+            // Toast.makeText(applicationContext, "Create Works", Toast.LENGTH_SHORT).show()
         }
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
 
+    }
+
+
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            R.id.settings_signout -> {
+                Log.d("settingsActivity", "Log out")
+                app.account.SignOut(this)
+            }
+
+
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onStart() {
@@ -131,71 +220,217 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
-
-        return true
-    }
-
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-
+        CheckCurrentUser()
         val email = findViewById<TextView>(R.id.Drawer_Email)
         val name = findViewById<TextView>(R.id.Drawer_Name)
+        val profileImage = findViewById<ImageView>(R.id.Drawer_Account_Image)
+
+
+
         //val profileimage = findViewById<ImageView>(R.id.Drawer_Account_Image)
 
+        val drawerDropDown = findViewById<LinearLayout>(R.id.drawer_header_button)
 
+        var buttonclicks = 0
+
+        if (CheckCurrentUser() == null) {
+            drawerDropDown.isVisible = false
+            drawerDropDown.isEnabled = false
+        } else {
+
+            val FBprofileImage = FirebaseStorage.getInstance().reference.child("${CheckCurrentUser()!!.uid}/ProfileImage.jpg")
+
+            FBprofileImage.downloadUrl.addOnSuccessListener { Uri ->
+                val imageURL = Uri.toString()
+                Glide.with(this).load(imageURL).into(profileImage)
+            }.addOnFailureListener {
+                profileImage.setImageResource(R.drawable.ic_pubs)
+            }
+
+            val sharedPrefInfo =
+                getSharedPreferences(CheckCurrentUser()!!.uid, Context.MODE_PRIVATE)
+
+            if (sharedPrefInfo.getString("Username", "")!!.isEmpty()){
+                val username = CheckCurrentUser()!!.displayName
+                name.text = username
+                email.text = CheckCurrentUser()!!.email
+
+                val datastore = getSharedPreferences(CheckCurrentUser()!!.uid,Context.MODE_PRIVATE)
+                val editor = datastore.edit()
+                editor.putString("Username",username)
+                editor.apply()
+            }else{
+                val username = sharedPrefInfo.getString("Username", "")
+                //val userEmail = sharedPrefInfo.getString("Email", "")
+                name.text = username
+                email.text = CheckCurrentUser()!!.email
+            }
+
+
+            //Log.d("shardpref", "$username to $userEmail")
+
+
+            //  email.text = userinfo.email
+
+
+
+
+
+
+            drawerDropDown.setOnClickListener {
+
+                val icon = findViewById<ImageView>(R.id.button_tabup)
+
+                if (buttonclicks == 0) {
+                    icon.setImageResource(R.drawable.ic_log_out_tabdown)
+                    binding.navView.menu[0].isVisible = true
+
+                    val signoutButton = binding.navView.menu[0]
+                    signoutButton.setOnMenuItemClickListener {
+                        Log.d("SignOut", "Signout Clicked")
+                        binding.drawerLayout.closeDrawer(GravityCompat.START)
+                        binding.navView.menu[0].isVisible = false
+                        navController.navigate(R.id.nav_home)
+                        app.account.SignOut(this)
+                        buttonclicks = 0
+                        true
+                    }
+                    buttonclicks = 1
+                } else if (buttonclicks == 1) {
+                    icon.setImageResource(R.drawable.ic_log_out_tabup)
+                    binding.navView.menu[0].isVisible = false
+                    buttonclicks = 0
+                }
+            }
+        }
+        if (CheckCurrentUser() != null) {
+            drawerDropDown.isVisible = true
+            drawerDropDown.isEnabled = true
+            binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone =
+                true
+        }
         //an UI so that once user loged in Email and Name and Image change
         //get google Image save to firestore
-
-
-
-        email.text = CheckCurrentUser()?.email.toString()
-        name.text = CheckCurrentUser()?.displayName.toString()
 
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     override fun changeBottomSheet(sheetActive: String) {
+        val bottomFragment = BottomFragmentLogin()
+        val bottomFragmentCreate = BottomFragmentCreate()
+        val bottomFragmentDelete = BottomFragmentDelete()
+        val bottomFragmentGroupCreate = BottomFragmentGroupCreate()
+
         when (sheetActive) {
-
-
             "Create" -> {
-
-                val bottomFragmentCreate = BottomFragmentCreate()
-                if (!bottomFragmentCreate.isAdded) {
+                if (!bottomFragmentCreate.isAdded && !bottomFragment.isVisible) {
+                    bottomFragment.isHidden
                     bottomFragmentCreate.show(supportFragmentManager, "Bottom Create")
-                }
 
+                }
             }
             "Login" -> {
-                val bottomFragment = BottomFragmentLogin()
                 if (!bottomFragment.isAdded && !bottomFragment.isVisible) {
+                    bottomFragmentCreate.isHidden
                     bottomFragment.show(supportFragmentManager, "Bottom Login")
                 }
-
             }
+            "reAuth" -> {
+                if (!bottomFragment.isAdded && !bottomFragment.isVisible) {
+                    bottomFragmentDelete.isHidden
+                    bottomFragment.arguments = bundleOf("relogin" to "reAuth")
+                    bottomFragment.show(supportFragmentManager, "Bottom Login")
+                }
+            }
+            "Delete" -> {
+                if (!bottomFragmentDelete.isAdded && !bottomFragmentDelete.isVisible) {
+                    bottomFragment.isHidden
+                    bottomFragmentDelete.arguments = bundleOf("reAuth" to "confirm")
+                    bottomFragmentDelete.show(supportFragmentManager, "Delete Account")
+                }
+            }
+
+
 
 
         }
     }
 
 
-    override fun ErrorCreatingAccount(info: String, email: String) {
+    override fun AccountStatus(info: String, Extra: String) {
+        val bottomJoinAddGroupFragment = BottomJoinAddGroupFragment()
+        val bottomCameraFragment = BottomCameraFragment()
         when (info) {
             "Task was Successful" -> {
                 //restart UI
                 // Update()
-                Toast.makeText(this, "Task was Successful", Toast.LENGTH_SHORT).show()
+                recreate()
+
+                //Account Was Made
+//                Toast.makeText(this, "Task was Successful", Toast.LENGTH_SHORT).show()
             }
             "Error Email Already in Use" -> {
+                val bottomFragment = BottomFragmentLogin()
+                if (!bottomFragment.isAdded && !bottomFragment.isVisible) {
+                    Toast.makeText(
+                        this,
+                        "Error Email Already in Use Try logging In",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    bottomFragment.arguments = bundleOf("Email" to Extra)
+                    bottomFragment.show(supportFragmentManager, "Bottom Login")
+                }
+            }
+            "Login Failed" -> {
+                val bottomFragment = BottomFragmentLogin()
+                if (!bottomFragment.isAdded && !bottomFragment.isVisible) {
+                    bottomFragment.arguments = bundleOf("Email" to Extra)
+                    bottomFragment.show(supportFragmentManager, "Bottom Login")
 
-                changeBottomSheet("Login")
-                    Toast.makeText(this, "Error Email Already in Use", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            "Camera" ->{
+                if (!bottomCameraFragment.isAdded && !bottomCameraFragment.isVisible){
+                    bottomJoinAddGroupFragment.isHidden
+                    bottomCameraFragment.isCancelable = false
+                    bottomCameraFragment.show(supportFragmentManager,"Camera Fragment")
+                }
+            }
+            "Group"->{
+                if(!bottomJoinAddGroupFragment.isAdded && !bottomJoinAddGroupFragment.isVisible){
+                    bottomCameraFragment.isHidden
+                    if (Extra.isNotBlank()){
+                        bottomJoinAddGroupFragment.arguments = bundleOf("QRCode" to Extra)
+                    }
+                    bottomJoinAddGroupFragment.show(supportFragmentManager,"Group Join")
                 }
             }
         }
+
+
     }
+
+    override fun PassView(view: Boolean) {
+
+        if (view){
+            recreate()
+        }
+
+
+    }
+
+    override fun Rules(Rules: MutableList<RulesModel>) {
+
+    }
+}
+
+
+
+
+
+
+
 

@@ -6,7 +6,6 @@
     android:layout_height="match_parent">
 
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,10 +16,11 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navview_menuitems"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:itemIconTint="@color/black"
-            app:itemTextColor="#000000"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
             app:menu="@menu/settings_menu" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

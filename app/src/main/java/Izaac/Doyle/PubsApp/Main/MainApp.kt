@@ -9,7 +9,7 @@ import android.app.Application
 class MainApp: Application() {
 
     lateinit var account: AccountStore
-    private lateinit var group: GroupStore
+     lateinit var group: GroupStore
 
     override fun onCreate() {
         super.onCreate()

@@ -3,6 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/izaac/Desktop/12Pubs-Assignment_1_Branch/app/src/main/res/layout/fragment_group.xml" value="0.14130434782608695" />
+        <entry key="..\:/Users/izaac/Desktop/12Pubs-Assignment_1_Branch/app/src/main/res/layout/fragment_home.xml" value="0.14130434782608695" />
+        <entry key="..\:/Users/izaac/Desktop/12Pubs-Assignment_1_Branch/app/src/main/res/layout/fragment_maps.xml" value="0.14130434782608695" />
+        <entry key="..\:/Users/izaac/Desktop/12Pubs-Assignment_1_Branch/app/src/main/res/layout/setting_update_info.xml" value="0.1015625" />
+        <entry key="..\:/Users/izaac/Documents/12Pubs/app/src/main/res/layout/account_bottom_dialog.xml" value="0.25" />
+        <entry key="..\:/Users/izaac/Documents/12Pubs/app/src/main/res/layout/splash_screen.xml" value="0.14130434782608695" />
         <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/account_bottom_dialog.xml" value="0.13405797101449277" />
         <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/account_create_bottom_dialog.xml" value="0.13405797101449277" />
         <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/layout/activity_main.xml" value="0.13405797101449277" />
@@ -15,6 +21,68 @@
         <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/menu/activity_settings_drawer.xml" value="0.1796875" />
         <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/menu/main.xml" value="0.1796875" />
         <entry key="..\:/Users/izaac/Dropbox/Apps Working on/12Pubs/app/src/main/res/menu/settings_menu.xml" value="0.1796875" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/drawable-anydpi/ic_account.xml" value="0.2115" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/drawable-anydpi/ic_pints_pubs.xml" value="0.2115" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.32" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/drawable/bottom_sheet_background.xml" value="0.3145" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/drawable/button_shape_color.xml" value="0.284" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/drawable/camera_box.xml" value="0.2655" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/drawable/ic_launcher_background.xml" value="0.32" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/drawable/ic_menu_camera.xml" value="0.32" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/drawable/icon_location_background.xml" value="0.2885" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/drawable/icon_settings_background.xml" value="0.3775" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/drawable/qr_icon_12pubs_background.xml" value="0.3775" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/account_bottom_dialog.xml" value="0.31145833333333334" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/account_create_bottom_dialog.xml" value="0.31145833333333334" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/account_serach_cardview.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/app_bar_main.xml" value="0.284375" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/camera_view.xml" value="0.31145833333333334" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/cardview_googleplaces.xml" value="0.31145833333333334" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/content_main.xml" value="0.284375" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/custom_delete_dialogbox.xml" value="0.30885416666666665" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/daynightmode_toggle.xml" value="0.31145833333333334" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/drawer_bottom_login_create.xml" value="0.5458333333333333" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/drawer_bottom_settings.xml" value="0.284375" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/drawer_bottom_signout.xml" value="0.3770833333333333" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/fragment_group.xml" value="0.5458333333333333" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/fragment_group_create.xml" value="0.3388888888888889" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/fragment_home.xml" value="0.33" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/fragment_join_add.xml" value="0.37447916666666664" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/fragment_maps.xml" value="0.284375" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/fragment_pubs.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/fragment_pubs_viewpager.xml" value="0.5447916666666667" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/fragment_rules_viewpager.xml" value="0.3484375" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/google_signin.xml" value="0.31145833333333334" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/group_joining_group.xml" value="0.37447916666666664" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/group_leave_group_confirm.xml" value="0.36302083333333335" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/group_pubscardview.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/mapfragmentview.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/maps_layout.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/menu_account_dropdown_tabdown.xml" value="0.284375" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/menu_account_dropdown_tabup.xml" value="0.284375" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/nav_header_main.xml" value="0.284375" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/notification_bell.xml" value="1.25" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/places_cardview.xml" value="0.36302083333333335" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/places_info_bottom_dialog.xml" value="0.36302083333333335" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/qrcode_dispay.xml" value="0.37447916666666664" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/ruales_add.xml" value="0.3484375" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/rule_cardview.xml" value="0.3359375" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/setting_update_account_indo.xml" value="0.22" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/setting_update_info.xml" value="0.28854166666666664" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/settings_activity.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/splash_screen.xml" value="0.30885416666666665" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/switch_item.xml" value="0.31145833333333334" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/tablayout_recyclerview.xml" value="0.5447916666666667" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/togglelayout.xml" value="0.353125" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/layout/view_saved_locations.xml" value="0.36302083333333335" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/menu/activity_main_drawer.xml" value="0.55" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/menu/activity_settings_drawer.xml" value="0.5415384615384615" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/menu/add_to_group.xml" value="0.3388888888888889" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/menu/main.xml" value="0.284375" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/menu/maps_toggle.xml" value="0.353125" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/menu/pubssearch_menu.xml" value="0.3567708333333333" />
+        <entry key="..\:/Users/milkc/Desktop/App Currently In Dev/12Pubs/app/src/main/res/menu/settings_menu.xml" value="0.31145833333333334" />
         <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.5661458333333333" />
         <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/drawable/bottom_sheet_background.xml" value="0.32407407407407407" />
         <entry key="..\:/Users/milkc/Dropbox/12Pubs/app/src/main/res/drawable/button_shape_color.xml" value="0.334375" />
