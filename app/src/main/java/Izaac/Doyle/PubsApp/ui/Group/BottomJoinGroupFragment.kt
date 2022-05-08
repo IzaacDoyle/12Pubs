@@ -76,7 +76,11 @@ class BottomJoinGroupFragment:BottomSheetDialogFragment() {
                 groupViewModel.Invitations.value!!.clear()
                 groupViewModel.Invites.value!!.clear()
                 dataPasser.PassView(true)
+<<<<<<< HEAD
                 groupViewModel.Update()
+=======
+
+>>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
 //                requireActivity().recreate()
                 dismiss()
 

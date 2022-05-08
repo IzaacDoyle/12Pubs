@@ -27,22 +27,34 @@ class GroupViewModel : ViewModel() {
         db = FirebaseFirestore.getInstance()
         db.firestoreSettings = FirebaseFirestoreSettings.Builder().build()
         CUuid = CheckCurrentUser()!!.uid
+<<<<<<< HEAD
         getUserGroup(CUuid)
         CheckInvitations(CheckCurrentUser()!!.uid)
         QrCodeScanSearch(CheckCurrentUser()!!.uid)
 
        // getGroupName()
+=======
+
+        CheckInvitations(CheckCurrentUser()!!.uid)
+        QrCodeScanSearch(CheckCurrentUser()!!.uid)
+
+
+>>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
 
     }
     override fun onCleared() {
         super.onCleared()
     }
 
+<<<<<<< HEAD
     fun Update(){
         getUserGroup(CUuid)
         CheckInvitations(CUuid)
         QrCodeScanSearch(CUuid)
     }
+=======
+
+>>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
 
    fun getUserGroup(UUID: String){
        println(UUID)

@@ -137,7 +137,11 @@ fun RandomNumberRule(ruleNum: String?,UUid: String) {
     val db = Firebase.firestore
     val IntArray = ArrayList<Int>()
     var randomNumber: Int = 0
+<<<<<<< HEAD
     for (i in 1..18) {
+=======
+    for (i in 1..20) {
+>>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
         Log.d("RuleNum", i.toString())
 //        randomNumber = (1..ruleNum!!.toInt()).random()
         randomNumber = random(ruleNum)
@@ -151,7 +155,11 @@ fun RandomNumberRule(ruleNum: String?,UUid: String) {
             }
         } else {
             IntArray.add(randomNumber)
+<<<<<<< HEAD
             println(randomNumber)
+=======
+            println("$randomNumber  $UUid")
+>>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
         }
         println("Before db Call "+IntArray.size)
     }
@@ -164,6 +172,12 @@ fun RandomNumberRule(ruleNum: String?,UUid: String) {
         )
         db.collection("Groups").document(UUid)
             .set(groupRules, SetOptions.merge())
+<<<<<<< HEAD
+=======
+            .addOnFailureListener {
+                Log.d("RulesAdd",it.message.toString())
+            }
+>>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
     }
 }
 fun random(ruleNum: String?):Int{
@@ -327,7 +341,11 @@ fun Leavegroup(groupModel: GroupModel,activity: Activity,groupViewModel: GroupVi
                     groupViewModel.groupRule.value!!.clear()
                     groupViewModel.GroupNames.value!!.clear()
                     groupViewModel.Rules.value!!.clear()
+<<<<<<< HEAD
                     groupViewModel.Update()
+=======
+
+>>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
                     activity.recreate()
                 }
 //            if (job2.isComplete){
