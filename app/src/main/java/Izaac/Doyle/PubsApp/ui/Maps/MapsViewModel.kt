@@ -1,9 +1,7 @@
 package Izaac.Doyle.PubsApp.ui.Maps
 
-import Izaac.Doyle.PubsApp.Firebase.AccountData
-import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
-import Izaac.Doyle.PubsApp.Firebase.FBRealTimeDB
-import Izaac.Doyle.PubsApp.Models.FBAccountNameModel
+import Izaac.Doyle.PubsApp.Firebase.GoogleRealTimeDB
+import Izaac.Doyle.PubsApp.Models.FBAccountModel
 import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
 import android.annotation.SuppressLint
 import android.app.Application
@@ -15,7 +13,6 @@ import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.GoogleMap
 import com.google.firebase.firestore.FirebaseFirestore
-import java.util.*
 
 @SuppressLint("MissingPermission")
 class MapsViewModel(application: Application):AndroidViewModel(application) {
@@ -26,7 +23,7 @@ class MapsViewModel(application: Application):AndroidViewModel(application) {
     private var PubLocations: MutableLiveData<MutableList<GooglePlacesModel>> = MutableLiveData(mutableListOf<GooglePlacesModel>())
 
     private val PubsList = MutableLiveData<List<GooglePlacesModel>>()
-    private val userProfile = MutableLiveData<List<FBAccountNameModel>>()
+    private val userProfile = MutableLiveData<List<FBAccountModel>>()
     var currentLocation = MutableLiveData<Location>()
     var fusedLocationClient:FusedLocationProviderClient
 
@@ -74,7 +71,7 @@ class MapsViewModel(application: Application):AndroidViewModel(application) {
 
     fun load(GroupUUID:String){
         try {
-            FBRealTimeDB.FindAll(GroupUUID,PubsList)
+            GoogleRealTimeDB.FindAll(GroupUUID,PubsList)
         }catch (e:Exception){
         }
     }

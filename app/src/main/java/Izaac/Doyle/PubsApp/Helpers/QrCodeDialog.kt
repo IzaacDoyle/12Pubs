@@ -13,7 +13,7 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
 
-public fun QrCodeDispay(context: Context,activity: Activity){
+fun QrCodeDispay(context: Context,activity: Activity){
 
     val view = View.inflate(context, R.layout.qrcode_dispay,null)
     val builder = AlertDialog.Builder(context)

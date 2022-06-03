@@ -3,11 +3,13 @@ package Izaac.Doyle.PubsApp.ui.BottomSheet
 
 
 
+import Izaac.Doyle.PubsApp.Firebase.AccountData
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.Firebase.FBcreateDB
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.AccountModel
+import Izaac.Doyle.PubsApp.Models.FBAccountModel
 import Izaac.Doyle.PubsApp.Models.RulesModel
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.AccountBottomDialogBinding
@@ -268,8 +270,11 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             //set that its gets username from firbase
 
             if (res.idpResponse!!.isNewUser){
-                FBcreateDB(CheckCurrentUser()!!.uid, CheckCurrentUser()!!.displayName.toString(),
-                    res.idpResponse!!.email!!)
+//                FBcreateDB(CheckCurrentUser()!!.uid, CheckCurrentUser()!!.displayName.toString(),
+//                    res.idpResponse!!.email!!)
+                val accounts = FBAccountModel(CheckCurrentUser()!!.uid,CheckCurrentUser()!!.displayName.toString(), res.idpResponse!!.email!!,"","")
+                Log.d("FirebaseRealTimeDBTest", "Create Account $accounts")
+                AccountData.createAccount(accounts)
                 Log.d("Info","FBUI new user")
             }
             dataPasser.AccountStatus("Task was Successful", res.idpResponse?.email!! )
@@ -331,16 +336,6 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
         super.onViewCreated(view, savedInstanceState)
         emailFocusListener()
         passwordFocusListener()
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
-
-    override fun onPause() {
-        super.onPause()
 
     }
 

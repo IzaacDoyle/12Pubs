@@ -92,13 +92,5 @@ class BottomFragmentGroupCreate:BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onStart() {
-        super.onStart()
-//        val behavior = BottomSheetBehavior.from(requireView().parent as View)
-//        behavior.peekHeight = 700
-//        behavior.maxHeight = 700
-
-    }
-
 
 }

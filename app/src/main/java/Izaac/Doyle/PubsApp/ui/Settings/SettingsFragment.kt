@@ -149,7 +149,7 @@ class SettingsFragment: Fragment() {
         _binding = null
     }
 
-    public fun dialogShow() {
+    fun dialogShow() {
 
         }
 

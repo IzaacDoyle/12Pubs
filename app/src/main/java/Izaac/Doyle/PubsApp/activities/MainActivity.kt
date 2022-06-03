@@ -1,6 +1,7 @@
 package Izaac.Doyle.PubsApp.activities
 
 
+import Izaac.Doyle.PubsApp.Firebase.AccountData
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.Firebase.FBGetDB
 import Izaac.Doyle.PubsApp.Helpers.QrCodeDispay
@@ -20,6 +21,7 @@ import Izaac.Doyle.PubsApp.ui.Maps.MapsViewModel
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -85,7 +87,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         setSupportActionBar(binding.appBarMain.toolbar)
         app = application as MainApp
         auth = Firebase.auth
-        dataPasser =this as onDataPasser
+        dataPasser = this
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
@@ -161,7 +163,14 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             binding.navView.menu[2].isVisible = true
             binding.navView.menu[2].isEnabled = true
             binding.navView.menu[1].subMenu[1].isVisible = true
-            FBGetDB(CheckCurrentUser()!!.uid, this)
+
+
+            if (intent != null) {
+                val getString = intent.getStringExtra("account")
+                Toast.makeText(this, "$getString", Toast.LENGTH_SHORT).show()
+            }
+
+//            FBGetDB(CheckCurrentUser()!!.uid, this)
 
         }
         val loginBtn = navView.findViewById<LinearLayout>(R.id.Drawer_Login)

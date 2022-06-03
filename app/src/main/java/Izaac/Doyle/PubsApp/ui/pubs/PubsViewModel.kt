@@ -1,8 +1,6 @@
 package Izaac.Doyle.PubsApp.ui.pubs
 
-import Izaac.Doyle.PubsApp.Models.FBAccountNameModel
 import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 

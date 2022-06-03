@@ -1,16 +1,11 @@
 package Izaac.Doyle.PubsApp.ui.BottomSheet
 
-import Izaac.Doyle.PubsApp.Firebase.AddPlacesToGroup
-import Izaac.Doyle.PubsApp.Firebase.FBRealTimeDB
-import Izaac.Doyle.PubsApp.Firebase.FBRealTimeDB.removeLocation
-import Izaac.Doyle.PubsApp.Firebase.RemovePlacesFromGroup
+import Izaac.Doyle.PubsApp.Firebase.GoogleRealTimeDB
+import Izaac.Doyle.PubsApp.Firebase.GoogleRealTimeDB.removeLocation
 import Izaac.Doyle.PubsApp.Helpers.LocationRecycleView
 import Izaac.Doyle.PubsApp.Helpers.PlaceClickListener
 import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
-import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.ViewSavedLocationsBinding
-import android.content.res.Resources
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -68,7 +63,7 @@ class ViewSavedLocations:BottomSheetDialogFragment(),PlaceClickListener {
             binding.actionButton.setOnClickListener {
 //add
 //                AddPlacesToGroup(placesList, requireArguments().getString("GroupOwner").toString(),myRuleAdaptor)
-                FBRealTimeDB.AddLocation(requireArguments().getString("GroupOwner").toString(),placesList)
+                GoogleRealTimeDB.AddLocation(requireArguments().getString("GroupOwner").toString(),placesList)
                 myRuleAdaptor.notifyDataSetChanged()
                 dismiss()
             }

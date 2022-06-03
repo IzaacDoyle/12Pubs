@@ -5,7 +5,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.view.View
 
-abstract interface onDataPasser {
+interface onDataPasser {
   //  fun dataPassed(Email :String, Password : String)
    // fun dataInvalid(Email_Incorrect:Boolean,Password: Boolean)
    // fun passView(view:View)

@@ -10,7 +10,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.*
 
-object FBRealTimeDB :GooglePlacesStore{
+object GoogleRealTimeDB :GooglePlacesStore{
     var database: DatabaseReference = FirebaseDatabase.getInstance().reference
 
 

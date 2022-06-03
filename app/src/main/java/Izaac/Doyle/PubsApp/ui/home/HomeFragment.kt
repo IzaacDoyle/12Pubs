@@ -1,16 +1,22 @@
 package Izaac.Doyle.PubsApp.ui.home
 
+import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.R
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import Izaac.Doyle.PubsApp.databinding.FragmentHomeBinding
+import android.content.ContentValues.TAG
+import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+import com.bumptech.glide.util.LogTime
 
 class HomeFragment : Fragment() {
 
-    private lateinit var homeViewModel: HomeViewModel
+    private val homeViewModel : HomeViewModel by activityViewModels()
     private var _binding: FragmentHomeBinding? = null
 
     // This property is only valid between onCreateView and
@@ -22,26 +28,25 @@ class HomeFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        homeViewModel =
-            ViewModelProvider(this)[HomeViewModel::class.java]
-
+//        homeViewModel =
+//            ViewModelProvider(this)[HomeViewModel::class.java]
         setHasOptionsMenu(true)
-
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-//        val navController = MainActivity().findNavController(R.id.nav_host_fragment_content_main)
+
+        if (CheckCurrentUser() != null){
+            homeViewModel.load(CheckCurrentUser()!!.uid)
+        }
 
 
-//        binding.homeMapLarger.setOnClickListener {
-////            val navController = HomeFragmentDirections.actionNavHomeToNavMaps()
-////            Navigation.findNavController(requireView()).navigate(R.id.nav_maps)
-//
-//
-//        }
+        homeViewModel.observableAccountData.observe(viewLifecycleOwner, Observer { account ->
+            Log.d("Account",account.toString())
 
+//            Toast.makeText(requireContext(), "$account", Toast.LENGTH_SHORT).show()
 
+        })
 
 
 

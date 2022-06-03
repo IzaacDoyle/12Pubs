@@ -1,16 +1,14 @@
 package Izaac.Doyle.PubsApp.ui.Group
 
 import Izaac.Doyle.PubsApp.Firebase.AddUserToGroup
-<<<<<<< HEAD
-=======
+
 import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 import Izaac.Doyle.PubsApp.Firebase.FirebaseLoggedIn
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
 import Izaac.Doyle.PubsApp.Helpers.ProfileClickListener
 import Izaac.Doyle.PubsApp.Helpers.UserSearchRecyclerview
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
-import Izaac.Doyle.PubsApp.Models.FBAccountNameModel
-import Izaac.Doyle.PubsApp.R
+import Izaac.Doyle.PubsApp.Models.FBAccountModel
 import Izaac.Doyle.PubsApp.databinding.CameraViewBinding
 import Izaac.Doyle.PubsApp.databinding.FragmentJoinAddBinding
 import Izaac.Doyle.PubsApp.ui.home.GroupViewModel
@@ -24,12 +22,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isEmpty
-<<<<<<< HEAD
-=======
+
 import androidx.fragment.app.activityViewModels
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -43,11 +39,10 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment(), ProfileClickListen
     private var camera_binding: CameraViewBinding? = null
     lateinit var dataPasser : onDataPasser
     lateinit var myAdapter:UserSearchRecyclerview
-    var account:FBAccountNameModel? = null
-<<<<<<< HEAD
-=======
+    var account:FBAccountModel? = null
+
     private val firebaseloggedin : FirebaseLoggedIn by activityViewModels()
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
 
     private var camera = false
     private lateinit var groupViewModel: GroupViewModel
@@ -65,11 +60,9 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment(), ProfileClickListen
         groupViewModel =
             ViewModelProvider(this)[GroupViewModel::class.java]
 
-<<<<<<< HEAD
-=======
         firebaseloggedin.getAccount(CheckCurrentUser()!!.uid)
 
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
 
        binding.profileSearchview.isIconified = false
 
@@ -92,7 +85,7 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment(), ProfileClickListen
 
         groupViewModel.qrcodeSearch.observe(viewLifecycleOwner){it ->
             Log.d("QRCodeSearch Observed Data",it.toString())
-            myAdapter = UserSearchRecyclerview(it as ArrayList<FBAccountNameModel>,this,requireContext())
+            myAdapter = UserSearchRecyclerview(it as ArrayList<FBAccountModel>,this,requireContext())
             binding.userSearchRecyclerView.layoutManager = LinearLayoutManager(requireContext())
             binding.userSearchRecyclerView.adapter = myAdapter
 
@@ -126,23 +119,23 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment(), ProfileClickListen
             if (account == null){
                 Toast.makeText(requireContext(), "Please Select A User to Add", Toast.LENGTH_SHORT).show()
             }else{
-<<<<<<< HEAD
+
                 AddUserToGroup(account!!,
                     groupViewModel.gNames.value?.get(0)?.OwnerUUID.toString(),requireContext(),requireDialog(),
                     Extra = true,
                     IsAdmin = false
                     )
 
-=======
+
                 firebaseloggedin.AccountObservable.observe(viewLifecycleOwner) { profile ->
                     AddUserToGroup(
                         account!!,
-                        profile[0].Group.toString(), requireContext(), requireDialog(),
+                        profile[0].GroupUUID.toString(), requireContext(), requireDialog(),
                         Extra = true,
                         IsAdmin = false
                     )
                 }
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
             }
         }
 
@@ -189,7 +182,7 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment(), ProfileClickListen
         groupViewModel.UsersGroupname.observe(viewLifecycleOwner) { it ->
             Log.d("QR SearchUser",it.toString())
 
-            myAdapter = UserSearchRecyclerview(it as ArrayList<FBAccountNameModel>,this,requireContext())
+            myAdapter = UserSearchRecyclerview(it as ArrayList<FBAccountModel>,this,requireContext())
             binding.userSearchRecyclerView.layoutManager = LinearLayoutManager(requireContext())
             binding.userSearchRecyclerView.adapter = myAdapter
 
@@ -221,14 +214,13 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment(), ProfileClickListen
     }
 
     override fun onResume() {
-<<<<<<< HEAD
-=======
+
         firebaseloggedin.getAccount(CheckCurrentUser()!!.uid)
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
         myAdapter.notifyItemRemoved(0)
         super.onResume()
     }
-    override fun onProfileClicked(accounts: FBAccountNameModel,itemView:View) {
+    override fun onProfileClicked(accounts: FBAccountModel, itemView:View) {
         Log.d("AccountClicked",accounts.toString())
 
 

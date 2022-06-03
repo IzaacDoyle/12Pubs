@@ -5,7 +5,6 @@ import Izaac.Doyle.PubsApp.Models.*
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.firebase.ui.auth.data.model.User
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -14,8 +13,8 @@ class GroupViewModel : ViewModel() {
     private lateinit var db: FirebaseFirestore
     private lateinit var CUuid:String
     var GroupNames: MutableLiveData<ArrayList<GroupModel>> = MutableLiveData<ArrayList<GroupModel>>()
-    private var Username: MutableLiveData<ArrayList<FBAccountNameModel>> = MutableLiveData<ArrayList<FBAccountNameModel>>()
-    private var QrcodeSearch:  MutableLiveData<MutableList<FBAccountNameModel>> = MutableLiveData(ArrayList<FBAccountNameModel>())
+    private var Username: MutableLiveData<ArrayList<FBAccountModel>> = MutableLiveData<ArrayList<FBAccountModel>>()
+    private var QrcodeSearch:  MutableLiveData<MutableList<FBAccountModel>> = MutableLiveData(ArrayList<FBAccountModel>())
     private var GooglePlaces: MutableLiveData<MutableList<GooglePlacesModel>> = MutableLiveData(ArrayList<GooglePlacesModel>())
     var Rules:MutableLiveData<MutableList<RulesModel>> = MutableLiveData(ArrayList<RulesModel>())
     var Invitations:MutableLiveData<MutableList<InvitationsModel>> = MutableLiveData(ArrayList<InvitationsModel>())
@@ -27,34 +26,29 @@ class GroupViewModel : ViewModel() {
         db = FirebaseFirestore.getInstance()
         db.firestoreSettings = FirebaseFirestoreSettings.Builder().build()
         CUuid = CheckCurrentUser()!!.uid
-<<<<<<< HEAD
+
         getUserGroup(CUuid)
         CheckInvitations(CheckCurrentUser()!!.uid)
         QrCodeScanSearch(CheckCurrentUser()!!.uid)
 
        // getGroupName()
-=======
+
 
         CheckInvitations(CheckCurrentUser()!!.uid)
         QrCodeScanSearch(CheckCurrentUser()!!.uid)
 
 
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
 
     }
-    override fun onCleared() {
-        super.onCleared()
-    }
 
-<<<<<<< HEAD
+
     fun Update(){
         getUserGroup(CUuid)
         CheckInvitations(CUuid)
         QrCodeScanSearch(CUuid)
     }
-=======
 
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
 
    fun getUserGroup(UUID: String){
        println(UUID)
@@ -103,7 +97,7 @@ class GroupViewModel : ViewModel() {
 
 
 
-     public fun SearchAddusersToGroup(SearchName: String?){
+     fun SearchAddusersToGroup(SearchName: String?){
          if (SearchName.isNullOrEmpty()){
              Username.value!!.clear()
              Log.d("SearchName","Search Is Empty")
@@ -112,7 +106,7 @@ class GroupViewModel : ViewModel() {
 
 
          Log.d("SearchUser", SearchName.lowercase())
-             val username = ArrayList<FBAccountNameModel>()
+             val username = ArrayList<FBAccountModel>()
         db.collection("UserProfiles").orderBy("Username")
             .startAt(SearchName)
             .endAt("$SearchName\uf8ff")
@@ -125,7 +119,7 @@ class GroupViewModel : ViewModel() {
                     Log.d("SearchuserInside", "${snapshot.documents}")
                     val document = snapshot.documents
                     document.forEach {
-                        val groupuser = it.toObject(FBAccountNameModel::class.java)
+                        val groupuser = it.toObject(FBAccountModel::class.java)
                         if (groupuser != null) {
                             Log.d("SearchUsername", "${groupuser.UserEmail + groupuser.Username}")
                             username.add(groupuser)
@@ -140,7 +134,7 @@ class GroupViewModel : ViewModel() {
     }
 
     fun QrCodeScanSearch(QRCode: String) {
-        val profile = mutableListOf<FBAccountNameModel>()
+        val profile = mutableListOf<FBAccountModel>()
         db.collection("UserProfiles")
             .orderBy("UserUUID")
             .startAt(QRCode)
@@ -152,10 +146,10 @@ class GroupViewModel : ViewModel() {
                     Log.d("QRSearchProfileAll", "${snapshot.documents}")
                     val document = snapshot.documents
                     document.forEach {
-                        val groupUser = it.toObject(FBAccountNameModel::class.java)
+                        val groupUser = it.toObject(FBAccountModel::class.java)
                         Log.d("QrUser", groupUser.toString())
                         if (groupUser != null) {
-                            Log.d("QrSearchProfile", groupUser.UserEmail + " " + groupUser.Username + " " + groupUser.UserUUID + " " + groupUser.Group)
+                            Log.d("QrSearchProfile", groupUser.UserEmail + " " + groupUser.Username + " " + groupUser.UserUUID + " " + groupUser.GroupUUID)
                             profile.add(groupUser)
 
                         }
@@ -293,7 +287,7 @@ class GroupViewModel : ViewModel() {
 
 
 
-    internal  var qrcodeSearch:MutableLiveData<MutableList<FBAccountNameModel>>
+    internal  var qrcodeSearch:MutableLiveData<MutableList<FBAccountModel>>
         get() { return QrcodeSearch}
         set(value) {QrcodeSearch =  value}
 
@@ -302,7 +296,7 @@ class GroupViewModel : ViewModel() {
         get() { return GroupNames }
         set(value) { GroupNames = value }
 
-    internal var UsersGroupname: MutableLiveData<ArrayList<FBAccountNameModel>>
+    internal var UsersGroupname: MutableLiveData<ArrayList<FBAccountModel>>
         get(){ return Username
         } set(value){ Username = value}
 }

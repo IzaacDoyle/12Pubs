@@ -28,7 +28,7 @@ class PubsViewpager : Fragment() , OnAboutDataReceivedListener, PlaceClickListen
     private val groupViewModel: GroupViewModel by viewModels()
     private val mapsViewModel: MapsViewModel by activityViewModels()
     private val firebaseloggedin : FirebaseLoggedIn by activityViewModels()
-    public lateinit var myRuleAdaptor: LocationRecycleView
+    lateinit var myRuleAdaptor: LocationRecycleView
 
 
     override fun onCreateView(
@@ -61,7 +61,7 @@ class PubsViewpager : Fragment() , OnAboutDataReceivedListener, PlaceClickListen
         firebaseloggedin.AccountObservable.observe(viewLifecycleOwner){profile->
             if (!profile.isEmpty()){
                 Log.d("MapsData",profile.toString())
-                mapsViewModel.load(profile[0].Group.toString())
+                mapsViewModel.load(profile[0].GroupUUID.toString())
             }
         }
     }

@@ -72,13 +72,6 @@ class MapsFragment : Fragment() {
         return root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -125,7 +118,7 @@ class MapsFragment : Fragment() {
         toggle.isChecked = false
         firebaseloggedin.AccountObservable.observe(viewLifecycleOwner) { profile ->
             if (profile.isNotEmpty()){
-                if (profile[0].Group.isNullOrBlank()){
+                if (profile[0].GroupUUID.isNullOrBlank()){
                     toggle.isChecked = true
                 }
             }
@@ -142,7 +135,7 @@ class MapsFragment : Fragment() {
                 firebaseloggedin.AccountObservable.observe(viewLifecycleOwner){profile->
                     if (!profile.isEmpty()){
                         Log.d("MapsData",profile.toString())
-                        mapsViewModel.load(profile[0].Group.toString())
+                        mapsViewModel.load(profile[0].GroupUUID.toString())
                     }
                     Toast.makeText(requireContext(), "Displaying Your Groups Pubs", Toast.LENGTH_SHORT).show()
                 }
@@ -151,16 +144,6 @@ class MapsFragment : Fragment() {
 
 
 
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-
-
-
-
-
-        return super.onOptionsItemSelected(item)
     }
 
     private fun displayMarker(pubs: ArrayList<GooglePlacesModel>,details:String?) {
@@ -207,7 +190,7 @@ class MapsFragment : Fragment() {
             firebaseloggedin.AccountObservable.observe(viewLifecycleOwner){profile->
                 if (!profile.isEmpty()){
                     Log.d("MapsData",profile.toString())
-                    mapsViewModel.load(profile[0].Group.toString())
+                    mapsViewModel.load(profile[0].GroupUUID.toString())
                     groupsViewModel.getUsersPubsList()
                 }
             }

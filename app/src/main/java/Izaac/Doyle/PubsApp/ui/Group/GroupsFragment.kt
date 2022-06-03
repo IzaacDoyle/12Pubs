@@ -28,7 +28,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.storage.FirebaseStorage
@@ -55,11 +54,11 @@ class GroupsFragment : Fragment(), onDataPasser {
     lateinit var app: MainApp
     lateinit var myAdapter:UserSearchRecyclerview
     var notificationBadge: NotificationBadge? = null
-<<<<<<< HEAD
-    lateinit var groupdata: GroupModel
-=======
-     var groupdata: GroupModel? = null
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
+//    private lateinit var groupdata: GroupModel
+
+     private var groupdata: GroupModel? = null
+
 
     lateinit var dataPasser : onDataPasser
       var RulesList: MutableList<RulesModel>? = null
@@ -93,13 +92,11 @@ class GroupsFragment : Fragment(), onDataPasser {
 
 
 
-<<<<<<< HEAD
-=======
 
 
 
 
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
             groupViewModel.Places.observe(viewLifecycleOwner){places->
                 if (places !=null) {
                     if (places.isNotEmpty()) {
@@ -108,11 +105,12 @@ class GroupsFragment : Fragment(), onDataPasser {
                             val groupPubAdd = ViewSavedLocations()
                             groupPubAdd.arguments = bundleOf("Add" to "Add",
                                 "Places" to places,
-<<<<<<< HEAD
-                                "GroupOwner" to groupdata.OwnerUUID
-=======
+
+                                "GroupOwner" to groupdata!!.OwnerUUID,
+
+
                                 "GroupOwner" to groupdata!!.OwnerUUID
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
                                 )
                             groupPubAdd.show(childFragmentManager,"SavedLocations")
                         }
@@ -128,11 +126,9 @@ class GroupsFragment : Fragment(), onDataPasser {
                     groupPubAdd.arguments = bundleOf(
                         "Remove" to "Remove",
                         "Places" to pubs as MutableList<GooglePlacesModel>,
-<<<<<<< HEAD
-                        "GroupOwner" to groupdata.OwnerUUID
-=======
+                        "GroupOwner" to groupdata!!.OwnerUUID,
                         "GroupOwner" to groupdata!!.OwnerUUID
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
                     )
                     groupPubAdd.show(childFragmentManager, "SavedLocations")
                 }
@@ -141,14 +137,14 @@ class GroupsFragment : Fragment(), onDataPasser {
 
 
 
-<<<<<<< HEAD
+
 
 
 //
-=======
+
             firebaseloggedin.AccountObservable.observe(viewLifecycleOwner) { account ->
                 if (account.isNotEmpty()) {
-                    if (account[0].Group.isNullOrEmpty()) {
+                    if (account[0].GroupUUID.isNullOrEmpty()) {
                         binding.groupGroupName.text = ""
                         binding.GroupImage.setImageResource(R.drawable.ic_group)
 
@@ -164,7 +160,7 @@ class GroupsFragment : Fragment(), onDataPasser {
                     }
                 }
             }
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
 
 
 
@@ -192,11 +188,11 @@ class GroupsFragment : Fragment(), onDataPasser {
                                         Glide.with(this).load(imageURL).into(binding.GroupImage)
                                     }.addOnFailureListener { error ->
                                         Log.d("ImageGlide", error.message.toString())
-<<<<<<< HEAD
+
                                         binding.GroupImage.setImageResource(R.drawable.ic_group)
-=======
+
 //                                        binding.GroupImage.setImageResource(R.drawable.ic_group)
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
                                         // Toast.makeText(requireContext(), "Error Loading Image, Get Group Admin to Re-Upload Image", Toast.LENGTH_SHORT).show()
                                     }
                                 }catch (e:Exception){
@@ -305,60 +301,61 @@ class GroupsFragment : Fragment(), onDataPasser {
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.add_to_group,menu)
+        inflater.inflate(R.menu.add_to_group, menu)
 
 
 
 
         groupViewModel.gNames.observe(viewLifecycleOwner) { result ->
-<<<<<<< HEAD
+
 
             val bell = menu.findItem(R.id.Group_join)
             val bellAction = bell.actionView
-=======
-            Log.d("Gnames",result.toString())
+
+            Log.d("Gnames", result.toString())
 
 
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
 
 
             menu.findItem(R.id.group_update).setOnMenuItemClickListener {
 
                 val update = settings_update_info()
-                update.arguments = bundleOf("GroupUpdate" to "GroupUpdate",
+                update.arguments = bundleOf(
+                    "GroupUpdate" to "GroupUpdate",
                     "GroupUUID" to result[0].OwnerUUID,
                     "GroupName" to result[0].GroupName
-                    )
-                update.show(childFragmentManager,"Group Update")
+                )
+                update.show(childFragmentManager, "Group Update")
 
 
                 true
             }
 
 
-<<<<<<< HEAD
+
             bellAction.setOnClickListener {
                 groupViewModel.CheckInvitations(CheckCurrentUser()!!.uid)
             }
-=======
 
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
+
 
             if (!result.isNullOrEmpty()) {
                 menu.findItem(R.id.Create_group).isVisible = !result.isNotEmpty()
                 menu.findItem(R.id.AddToGroup).isVisible = result.isNotEmpty()
-                menu.findItem(R.id.Leave_Group).isVisible =result.isNotEmpty()
+                menu.findItem(R.id.Leave_Group).isVisible = result.isNotEmpty()
                 menu.findItem(R.id.group_update).isVisible = result.isNotEmpty()
-<<<<<<< HEAD
+
                 bell.isVisible = result.isEmpty()
                 bellAction.isVisible = result.isEmpty()
             }
-            if (result.isNullOrEmpty()){
+            if (result.isNullOrEmpty()) {
                 println(result)
 
-                groupViewModel.Invites.observe(viewLifecycleOwner){result->
+                groupViewModel.Invites.observe(viewLifecycleOwner) { result ->
                     println(result)
-                    if (!result.isNullOrEmpty()){
+                    if (!result.isNullOrEmpty()) {
                         bell.isVisible = true
                         notificationBadge = bellAction.findViewById(R.id.badge) as NotificationBadge
                         bellAction!!.setOnClickListener {
@@ -366,7 +363,7 @@ class GroupsFragment : Fragment(), onDataPasser {
 //                            Toast.makeText(requireContext(), "Notification USer Group UUID  ${result[0].GroupUUID}", Toast.LENGTH_SHORT).show()
                             val bottomjoin = BottomJoinGroupFragment()
                             bottomjoin.arguments = bundleOf("GroupUUID" to result[0].GroupUUID)
-                            bottomjoin.show(childFragmentManager,"JoinGroup")
+                            bottomjoin.show(childFragmentManager, "JoinGroup")
 //
 //                            if (bottomjoin.isAdded){
 //                            if (bottomjoin.requireActivity().isDestroyed){
@@ -377,76 +374,71 @@ class GroupsFragment : Fragment(), onDataPasser {
                         notificationBadge!!.setText("1")
                     }
                 }
-=======
+
 
             }
-            if (result.isNullOrEmpty()){
+            if (result.isNullOrEmpty()) {
 
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
             }
-
-
 
 
         }
 
 
-<<<<<<< HEAD
-        groupViewModel.UsersGroupname.observe(viewLifecycleOwner){it->
+
+        groupViewModel.UsersGroupname.observe(viewLifecycleOwner) { it ->
 //            println("Test Group "+ it[0].GroupUUID)
 
 
-
-
-=======
-        firebaseloggedin.AccountObservable.observe(viewLifecycleOwner) { account ->
-            val bell = menu.findItem(R.id.Group_join)
-            val bellAction = bell.actionView
-            if (account.isNotEmpty()) {
-                if (!account.isNullOrEmpty()){
-                    bell.isVisible = account.isEmpty()
-                    bellAction.isVisible = account.isEmpty()
-                }
-                if (account[0].Group.isNullOrEmpty()) {
-
-                    bellAction.setOnClickListener {
-                        groupViewModel.CheckInvitations(CheckCurrentUser()!!.uid)
+            firebaseloggedin.AccountObservable.observe(viewLifecycleOwner) { account ->
+                val bell = menu.findItem(R.id.Group_join)
+                val bellAction = bell.actionView
+                if (account.isNotEmpty()) {
+                    if (!account.isNullOrEmpty()) {
+                        bell.isVisible = account.isEmpty()
+                        bellAction.isVisible = account.isEmpty()
                     }
+                    if (account[0].GroupUUID.isNullOrEmpty()) {
 
-                    println(account)
-
-                    groupViewModel.Invites.observe(viewLifecycleOwner){result->
-                        println(result)
-                        if (!result.isNullOrEmpty()){
-                            bell.isVisible =true
-                            println("Bell $result")
-                            notificationBadge = bellAction.findViewById(R.id.badge) as NotificationBadge
-                            bellAction!!.setOnClickListener {
-//                            Toast.makeText(requireContext(), "Notification USer Group UUID  ${result[0].GroupUUID}", Toast.LENGTH_SHORT).show()
-                                val bottomjoin = BottomJoinGroupFragment()
-                                bottomjoin.arguments = bundleOf("GroupUUID" to result[0].GroupUUID)
-                                bottomjoin.show(childFragmentManager,"JoinGroup")
-
-                            }
-                            notificationBadge!!.isVisible = true
-                            notificationBadge!!.setText("1")
+                        bellAction.setOnClickListener {
+                            groupViewModel.CheckInvitations(CheckCurrentUser()!!.uid)
                         }
+
+                        println(account)
+
+                        groupViewModel.Invites.observe(viewLifecycleOwner) { result ->
+                            println(result)
+                            if (!result.isNullOrEmpty()) {
+                                bell.isVisible = true
+                                println("Bell $result")
+                                notificationBadge =
+                                    bellAction.findViewById(R.id.badge) as NotificationBadge
+                                bellAction!!.setOnClickListener {
+//                            Toast.makeText(requireContext(), "Notification USer Group UUID  ${result[0].GroupUUID}", Toast.LENGTH_SHORT).show()
+                                    val bottomjoin = BottomJoinGroupFragment()
+                                    bottomjoin.arguments =
+                                        bundleOf("GroupUUID" to result[0].GroupUUID)
+                                    bottomjoin.show(childFragmentManager, "JoinGroup")
+
+                                }
+                                notificationBadge!!.isVisible = true
+                                notificationBadge!!.setText("1")
+                            }
+                        }
+
+
                     }
-
-
                 }
+
             }
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
+
+
+
+
+            super.onCreateOptionsMenu(menu, inflater)
         }
-
-
-
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
-        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -483,14 +475,14 @@ class GroupsFragment : Fragment(), onDataPasser {
 //                    groupViewModel.Update()
 //                    requireActivity().recreate()
                     dialog.dismiss()
-<<<<<<< HEAD
-                    app.group.LeaveGroup(groupdata,requireActivity(),groupViewModel)
-=======
+
+                    app.group.LeaveGroup(groupdata!!,requireActivity(),groupViewModel)
+
                     firebaseloggedin.getAccount(CheckCurrentUser()!!.uid)
 
                     app.group.LeaveGroup(groupdata!!,requireActivity(),groupViewModel)
                     groupdata = null
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
                 }
 
                 dialog.show()
@@ -506,40 +498,43 @@ class GroupsFragment : Fragment(), onDataPasser {
 
     override fun onResume() {
         super.onResume()
-<<<<<<< HEAD
 
-        if (CheckCurrentUser() != null){
-            firebaseloggedin.getAccount(CheckCurrentUser()!!.uid)
-            firebaseloggedin.AccountObservable.observe(viewLifecycleOwner){profile->
-                if (!profile.isEmpty()){
-                    Log.d("MapsData",profile.toString())
-                    if (profile[0].Group!!.isNotBlank()){
-                        groupViewModel.getUserGroup(profile[0].Group.toString())
-                    }
-                    mapsViewModel.load(profile[0].Group.toString())
 
-=======
-        groupViewModel.CheckInvitations(CheckCurrentUser()!!.uid)
-        groupViewModel.QrCodeScanSearch(CheckCurrentUser()!!.uid)
-        groupViewModel.getUsersPubsList()
-
-        if (CheckCurrentUser() != null){
+        if (CheckCurrentUser() != null) {
             firebaseloggedin.getAccount(CheckCurrentUser()!!.uid)
             firebaseloggedin.AccountObservable.observe(viewLifecycleOwner) { profile ->
-                if (profile.isNotEmpty()) {
+                if (!profile.isEmpty()) {
+                    Log.d("MapsData", profile.toString())
+                    if (profile[0].GroupUUID!!.isNotBlank()) {
+                        groupViewModel.getUserGroup(profile[0].GroupUUID.toString())
+                    }
+                    mapsViewModel.load(profile[0].GroupUUID.toString())
 
-                    if (!profile.isEmpty()) {
-                        Log.d("MapsData", profile.toString())
-                        if (profile[0].Group!!.isNotBlank()) {
-                            groupViewModel.getUserGroup(profile[0].Group.toString())
+
+                    groupViewModel.CheckInvitations(CheckCurrentUser()!!.uid)
+                    groupViewModel.QrCodeScanSearch(CheckCurrentUser()!!.uid)
+                    groupViewModel.getUsersPubsList()
+
+                    if (CheckCurrentUser() != null) {
+                        firebaseloggedin.getAccount(CheckCurrentUser()!!.uid)
+                        firebaseloggedin.AccountObservable.observe(viewLifecycleOwner) { profile ->
+                            if (profile.isNotEmpty()) {
+
+                                if (!profile.isEmpty()) {
+                                    Log.d("MapsData", profile.toString())
+                                    if (profile[0].GroupUUID!!.isNotBlank()) {
+                                        groupViewModel.getUserGroup(profile[0].GroupUUID.toString())
+                                    }
+                                    mapsViewModel.load(profile[0].GroupUUID.toString())
+
+                                }
+
+                            }
                         }
-                        mapsViewModel.load(profile[0].Group.toString())
 
                     }
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
                 }
             }
-
         }
     }
 

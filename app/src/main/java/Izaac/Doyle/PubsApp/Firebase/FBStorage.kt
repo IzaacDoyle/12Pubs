@@ -2,41 +2,22 @@ package Izaac.Doyle.PubsApp.Firebase
 
 import Izaac.Doyle.PubsApp.Helpers.LocationRecycleView
 import Izaac.Doyle.PubsApp.Models.AccountModel
-import Izaac.Doyle.PubsApp.Models.FBAccountNameModel
+import Izaac.Doyle.PubsApp.Models.FBAccountModel
 import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
 import Izaac.Doyle.PubsApp.Models.GroupModel
-import Izaac.Doyle.PubsApp.activities.MainActivity
-import Izaac.Doyle.PubsApp.ui.Group.viewpager.RulesViewpager
 import Izaac.Doyle.PubsApp.ui.home.GroupViewModel
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
-import android.content.SharedPreferences
 import android.net.Uri
 import android.util.Log
-import android.view.View
 import android.widget.Toast
-import androidx.core.content.edit
-import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import java.net.CacheResponse
-import java.util.*
-import java.util.prefs.Preferences
-import javax.security.auth.callback.Callback
 import kotlin.collections.ArrayList
-import kotlin.math.log
-import kotlin.random.Random
 
 
 fun FBcreateDB(userUUID: String,username:String,userEmail:String) {
@@ -137,11 +118,11 @@ fun RandomNumberRule(ruleNum: String?,UUid: String) {
     val db = Firebase.firestore
     val IntArray = ArrayList<Int>()
     var randomNumber: Int = 0
-<<<<<<< HEAD
-    for (i in 1..18) {
-=======
+
+
+
     for (i in 1..20) {
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
         Log.d("RuleNum", i.toString())
 //        randomNumber = (1..ruleNum!!.toInt()).random()
         randomNumber = random(ruleNum)
@@ -155,11 +136,11 @@ fun RandomNumberRule(ruleNum: String?,UUid: String) {
             }
         } else {
             IntArray.add(randomNumber)
-<<<<<<< HEAD
+
             println(randomNumber)
-=======
+
             println("$randomNumber  $UUid")
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
         }
         println("Before db Call "+IntArray.size)
     }
@@ -172,12 +153,10 @@ fun RandomNumberRule(ruleNum: String?,UUid: String) {
         )
         db.collection("Groups").document(UUid)
             .set(groupRules, SetOptions.merge())
-<<<<<<< HEAD
-=======
             .addOnFailureListener {
                 Log.d("RulesAdd",it.message.toString())
             }
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+
     }
 }
 fun random(ruleNum: String?):Int{
@@ -188,7 +167,7 @@ fun random(ruleNum: String?):Int{
 
 }
 
-fun AddUserToGroup(accountModel: FBAccountNameModel,UUid: String,context: Context?,dialog: Dialog?,Extra:Boolean,IsAdmin:Boolean){
+fun AddUserToGroup(accountModel: FBAccountModel, UUid: String, context: Context?, dialog: Dialog?, Extra:Boolean, IsAdmin:Boolean){
     val db = Firebase.firestore
 
     val UserAdd = hashMapOf(
@@ -274,7 +253,7 @@ fun CreatePendingAdd(GroupUUID:String,NewUserUUID:String){
             .set(GroupDB)
             .addOnSuccessListener {
                 if (!Username.isNullOrBlank()) {
-                    AddUserToGroup(FBAccountNameModel(UUid!!, Username, "", "", ""), UUid, null, null, Extra = false, IsAdmin = true)
+                    AddUserToGroup(FBAccountModel(UUid!!, Username, "", "", ""), UUid, null, null, Extra = false, IsAdmin = true)
                 }
                 RandomRules(groupModel.OwnerUUID)
                 Log.d("FirestoreDB", "DB created for groups")
@@ -341,11 +320,11 @@ fun Leavegroup(groupModel: GroupModel,activity: Activity,groupViewModel: GroupVi
                     groupViewModel.groupRule.value!!.clear()
                     groupViewModel.GroupNames.value!!.clear()
                     groupViewModel.Rules.value!!.clear()
-<<<<<<< HEAD
-                    groupViewModel.Update()
-=======
 
->>>>>>> 30099089273251f14653cab44040b5f9b5c3b90e
+                    groupViewModel.Update()
+
+
+
                     activity.recreate()
                 }
 //            if (job2.isComplete){

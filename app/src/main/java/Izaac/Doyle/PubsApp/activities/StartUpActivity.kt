@@ -1,5 +1,8 @@
 package Izaac.Doyle.PubsApp.activities
 
+import Izaac.Doyle.PubsApp.Firebase.AccountData
+import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+import Izaac.Doyle.PubsApp.Models.FBAccountModel
 import Izaac.Doyle.PubsApp.R
 import android.Manifest
 import android.app.Application
@@ -13,6 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.MutableLiveData
 import kotlin.system.exitProcess
 
 class StartUpActivity: AppCompatActivity() {
@@ -47,13 +51,28 @@ class StartUpActivity: AppCompatActivity() {
 
         }else{
          //   Toast.makeText(this, "Else Entered", Toast.LENGTH_SHORT).show()
+            if (CheckCurrentUser() != null){
 
-            Handler(Looper.getMainLooper()).postDelayed({
-                val intent = Intent(applicationContext, MainActivity::class.java)
-                startActivity(intent)
-                finish()
-            }, 2000)
-//
+                 val account = MutableLiveData<List<FBAccountModel>>()
+                AccountData.getAccount(CheckCurrentUser()!!.uid, account)
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    val intent = Intent(applicationContext, MainActivity::class.java)
+                    if (account.value?.get(0) != null) {
+                        intent.putExtra("account", account.value?.get(0)!!.UserEmail)
+                        Log.d("StartUp","Account Available " + account.value?.get(0)!!.UserEmail)
+                    }
+                    startActivity(intent)
+                    finish()
+                }, 3000)
+
+            }else {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    val intent = Intent(applicationContext, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }, 3000)
+            }
         }
         return
     }

@@ -2,6 +2,7 @@ package Izaac.Doyle.PubsApp.Firebase
 
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Models.AccountModel
+import Izaac.Doyle.PubsApp.Models.FBAccountModel
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.activities.MainActivity
 import Izaac.Doyle.PubsApp.ui.BottomSheet.BottomFragmentDelete
@@ -12,6 +13,7 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.Navigation
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -27,11 +29,11 @@ fun FBReAuth(Email:String,password:String,info:String,activity: Activity){
             dataPasser = activity as onDataPasser
             Log.d("ReAuth Delete","Auth Entered")
             if (info == "Delete"){
-           // dataPasser = activity as onDataPasser
+                // dataPasser = activity as onDataPasser
                 dataPasser.changeBottomSheet("Delete")
-            //    MainActivity().reAuth = "true"
-           // SettingsFragment().dialog()
-            //SettingsFragment().reAuth = true
+                //    MainActivity().reAuth = "true"
+                // SettingsFragment().dialog()
+                //SettingsFragment().reAuth = true
                 //FBDeleteAccount()
             }
         }
@@ -42,50 +44,45 @@ fun FBReAuth(Email:String,password:String,info:String,activity: Activity){
 
 }
 
-   fun FBCreateAccount(account: AccountModel,password: String, activity: Activity) {
+//Create Account FBAuth
+
+fun FBCreateAccount(account: AccountModel,password: String, activity: Activity) {
     val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     val Email = account.email
     val Username = account.username
-   // val Password = account.password
-    //var info: String? = null
-       var dataPasser :onDataPasser
-
+    var dataPasser :onDataPasser
     firebaseAuth.createUserWithEmailAndPassword(Email,password)
         .addOnCompleteListener(activity) { task->
             dataPasser = activity as onDataPasser
-
             if (task.isSuccessful){
                 val user = firebaseAuth.currentUser
-
                 //UpDateUI
-                    dataPasser.AccountStatus("Task was Successful", Email)
-
-                FBcreateDB(user!!.uid, Username,Email)
-               // info = "Task was Successful"
+                dataPasser.AccountStatus("Task was Successful", Email)
+//                FBcreateDB(user!!.uid, Username,Email)
+                val accounts = FBAccountModel(user!!.uid,Username,Email,null,null)
+                Log.d("FirebaseRealTimeDBTest", "Create Account $account")
+                AccountData.createAccount(accounts)
+                // info = "Task was Successful"
 
                 val navController = Navigation.findNavController(activity,
                     Izaac.Doyle.PubsApp.R.id.nav_host_fragment_content_main)
                 navController.navigate(Izaac.Doyle.PubsApp.R.id.nav_home)
                 activity.recreate()
-
             }else{
                 Log.d("UserCreate", task.exception!!.message.toString()+ account.email)
             }
-
             if (!task.isSuccessful) {
-                 try {
+                try {
                     throw task.exception!!
                 } catch (e: FirebaseAuthUserCollisionException) {
-                     dataPasser.AccountStatus("Error Email Already in Use",Email)
+                    dataPasser.AccountStatus("Error Email Already in Use",Email)
                     Log.d("User Create" ,"Error Email Already in Use ${e.message}  FBCr")
-                  //   "Email Already In Use"
+                    //   "Email Already In Use"
                 } catch (e: Exception) {
-                  //  "Error with Firebase ${e.message}"
+                    //  "Error with Firebase ${e.message}"
                 }
-                }
-
-
             }
+        }
 
 }
 
@@ -120,7 +117,7 @@ fun FBLogin(email:String,password: String,context: Context,activity: Activity){
                 }
 
             }
-    }
+        }
 
 }
 
@@ -129,12 +126,12 @@ fun FBDeleteAccount(activity: Activity,context: Context){
     //Delete Account only if it doesnt own a group
 
     val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-   val user = firebaseAuth.currentUser!!
+    val user = firebaseAuth.currentUser!!
     user.delete().addOnCompleteListener  { task->
         if (task.isSuccessful){
 
-           // val navController = Navigation.findNavController(activity, R.id.nav_host_fragment_content_main)
-           // navController.navigate(R.id.nav_home)
+            // val navController = Navigation.findNavController(activity, R.id.nav_host_fragment_content_main)
+            // navController.navigate(R.id.nav_home)
             val intent = Intent(context,MainActivity()::class.java)
             activity.startActivity(intent)
 
@@ -186,24 +183,27 @@ fun CheckCurrentUser(): UserInfo? {
 }
 
 
-  fun GoogleSignInAccount(idToken: String?,activity: Activity,info: String) {
-     var dataPasser :onDataPasser
+fun GoogleSignInAccount(idToken: String?,activity: Activity,info: String) {
+    var dataPasser :onDataPasser
     val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     val credential = GoogleAuthProvider.getCredential(idToken, null)
     firebaseAuth.signInWithCredential(credential)
         .addOnCompleteListener(activity) { task ->
             if (task.isSuccessful) {
                 dataPasser = activity as onDataPasser
-               // reAuth = settings_update_info() as reAuth
+                // reAuth = settings_update_info() as reAuth
                 // Sign in success, update UI with the signed-in user's information
                 Log.d("TAG", "signInWithCredential:success")
                 val user = firebaseAuth.currentUser
                 if (task.result.additionalUserInfo?.isNewUser == true) {
-                    Log.d("New USer", user!!.email.toString())
-                    FBcreateDB(user.uid, user.displayName.toString(), user.email.toString())
+                    Log.d("NewUser", user!!.email.toString()+ " New User")
+//                    FBcreateDB(user.uid, user.displayName.toString(), user.email.toString())
+                    val account = FBAccountModel(user.uid,user.displayName,user.email!!,null,null)
+                    Log.d("FirebaseRealTimeDBTest", "Create Account $account")
+                    AccountData.createAccount(account)
                 }
                 if (info == "Delete"){
-                //call ondatapasser
+                    //call ondatapasser
                     dataPasser.changeBottomSheet("Delete")
 
                 }else{
