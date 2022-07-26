@@ -1,6 +1,7 @@
 package Izaac.Doyle.PubsApp.Helpers
 
-import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
 import Izaac.Doyle.PubsApp.R
 import android.app.Activity
 import android.app.AlertDialog
@@ -13,7 +14,7 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
 
-fun QrCodeDispay(context: Context,activity: Activity){
+fun QrCodeDispay(context: Context,activity: Activity, loginViewmodel : AccountActivitysViewModel){
 
     val view = View.inflate(context, R.layout.qrcode_dispay,null)
     val builder = AlertDialog.Builder(context)
@@ -26,7 +27,7 @@ fun QrCodeDispay(context: Context,activity: Activity){
     val writer = QRCodeWriter()
     try {
 
-        val bitMatrix = writer.encode(CheckCurrentUser()!!.uid, BarcodeFormat.QR_CODE,512,512)
+        val bitMatrix = writer.encode(loginViewmodel.liveFirebaseUser.value!!.uid, BarcodeFormat.QR_CODE,512,512)
         val width = bitMatrix.width
         val height = bitMatrix.height
         val bmp = Bitmap.createBitmap(width,height, Bitmap.Config.RGB_565)

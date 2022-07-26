@@ -3,9 +3,10 @@ package Izaac.Doyle.PubsApp.ui.BottomSheet
 
 
 
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
 import Izaac.Doyle.PubsApp.Firebase.AccountData
-import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
-import Izaac.Doyle.PubsApp.Firebase.FBcreateDB
+
+
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.AccountModel
@@ -25,6 +26,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -40,6 +42,10 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var firebaseAuth : FirebaseAuth
+
+
+
+    private lateinit var loginViewmodel: AccountActivitysViewModel
 
     private lateinit var providers:List<AuthUI.IdpConfig>
 
@@ -80,6 +86,9 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
 
         _binding = AccountBottomDialogBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+
+        loginViewmodel = ViewModelProvider(this)[AccountActivitysViewModel::class.java]
 
       // val view = inflater.inflate(R.layout.account_bottom_dialog, container , false)
 
@@ -123,12 +132,18 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             binding.UserPasswordLogin2.clearFocus()
             if (emailValid && passwordValid) {
                 if (arguments?.containsKey("relogin") == true) {
-                    app.account.ReAuth(
+
+
+                    loginViewmodel.ReAuth(
                         binding.UserEmailLogin2.text.toString(),
                         binding.UserPasswordLogin2.text.toString(),
                         "Delete",
                         requireActivity()
                     )
+
+
+
+
                     dismiss()
                     Log.d("ReAuth Login","Google ReAuth")
 
@@ -137,11 +152,11 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
                         "User",
                         "User can be logged in or if account not there create account prompt"
                     )
-                    val accountModel = AccountModel("","",binding.UserEmailLogin2.text.toString(),"")
-                    //SignIn
-//                    signInLauncher
+//                    val accountModel = AccountModel("","",binding.UserEmailLogin2.text.toString(),"")
+//                    app.account.SignIn(accountModel,binding.UserPasswordLogin2.text.toString(),requireContext(),requireActivity())
 
-                    app.account.SignIn(accountModel,binding.UserPasswordLogin2.text.toString(),requireContext(),requireActivity())
+                    loginViewmodel.EPLogin(binding.UserEmailLogin2.text.toString(),binding.UserPasswordLogin2.text.toString(),requireContext(),requireActivity())
+
                     dismiss()
                 }
             }
@@ -150,30 +165,13 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
         }
 
         binding.GoogleSignIn.setOnClickListener {
-//            val customLayout = AuthMethodPickerLayout
-//            .Builder(R.layout.account_bottom_dialog)
-//            .setGoogleButtonId(R.id.Google_SignIn)
-//            .setEmailButtonId(R.id.User_Login_Login)
-//            .build()
-
         val signinIntent  = AuthUI.getInstance()
             .createSignInIntentBuilder()
             .setAvailableProviders(providers)
             .setTheme(R.style.LoginTheme)
             //.setAuthMethodPickerLayout(customLayout)
             .build()
-
         signInLauncher.launch(signinIntent)
-//            // Google Sign in
-//           val gso = GoogleSignInOptions
-//               .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//               .requestIdToken(getString(R.string.default_web_client_id))
-//               .requestEmail()
-//               .build()
-//           googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(requireActivity(), gso)
-//            Log.d("Google Sign In","Google Sign in Attempt")
-//            val intent = googleSignInClient.signInIntent
-//         //  activityResultLauncher.launch(intent)
             }
         return root
     }
@@ -259,6 +257,7 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
 //        }
 //    }
 
+    //Firebase UI SignIn
     private val signInLauncher = registerForActivityResult(
         FirebaseAuthUIActivityResultContract()
     ) { res ->
@@ -267,60 +266,32 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
             dataPasser.changeBottomSheet("Delete")
         }else if (FirebaseAuth.getInstance().currentUser !=null){
             Log.d("Info",res.toString())
-            //set that its gets username from firbase
-
+            //set that its gets username from firebase
             if (res.idpResponse!!.isNewUser){
-//                FBcreateDB(CheckCurrentUser()!!.uid, CheckCurrentUser()!!.displayName.toString(),
-//                    res.idpResponse!!.email!!)
-                val accounts = FBAccountModel(CheckCurrentUser()!!.uid,CheckCurrentUser()!!.displayName.toString(), res.idpResponse!!.email!!,"","")
+                val accounts = FBAccountModel(loginViewmodel.liveFirebaseUser.value!!.uid,loginViewmodel.liveFirebaseUser.value!!.displayName.toString(), res.idpResponse!!.email!!,"","")
                 Log.d("FirebaseRealTimeDBTest", "Create Account $accounts")
-                AccountData.createAccount(accounts)
+                AccountData.createAccountDB(accounts,this,requireActivity())
                 Log.d("Info","FBUI new user")
             }
-            dataPasser.AccountStatus("Task was Successful", res.idpResponse?.email!! )
-            dismiss()
-        }
+            //Just Call Recreate
+//            dataPasser.AccountStatus("Task was Successful", res.idpResponse?.email!! )
+            //
+
+//            dismiss()
+
+
+         }
         //this.onSignInResult(res)
     }
 
-    private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ActivityResultCallback {
-
-        if(it.resultCode == RESULT_OK){
-            Log.d("Activity Result","Activity Result has been started")
-            val task  = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                if (arguments?.containsKey("relogin") == true) {
-                    Log.d("ReAuth","Google ReAuth")
-                    app.account.GoogleSignIn(account.idToken,requireActivity(),"Delete")
-                    Log.d("delete","${requireActivity()}")
-                    //SettingsFragment().reAuth = true
-                }else{
-                    app.account.GoogleSignIn(account.idToken,requireActivity(),"SignIn")
-                }
-               // setFragmentResult(DeleteAccountConstraint.REQUEST_CODE, bundleOf(DeleteAccountConstraint.BUNDLE_KEY to "confirm"))
-                dismiss()
-            }catch (e:Exception){
-              //  Toast.makeText(requireContext() ,    "${e.message} $e", Toast.LENGTH_SHORT).show()
-                Log.d("Google SignIn","${e.message} $e")
-            }
-        }
+    override fun onStart() {
+        super.onStart()
 
 
-    })
 
-//    override fun onStart() {
-//        super.onStart()
-//        firebaseAuth.addAuthStateListener(fblistener)
-//    }
-//
-//    override fun onStop() {
-//        if(fblistener !=null){
-//            firebaseAuth.removeAuthStateListener(fblistener)
-//        }
-//        super.onStop()
-//
-//    }
+    }
+
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -348,7 +319,7 @@ class BottomFragmentLogin: BottomSheetDialogFragment(),onDataPasser{
         TODO("Not yet implemented")
     }
 
-    override fun AccountStatus(info: String, email: String) {
+    override fun AccountStatus(info: String, email: String?, account: FBAccountModel?) {
 
         when (info) {
             "Task was Successful" -> {

@@ -1,11 +1,15 @@
 package Izaac.Doyle.PubsApp.ui.Settings
 
-import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
+import Izaac.Doyle.PubsApp.Firebase.AccountData
+
 import Izaac.Doyle.PubsApp.Firebase.FBUpdateGroup
 import Izaac.Doyle.PubsApp.Firebase.UploadImage
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.AccountModel
+import Izaac.Doyle.PubsApp.Models.FBAccountModel
 import Izaac.Doyle.PubsApp.databinding.SettingUpdateInfoBinding
+import Izaac.Doyle.PubsApp.ui.home.HomeViewModel
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
@@ -13,16 +17,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.storage.FirebaseStorage
+
 
 class settings_update_info: BottomSheetDialogFragment() {
 
     private var _binding: SettingUpdateInfoBinding? = null
     private  var ImageUri:Uri? = null
+//    private val args by navArgs<settings_update_infoArgs>()
 
     lateinit var app: MainApp
+
+    private val homeViewModel : HomeViewModel by activityViewModels()
+    private lateinit var loginViewmodel : AccountActivitysViewModel
 
 
 
@@ -37,15 +50,17 @@ class settings_update_info: BottomSheetDialogFragment() {
     ): View? {
         _binding = SettingUpdateInfoBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        loginViewmodel = ViewModelProvider(this)[AccountActivitysViewModel::class.java]
         app = requireActivity().application as MainApp
 
         binding.accountImageUpdate.isEnabled = false
 
 
 
-        val sharedPrefInfo = requireContext().getSharedPreferences(CheckCurrentUser()!!.uid, Context.MODE_PRIVATE)
+        val sharedPrefInfo = requireContext().getSharedPreferences(loginViewmodel.liveFirebaseUser.value!!.uid, Context.MODE_PRIVATE)
 
-
+        homeViewModel.load(loginViewmodel.liveFirebaseUser.value!!.uid)
 
         binding.accountToggleUpdate.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked){
@@ -62,6 +77,7 @@ class settings_update_info: BottomSheetDialogFragment() {
         if (!requireArguments().isEmpty) {
             if (!requireArguments().isEmpty) {
                 if (requireArguments().containsKey("GroupUpdate")) {
+                    //Update - Text On Group
                     binding.accountUsername1.helperText = "Update Group Name"
                     binding.textView5.text = "Click to Change Group Image"
 
@@ -69,52 +85,40 @@ class settings_update_info: BottomSheetDialogFragment() {
 
                 binding.accountUsernameUpdate.setText(requireArguments().getString("GroupName"))
             }else{
+                //Update - Text On Profile
                 binding.accountUsernameUpdate.setText(sharedPrefInfo.getString("Username", ""))
             }
         }
+
+        homeViewModel.observableAccountData.observe(viewLifecycleOwner, Observer {
+            println(it[0].AccountID)
+        })
 
 
         binding.accountInfoUpdate.setOnClickListener {
             if (!requireArguments().isEmpty) {
                 if (requireArguments().containsKey("GroupUpdate")) {
+                    //Update Group
                     FBUpdateGroup(
                         requireArguments().getString("GroupUUID").toString(),
                         binding.accountUsernameUpdate.text.toString().trim()
                     )
-
                     if (ImageUri != null) {
-                        UploadImage(
-                            requireArguments().getString("GroupUUID").toString(),
-                            ImageUri!!,
-                            "GroupImage"
+                        UploadImage(requireArguments().getString("GroupUUID").toString(), ImageUri!!, "GroupImage"
                         )
                     }
-
-
                 } else {
-
-                    app.account.UpdateAccountDB(
-                        AccountModel(
-                            CheckCurrentUser()!!.uid,
-                            binding.accountUsernameUpdate.text.toString().trim(),
-                            ""
-                        )
-                    )
-
+                    // Update Profile
+//                    app.account.UpdateAccountDB(AccountModel(CheckCurrentUser()!!.uid, binding.accountUsernameUpdate.text.toString().trim(), ""))
+                    AccountData.updateAccountUserName(FBAccountModel(loginViewmodel.liveFirebaseUser.value!!.uid,binding.accountUsernameUpdate.text.toString().trim(),
+                        loginViewmodel.liveFirebaseUser.value!!.email.toString(),
+                        homeViewModel.observableAccountData.value!![0].AccountID))
                     if (ImageUri != null) {
-                        UploadImage(CheckCurrentUser()!!.uid, ImageUri!!, "ProfileImage")
+                        UploadImage(loginViewmodel.liveFirebaseUser.value!!.uid, ImageUri!!, "ProfileImage")
                     }
-                    val datastore = requireActivity().getSharedPreferences(
-                        CheckCurrentUser()!!.uid,
-                        Context.MODE_PRIVATE
-                    )
-
+                    val datastore = requireActivity().getSharedPreferences(loginViewmodel.liveFirebaseUser.value!!.uid, Context.MODE_PRIVATE)
                     val editor = datastore.edit()
-                    //editor.putString("Email", result.data!!["Username"] as String?)
-                    editor.putString(
-                        "Username",
-                        binding.accountUsernameUpdate.text.toString().trim()
-                    )
+                    editor.putString("Username", binding.accountUsernameUpdate.text.toString().trim())
                     editor.apply()
                     dismiss()
                 }
@@ -124,8 +128,7 @@ class settings_update_info: BottomSheetDialogFragment() {
         val profileImage = binding.accountImageUpdate
         if (!requireArguments().isEmpty) {
             if (requireArguments().containsKey("GroupUpdate")) {
-                val FBgroupImage =
-                    FirebaseStorage.getInstance().reference.child("${requireArguments().getString("GroupUUID")}/GroupImage.jpg")
+                val FBgroupImage = FirebaseStorage.getInstance().reference.child("${requireArguments().getString("GroupUUID")}/GroupImage.jpg")
 
                 FBgroupImage.downloadUrl.addOnSuccessListener { Uri ->
                     val imageURL = Uri.toString()
@@ -133,12 +136,11 @@ class settings_update_info: BottomSheetDialogFragment() {
                 }
                 binding.accountImageUpdate.setOnClickListener {
                     ImageLauncher.launch("image/*")
-                    // ShowImagePicker(requireActivity(),IMAGE_REQUEST,"Group")
                 }
 
             } else {
                 val FBprofileImage =
-                    FirebaseStorage.getInstance().reference.child("${CheckCurrentUser()!!.uid}/ProfileImage.jpg")
+                    FirebaseStorage.getInstance().reference.child("${loginViewmodel.liveFirebaseUser.value!!.uid}/ProfileImage.jpg")
 
                 FBprofileImage.downloadUrl.addOnSuccessListener { Uri ->
                     val imageURL = Uri.toString()

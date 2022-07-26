@@ -8,15 +8,16 @@ import Izaac.Doyle.PubsApp.ui.home.GroupViewModel
 import android.app.Activity
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 
 object GoogleRealTimeDB :GooglePlacesStore{
     var database: DatabaseReference = FirebaseDatabase.getInstance().reference
 
 
-    override fun AddLocation(GroupUUID: String, placesModel: ArrayList<GooglePlacesModel>) {
+    override fun AddLocation(GroupUUID: String, placesModel: ArrayList<GooglePlacesModel>,user: FirebaseUser) {
         Log.d("RealTime",placesModel.toString())
-        val uid = CheckCurrentUser()!!.uid
+        val uid = user!!.uid
         val key = database.child("Pubs").key
 
         for (i in placesModel){

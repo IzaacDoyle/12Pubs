@@ -1,30 +1,24 @@
 package Izaac.Doyle.PubsApp.activities
 
 
-import Izaac.Doyle.PubsApp.Firebase.AccountData
-import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
-import Izaac.Doyle.PubsApp.Firebase.FBGetDB
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
 import Izaac.Doyle.PubsApp.Helpers.QrCodeDispay
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Helpers.setTheme
 import Izaac.Doyle.PubsApp.Main.MainApp
+import Izaac.Doyle.PubsApp.Models.FBAccountModel
 import Izaac.Doyle.PubsApp.Models.RulesModel
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.ActivityMainBinding
-import Izaac.Doyle.PubsApp.databinding.FragmentHomeBinding
-import Izaac.Doyle.PubsApp.databinding.FragmentMapsBinding
+import Izaac.Doyle.PubsApp.databinding.NavHeaderMainBinding
 import Izaac.Doyle.PubsApp.ui.BottomSheet.*
 import Izaac.Doyle.PubsApp.ui.Group.BottomCameraFragment
 import Izaac.Doyle.PubsApp.ui.Group.BottomFragmentGroupCreate
 import Izaac.Doyle.PubsApp.ui.Group.BottomJoinAddGroupFragment
-import Izaac.Doyle.PubsApp.ui.Maps.MapsViewModel
-import android.app.Activity
+import Izaac.Doyle.PubsApp.ui.home.HomeViewModel
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.Bitmap
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -32,74 +26,72 @@ import android.view.View
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.core.view.get
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.WriterException
-import com.google.zxing.qrcode.QRCodeWriter
 
 class MainActivity : AppCompatActivity(), onDataPasser {
 
 
     lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var navbinding : NavHeaderMainBinding
     private lateinit var auth: FirebaseAuth
+    private val homeViewModel : HomeViewModel by viewModels()
 
-
-
-
-
-
+    private lateinit var loggedViewModel: AccountActivitysViewModel
 
     lateinit var dataPasser : onDataPasser
     lateinit var app: MainApp
-    var SearchActive:Boolean = false
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setSupportActionBar(binding.appBarMain.toolbar)
+        //setSupportActionBar(binding.appBarMain.toolbar)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+
+        loggedViewModel = ViewModelProvider(this)[AccountActivitysViewModel::class.java]
+
+
         app = application as MainApp
         auth = Firebase.auth
         dataPasser = this
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
+        val navController = navHostFragment.navController
+//        val navController = findNavController(R.id.nav_host_fragment_content_main)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_pubs, R.id.nav_maps, R.id.nav_settings, R.id.nav_group
+                R.id.nav_home, R.id.nav_pubs, R.id.nav_maps, R.id.nav_settings, R.id.nav_group,R.id.nav_rules
             ), drawerLayout
         )
-
 
         binding.navView.menu[3].setOnMenuItemClickListener {
             val view = View.inflate(this, R.layout.daynightmode_toggle,null)
@@ -138,37 +130,33 @@ class MainActivity : AppCompatActivity(), onDataPasser {
                     dialog.dismiss()
                 }
             }
-
-
-
-
-
-
-
             true
         }
 
-
-
-
-
-        if (CheckCurrentUser() == null) {
+        if (FirebaseAuth.getInstance().currentUser == null) {
             binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone =
                 false
             binding.navView.menu[2].isVisible = false
             binding.navView.menu[2].isEnabled = false
             binding.navView.menu[1].subMenu[1].isVisible = false
+            Log.d("StartUpAccount","No Firebase User")
         } else {
             binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone = true
             binding.navView.menu[2].isVisible = true
             binding.navView.menu[2].isEnabled = true
             binding.navView.menu[1].subMenu[1].isVisible = true
 
-
-            if (intent != null) {
+            Log.d("StartUpAccount","has Firebase User")
+            if (intent.hasExtra("account")) {
                 val getString = intent.getStringExtra("account")
+                Log.d("AccountStartUp",getString.toString())
                 Toast.makeText(this, "$getString", Toast.LENGTH_SHORT).show()
             }
+
+
+
+
+
 
 //            FBGetDB(CheckCurrentUser()!!.uid, this)
 
@@ -177,7 +165,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         val createAccountBtn = navView.findViewById<LinearLayout>(R.id.Drawer_CreateA)
         val QRView = navView.menu[2].subMenu[1]
             QRView.setOnMenuItemClickListener {
-                QrCodeDispay(this,this)
+                QrCodeDispay(this,this,loggedViewModel)
 
                 true
             }
@@ -205,6 +193,13 @@ class MainActivity : AppCompatActivity(), onDataPasser {
 
     }
 
+//    override fun onSupportNavigateUp(): Boolean {
+//        val navController = findNavController(R.id.my_nav_host)
+//        return navController.navigateUp(myAppBarConfiguration) || super.onSupportNavigateUp()
+//    }
+
+
+
 
 
 
@@ -213,7 +208,8 @@ class MainActivity : AppCompatActivity(), onDataPasser {
         when (item.itemId) {
             R.id.settings_signout -> {
                 Log.d("settingsActivity", "Log out")
-                app.account.SignOut(this)
+//                app.account.SignOut(this)
+                loggedViewModel.LogOut(this)
             }
 
 
@@ -222,71 +218,54 @@ class MainActivity : AppCompatActivity(), onDataPasser {
     }
 
     override fun onStart() {
-        super.onStart()
-        CheckCurrentUser()
-        Log.d("Google Account", "${CheckCurrentUser()?.email}")
 
+        loggedViewModel.CheckCurrentUser()
+        Log.d("GoogleAccount", "${loggedViewModel.liveFirebaseUser.value?.email}")
+
+        homeViewModel.observableAccountData.observe(this, Observer {
+            if (it != null && it.isNotEmpty()){
+                Log.d("HomeAccount",it[0].Username.toString())
+                UpDatNavHeader(it[0])
+            }
+        })
+
+        super.onStart()
+
+
+    }
+
+    private fun UpDatNavHeader(currentUser: FBAccountModel){
+        val headerView = binding.navView.getHeaderView(0)
+        navbinding = NavHeaderMainBinding.bind(headerView)
+        navbinding.DrawerName.text = currentUser.Username
+        navbinding.DrawerEmail.text = currentUser.UserEmail
+
+        try {
+            val FBprofileImage =
+                FirebaseStorage.getInstance().reference.child("${loggedViewModel.liveFirebaseUser.value!!.uid}/ProfileImage.jpg")
+            FBprofileImage.downloadUrl.addOnSuccessListener { Uri ->
+                val imageURL = Uri.toString()
+                Glide.with(this).load(imageURL).into(navbinding.DrawerAccountImage)
+            }.addOnFailureListener {
+                navbinding.DrawerAccountImage.setImageResource(R.drawable.ic_pubs)
+            }
+        }catch (e:Exception){
+            navbinding.DrawerAccountImage.setImageResource(R.drawable.ic_pubs)
+        }
 
     }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        CheckCurrentUser()
-        val email = findViewById<TextView>(R.id.Drawer_Email)
-        val name = findViewById<TextView>(R.id.Drawer_Name)
-        val profileImage = findViewById<ImageView>(R.id.Drawer_Account_Image)
-
-
-
-        //val profileimage = findViewById<ImageView>(R.id.Drawer_Account_Image)
 
         val drawerDropDown = findViewById<LinearLayout>(R.id.drawer_header_button)
 
         var buttonclicks = 0
 
-        if (CheckCurrentUser() == null) {
+        if (loggedViewModel.liveFirebaseUser.value == null) {
             drawerDropDown.isVisible = false
             drawerDropDown.isEnabled = false
         } else {
-
-            val FBprofileImage = FirebaseStorage.getInstance().reference.child("${CheckCurrentUser()!!.uid}/ProfileImage.jpg")
-
-            FBprofileImage.downloadUrl.addOnSuccessListener { Uri ->
-                val imageURL = Uri.toString()
-                Glide.with(this).load(imageURL).into(profileImage)
-            }.addOnFailureListener {
-                profileImage.setImageResource(R.drawable.ic_pubs)
-            }
-
-            val sharedPrefInfo =
-                getSharedPreferences(CheckCurrentUser()!!.uid, Context.MODE_PRIVATE)
-
-            if (sharedPrefInfo.getString("Username", "")!!.isEmpty()){
-                val username = CheckCurrentUser()!!.displayName
-                name.text = username
-                email.text = CheckCurrentUser()!!.email
-
-                val datastore = getSharedPreferences(CheckCurrentUser()!!.uid,Context.MODE_PRIVATE)
-                val editor = datastore.edit()
-                editor.putString("Username",username)
-                editor.apply()
-            }else{
-                val username = sharedPrefInfo.getString("Username", "")
-                //val userEmail = sharedPrefInfo.getString("Email", "")
-                name.text = username
-                email.text = CheckCurrentUser()!!.email
-            }
-
-
-            //Log.d("shardpref", "$username to $userEmail")
-
-
-            //  email.text = userinfo.email
-
-
-
-
-
 
             drawerDropDown.setOnClickListener {
 
@@ -302,7 +281,8 @@ class MainActivity : AppCompatActivity(), onDataPasser {
                         binding.drawerLayout.closeDrawer(GravityCompat.START)
                         binding.navView.menu[0].isVisible = false
                         navController.navigate(R.id.nav_home)
-                        app.account.SignOut(this)
+//                        app.account.SignOut(this)
+                        loggedViewModel.LogOut(this)
                         buttonclicks = 0
                         true
                     }
@@ -314,7 +294,7 @@ class MainActivity : AppCompatActivity(), onDataPasser {
                 }
             }
         }
-        if (CheckCurrentUser() != null) {
+        if (loggedViewModel.liveFirebaseUser.value != null) {
             drawerDropDown.isVisible = true
             drawerDropDown.isEnabled = true
             binding.drawerLayout.findViewById<LinearLayout>(R.id.Drawer_Login_Create).isGone =
@@ -368,17 +348,19 @@ class MainActivity : AppCompatActivity(), onDataPasser {
     }
 
 
-    override fun AccountStatus(info: String, Extra: String) {
+    override fun AccountStatus(info: String, email: String?, account: FBAccountModel?) {
         val bottomJoinAddGroupFragment = BottomJoinAddGroupFragment()
         val bottomCameraFragment = BottomCameraFragment()
         when (info) {
             "Task was Successful" -> {
                 //restart UI
-                // Update()
-                recreate()
 
-                //Account Was Made
-//                Toast.makeText(this, "Task was Successful", Toast.LENGTH_SHORT).show()
+//                homeViewModel.load(loggedViewModel.liveFirebaseUser.value!!.uid)
+                recreate()
+                if (account != null){
+
+                }
+
             }
             "Error Email Already in Use" -> {
                 val bottomFragment = BottomFragmentLogin()
@@ -388,14 +370,14 @@ class MainActivity : AppCompatActivity(), onDataPasser {
                         "Error Email Already in Use Try logging In",
                         Toast.LENGTH_SHORT
                     ).show()
-                    bottomFragment.arguments = bundleOf("Email" to Extra)
+                    bottomFragment.arguments = bundleOf("Email" to email)
                     bottomFragment.show(supportFragmentManager, "Bottom Login")
                 }
             }
             "Login Failed" -> {
                 val bottomFragment = BottomFragmentLogin()
                 if (!bottomFragment.isAdded && !bottomFragment.isVisible) {
-                    bottomFragment.arguments = bundleOf("Email" to Extra)
+                    bottomFragment.arguments = bundleOf("Email" to email)
                     bottomFragment.show(supportFragmentManager, "Bottom Login")
 
                 }
@@ -411,8 +393,10 @@ class MainActivity : AppCompatActivity(), onDataPasser {
             "Group"->{
                 if(!bottomJoinAddGroupFragment.isAdded && !bottomJoinAddGroupFragment.isVisible){
                     bottomCameraFragment.isHidden
-                    if (Extra.isNotBlank()){
-                        bottomJoinAddGroupFragment.arguments = bundleOf("QRCode" to Extra)
+                    if (email != null) {
+                        if (email.isNotBlank()){
+                            bottomJoinAddGroupFragment.arguments = bundleOf("QRCode" to email)
+                        }
                     }
                     bottomJoinAddGroupFragment.show(supportFragmentManager,"Group Join")
                 }

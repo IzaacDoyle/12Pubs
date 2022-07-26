@@ -1,12 +1,15 @@
 package Izaac.Doyle.PubsApp.ui.pubs
 
+
 import Izaac.Doyle.PubsApp.BuildConfig
-import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
 import Izaac.Doyle.PubsApp.Helpers.*
 import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
 import Izaac.Doyle.PubsApp.R
 import Izaac.Doyle.PubsApp.databinding.FragmentPubsBinding
 import android.annotation.SuppressLint
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
+
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -37,6 +41,7 @@ class PubsFragment : Fragment(), PubsClickListener {
     private lateinit var pubsViewModel: PubsViewModel
     private var _binding: FragmentPubsBinding? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var loginViewmodel : AccountActivitysViewModel
     lateinit var myAdapter: PubsRecycelerView
 
     // This property is only valid between onCreateView and
@@ -52,11 +57,17 @@ class PubsFragment : Fragment(), PubsClickListener {
         pubsViewModel =
             ViewModelProvider(this)[PubsViewModel::class.java]
 
+        loginViewmodel = ViewModelProvider(this)[AccountActivitysViewModel::class.java]
+
         _binding = FragmentPubsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
 
-        Places.initialize(root.context, BuildConfig.google_api_key)
+
+
+//        Log.d("MAPSAPI",value.toString())
+
+        Places.initialize(root.context, BuildConfig.google_api_key )
 
         val placesClient = Places.createClient(root.context)
 
@@ -148,12 +159,12 @@ class PubsFragment : Fragment(), PubsClickListener {
 
                 myAdapter.notifyDataSetChanged()
 
-                if (CheckCurrentUser() !=null) {
+                if (loginViewmodel.liveFirebaseUser.value !=null) {
                     val itemTouchHelperLeft =
                         ItemTouchHelper(PlacesSwipeLeft(myAdapter, requireContext()))
                     itemTouchHelperLeft.attachToRecyclerView(binding.pubsPlacesRecyclerView)
                     val itemTouchHelperRight =
-                        ItemTouchHelper(PlacesSwiperight(myAdapter, requireContext()))
+                        ItemTouchHelper(PlacesSwiperight(myAdapter, requireContext(),loginViewmodel))
                     itemTouchHelperRight.attachToRecyclerView(binding.pubsPlacesRecyclerView)
                     val itemTouchHelperMove =
                         ItemTouchHelper(PlacesDragtoRearage(myAdapter, requireContext(), result))

@@ -1,8 +1,9 @@
 package Izaac.Doyle.PubsApp.ui.Group
 
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
 import Izaac.Doyle.PubsApp.Firebase.AddUserToGroup
 
-import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+
 import Izaac.Doyle.PubsApp.Firebase.FirebaseLoggedIn
 
 import Izaac.Doyle.PubsApp.Helpers.ProfileClickListener
@@ -35,6 +36,8 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment(), ProfileClickListen
 
 
 
+
+
     private var _binding: FragmentJoinAddBinding? = null
     private var camera_binding: CameraViewBinding? = null
     lateinit var dataPasser : onDataPasser
@@ -42,6 +45,8 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment(), ProfileClickListen
     var account:FBAccountModel? = null
 
     private val firebaseloggedin : FirebaseLoggedIn by activityViewModels()
+
+    private lateinit var loginViewmodel : AccountActivitysViewModel
 
 
     private var camera = false
@@ -57,10 +62,12 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment(), ProfileClickListen
         _binding = FragmentJoinAddBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        loginViewmodel = ViewModelProvider(this)[AccountActivitysViewModel::class.java]
+
         groupViewModel =
             ViewModelProvider(this)[GroupViewModel::class.java]
 
-        firebaseloggedin.getAccount(CheckCurrentUser()!!.uid)
+        firebaseloggedin.getAccount(loginViewmodel.liveFirebaseUser.value!!.uid)
 
 
 
@@ -145,7 +152,7 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment(), ProfileClickListen
 
 
         binding.ScanButton.setOnClickListener {
-            dataPasser.AccountStatus("Camera", "")
+            dataPasser.AccountStatus("Camera", null,null)
             dismiss()
         }
 
@@ -215,7 +222,7 @@ class BottomJoinAddGroupFragment:BottomSheetDialogFragment(), ProfileClickListen
 
     override fun onResume() {
 
-        firebaseloggedin.getAccount(CheckCurrentUser()!!.uid)
+        firebaseloggedin.getAccount(loginViewmodel.liveFirebaseUser.value!!.uid)
 
         myAdapter.notifyItemRemoved(0)
         super.onResume()

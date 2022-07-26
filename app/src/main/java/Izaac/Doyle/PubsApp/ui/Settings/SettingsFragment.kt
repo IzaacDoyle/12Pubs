@@ -1,5 +1,6 @@
 package Izaac.Doyle.PubsApp.ui.Settings
 
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.R
@@ -22,6 +23,8 @@ class SettingsFragment: Fragment() {
     private var _binding: SettingsActivityBinding? = null
     lateinit var app: MainApp
     lateinit var dataPasser : onDataPasser
+
+    private lateinit var loginViewmodel: AccountActivitysViewModel
 
 
 
@@ -46,6 +49,8 @@ class SettingsFragment: Fragment() {
         val root: View = binding.root
        // val dialog = Dialog(requireContext())
 
+        loginViewmodel = ViewModelProvider(this)[AccountActivitysViewModel::class.java]
+
 
 
         binding.navviewMenuitems.menu[2].subMenu[1].setOnMenuItemClickListener {
@@ -54,7 +59,8 @@ class SettingsFragment: Fragment() {
             when (it.itemId){
                 R.id.settings_signout ->{
                     Log.d("account","Signout")
-                    app.account.SignOut(requireActivity())
+//                    app.account.SignOut(requireActivity())
+                    loginViewmodel.LogOut(requireActivity())
                     //val homefragment = HomeFragment()
                     //add fragment trasaction to get out of settings
                     val navController = Navigation.findNavController(requireActivity(),R.id.nav_host_fragment_content_main)
@@ -90,10 +96,10 @@ class SettingsFragment: Fragment() {
 
 
         binding.navviewMenuitems.menu[2].subMenu[0].setOnMenuItemClickListener {
+            //Update Account
             val settings = settings_update_info()
             when(it.itemId){
                 R.id.settings_update_account->{
-
                     if (!settings.isAdded) {
                         settings.arguments = bundleOf("Delete" to "Delete")
                         settings.show(childFragmentManager, "Bottom Create")

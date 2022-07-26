@@ -1,6 +1,7 @@
 package Izaac.Doyle.PubsApp.Helpers
 
-import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
 import Izaac.Doyle.PubsApp.Firebase.savePlaceAsFav
 import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
 import Izaac.Doyle.PubsApp.R
@@ -14,7 +15,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-class PlacesSwiperight(var adapter: PubsRecycelerView,var context:Context): ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT ) {
+class PlacesSwiperight(var adapter: PubsRecycelerView,var context:Context, loginViewmodel :AccountActivitysViewModel): ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT ) {
 
 
     private val saveicon = ContextCompat.getDrawable(context, R.drawable.ic_save)
@@ -25,6 +26,8 @@ class PlacesSwiperight(var adapter: PubsRecycelerView,var context:Context): Item
 
 
     private val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
+
+    private val loginviewmodel = loginViewmodel
 
 //    private val intrinsicWidth = editIcon?.intrinsicWidth
 //    private val intrinsicHeight = editIcon?.intrinsicHeight
@@ -47,7 +50,7 @@ class PlacesSwiperight(var adapter: PubsRecycelerView,var context:Context): Item
             val pubs = viewHolder.itemView.tag as GooglePlacesModel
             println(pubs)
 
-            savePlaceAsFav(context, CheckCurrentUser()!!.uid,pubs)
+            savePlaceAsFav(context, loginviewmodel.liveFirebaseUser.value!!.uid,pubs)
             adapter.notifyItemChanged(pos)
         //save to Account
 

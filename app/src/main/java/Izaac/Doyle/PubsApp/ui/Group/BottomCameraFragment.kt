@@ -2,6 +2,7 @@ package Izaac.Doyle.PubsApp.ui.Group
 
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.databinding.CameraViewBinding
+import android.Manifest.permission.CAMERA
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
@@ -12,6 +13,7 @@ import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.vision.CameraSource
@@ -57,7 +59,7 @@ class BottomCameraFragment: BottomSheetDialogFragment() {
         }
 
         binding.cancelCamera.setOnClickListener {
-            dataPasser.AccountStatus("Group","")
+            dataPasser.AccountStatus("Group",null,null)
             dismiss()
         }
 
@@ -122,7 +124,7 @@ class BottomCameraFragment: BottomSheetDialogFragment() {
                         cameraSource.stop()
                         Log.d("CameraScan",scannedValue)
                        //Toast.makeText(requireContext(), scannedValue, Toast.LENGTH_SHORT).show()
-                        dataPasser.AccountStatus("Group",scannedValue)
+                        dataPasser.AccountStatus("Group",scannedValue,null)
                         dismiss()
                     }
 
@@ -135,29 +137,45 @@ class BottomCameraFragment: BottomSheetDialogFragment() {
 
     }
     private fun askForCameraPermission() {
-        ActivityCompat.requestPermissions(
-            requireActivity(),
-            arrayOf(android.Manifest.permission.CAMERA),
-            PERMISSIONS_GRANTED
-        )
+
+//        ActivityCompat.requestPermissions(
+//            requireActivity(),
+//            arrayOf(android.Manifest.permission.CAMERA),
+//            PERMISSIONS_GRANTED
+//        )
+
+        cameraPermission.launch(arrayOf(CAMERA))
     }
 
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSIONS_GRANTED && grantResults.isNotEmpty()) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                setUpControls()
-            } else {
-                Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
+    val cameraPermission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){
+        permission ->
+        permission.entries.forEach { _ ->
+            if (permission[CAMERA]== true ){
+                    setUpControls()
+                }else{
+                    Toast.makeText(requireContext(), "Permission for camera denied", Toast.LENGTH_SHORT).show()
                 dismiss()
-            }
+                }
         }
     }
+
+
+
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<out String>,
+//        grantResults: IntArray
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)C
+//        if (requestCode == PERMISSIONS_GRANTED && grantResults.isNotEmpty()) {
+//            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                setUpControls()
+//            } else {
+//                Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show()
+//                dismiss()
+//            }
+//        }
+//    }
 
     override fun onStart() {
         super.onStart()

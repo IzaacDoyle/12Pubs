@@ -1,8 +1,9 @@
 package Izaac.Doyle.PubsApp.ui.BottomSheet
 
 
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
 import Izaac.Doyle.PubsApp.Firebase.AccountData
-import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
 import Izaac.Doyle.PubsApp.Models.AccountModel
@@ -22,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.ViewModelProvider
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -38,6 +40,7 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
     private var _binding: AccountCreateBottomDialogBinding? = null
     private lateinit var firebaseAuth : FirebaseAuth
     private lateinit var providers:List<AuthUI.IdpConfig>
+    private lateinit var loginViewmodel: AccountActivitysViewModel
     lateinit var app: MainApp
     lateinit var dataPasser : onDataPasser
     var emailValid:Boolean = false
@@ -66,6 +69,8 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
         val root: View = binding.root
 
         firebaseAuth = FirebaseAuth.getInstance()
+
+        loginViewmodel = ViewModelProvider(this)[AccountActivitysViewModel::class.java]
 
         providers = arrayListOf(
            // AuthUI.IdpConfig.EmailBuilder().build(),
@@ -107,11 +112,22 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
                     binding.UserPasswordRetypeCreate1.helperText = "Passwords do not Match"
                 } else {
                     if (passwordValid && emailValid) {
-                        app.account.LoginCreate(
-                            AccountModel("",  binding.UserUsernameCreate2.text.toString().trim(), binding.UserEmailCreate2.text.toString().trim(),""),
+
+                        loginViewmodel.EPRegister(  AccountModel("",  binding.UserUsernameCreate2.text.toString().trim(), binding.UserEmailCreate2.text.toString().trim(),""),
                             binding.UserPasswordCreate2.text.toString().trim(),
-                            requireActivity()
-                        )
+                            requireActivity())
+
+//                        app.account.LoginCreate(
+//                            AccountModel("",  binding.UserUsernameCreate2.text.toString().trim(), binding.UserEmailCreate2.text.toString().trim(),""),
+//                            binding.UserPasswordCreate2.text.toString().trim(),
+//                            requireActivity()
+//                        )
+//
+//                        val account: FBAccountModel= FBAccountModel("",binding.UserUsernameCreate2.text.toString().trim(),binding.UserEmailCreate2.text.toString().trim(),binding.UserPasswordCreate2.text.toString().trim(),"","",)
+//                        AccountData.createAccount(account,this,requireActivity())
+
+
+
                         dismiss()
 
 
@@ -169,35 +185,21 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
             if (res.idpResponse!!.isNewUser){
 //                FBcreateDB(CheckCurrentUser()!!.uid, CheckCurrentUser()!!.displayName.toString(),
 //                    res.idpResponse!!.email!!)
-                val accounts = FBAccountModel(CheckCurrentUser()!!.uid,CheckCurrentUser()!!.displayName.toString(), res.idpResponse!!.email!!,"","")
+                val accounts = FBAccountModel(loginViewmodel.liveFirebaseUser.value!!.uid,loginViewmodel.liveFirebaseUser.value!!.displayName.toString(), res.idpResponse!!.email!!,"","")
                 Log.d("FirebaseRealTimeDBTest", "Create Account $accounts")
-                AccountData.createAccount(accounts)
+                AccountData.createAccountDB(accounts,this, requireActivity())
                 Log.d("Info","FBUI new user")
             }
-            dataPasser.AccountStatus("Task was Successful", res.idpResponse?.email!! )
-            dismiss()
+//            dataPasser.AccountStatus("Task was Successful", res.idpResponse?.email!! )
+
+
+
+//            dismiss()
+
+
         }
+
     }
-
-
-    private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(), ActivityResultCallback {
-
-        if(it.resultCode == Activity.RESULT_OK){
-            Log.d("Activity Result","Activity Result has been started")
-            val task  = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                app.account.GoogleSignIn(account.idToken,requireActivity(),"SignIn")
-                dismiss()
-            }catch (e:Exception){
-              //  Toast.makeText(requireContext() ,    "${e.message} $e", Toast.LENGTH_SHORT).show()
-                Log.d("Google SignIn","${e.message} $e")
-            }
-        }
-
-
-    })
-
 
 
     private fun emailFocusListener() {
@@ -299,7 +301,7 @@ class BottomFragmentCreate: BottomSheetDialogFragment(),onDataPasser {
     override fun changeBottomSheet(sheetActive: String) {
     }
 
-    override fun AccountStatus(info: String, email: String) {
+    override fun AccountStatus(info: String, email: String?, account: FBAccountModel?) {
         when (info) {
             "Task was Successful" -> {
                 //restart UI

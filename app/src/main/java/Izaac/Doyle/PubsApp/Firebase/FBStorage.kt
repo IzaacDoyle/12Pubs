@@ -12,6 +12,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
@@ -20,54 +21,54 @@ import com.google.firebase.storage.FirebaseStorage
 import kotlin.collections.ArrayList
 
 
-fun FBcreateDB(userUUID: String,username:String,userEmail:String) {
-    val db = Firebase.firestore
-    Log.d("UserEmail",userEmail)
-
-    val UserDb = hashMapOf(
-        "UserUUID" to userUUID,
-        "Username" to username.lowercase(),
-        "UserEmail" to userEmail
-
-    )
-
-    db.collection("UserProfiles").document(userUUID)
-        .set(UserDb)
-        .addOnSuccessListener {
-            Log.d("FirestoreDB", "DB created")
-        }
-
-}
-
-
-fun FBGetDB(userUUID: String,activity: Activity){
-    val db = Firebase.firestore
-    db.collection("UserProfiles").document(userUUID)
-        .get()
-        .addOnSuccessListener { result ->
-            if (result != null && result.exists()){
-                Log.d("FBGet","SetSaved Pref")
-                 val userInfo = result.toObject(AccountModel::class.java)
-              //  Update(userInfo!!)
-              //  Update(userInfo!!)
-
-            //    Log.d("FBGet","SetSaved Pref ${userInfo!!.email} + ${result.data!!["Username"].toString()}")
-                val datastore = activity.getSharedPreferences(userUUID,Context.MODE_PRIVATE)
-                val editor = datastore.edit()
-                    //editor.putString("Email", result.data!!["Username"] as String?)
-                    editor.putString("Username",result.data!!["Username"].toString())
-                //if group is empty wont local save
-                    if (result.data!!["Group"].toString().isNotEmpty()) {
-                        editor.putString("GroupName", result.data!!["Group"].toString())
-                    }
-                    editor.apply()
-            }
-//            val userInfo = result.data.
-          //  val username = result.data!!["Username"]
-        //    Log.d("FBgetDB","$username and with UID of $userUUID")
-        }
-
-}
+//fun FBcreateDB(userUUID: String,username:String,userEmail:String) {
+//    val db = Firebase.firestore
+//    Log.d("UserEmail",userEmail)
+//
+//    val UserDb = hashMapOf(
+//        "UserUUID" to userUUID,
+//        "Username" to username.lowercase(),
+//        "UserEmail" to userEmail
+//
+//    )
+//
+//    db.collection("UserProfiles").document(userUUID)
+//        .set(UserDb)
+//        .addOnSuccessListener {
+//            Log.d("FirestoreDB", "DB created")
+//        }
+//
+//}
+//
+//
+//fun FBGetDB(userUUID: String,activity: Activity){
+//    val db = Firebase.firestore
+//    db.collection("UserProfiles").document(userUUID)
+//        .get()
+//        .addOnSuccessListener { result ->
+//            if (result != null && result.exists()){
+//                Log.d("FBGet","SetSaved Pref")
+//                 val userInfo = result.toObject(AccountModel::class.java)
+//              //  Update(userInfo!!)
+//              //  Update(userInfo!!)
+//
+//            //    Log.d("FBGet","SetSaved Pref ${userInfo!!.email} + ${result.data!!["Username"].toString()}")
+//                val datastore = activity.getSharedPreferences(userUUID,Context.MODE_PRIVATE)
+//                val editor = datastore.edit()
+//                    //editor.putString("Email", result.data!!["Username"] as String?)
+//                    editor.putString("Username",result.data!!["Username"].toString())
+//                //if group is empty wont local save
+//                    if (result.data!!["Group"].toString().isNotEmpty()) {
+//                        editor.putString("GroupName", result.data!!["Group"].toString())
+//                    }
+//                    editor.apply()
+//            }
+////            val userInfo = result.data.
+//          //  val username = result.data!!["Username"]
+//        //    Log.d("FBgetDB","$username and with UID of $userUUID")
+//        }
+//
+//}
 
 
 fun FBUpdateDB(userUUID: String, username: String){
@@ -300,16 +301,16 @@ fun CreatePendingAdd(GroupUUID:String,NewUserUUID:String){
     }
 
 
-fun Leavegroup(groupModel: GroupModel,activity: Activity,groupViewModel: GroupViewModel){
+fun Leavegroup(groupModel: GroupModel,activity: Activity,groupViewModel: GroupViewModel,user:FirebaseUser){
     val db = Firebase.firestore
 
-   val job = db.collection("Groups").document(groupModel.OwnerUUID).collection("Users").document(CheckCurrentUser()!!.uid).delete()
+   val job = db.collection("Groups").document(groupModel.OwnerUUID).collection("Users").document(user!!.uid).delete()
         .addOnSuccessListener {
             Log.d("LeaveGroup","User Removed from group")
             val deleteGroup = hashMapOf<String,Any>(
                 "Group" to FieldValue.delete()
             )
-           db.collection("UserProfiles").document(CheckCurrentUser()!!.uid).update(deleteGroup)
+           db.collection("UserProfiles").document(user!!.uid).update(deleteGroup)
                 .addOnSuccessListener {
                     Log.d("LeaveGroup","Users Profile Update to not in group")
 
@@ -321,7 +322,7 @@ fun Leavegroup(groupModel: GroupModel,activity: Activity,groupViewModel: GroupVi
                     groupViewModel.GroupNames.value!!.clear()
                     groupViewModel.Rules.value!!.clear()
 
-                    groupViewModel.Update()
+                    groupViewModel.Update(user.uid)
 
 
 
@@ -335,38 +336,38 @@ fun Leavegroup(groupModel: GroupModel,activity: Activity,groupViewModel: GroupVi
 
 }
 
-fun AddPlacesToGroup(placesModel: ArrayList<GooglePlacesModel>,GroupUUID: String,myRuleAdaptor: LocationRecycleView){
-    val db = Firebase.firestore
-    for (i in placesModel){
-        val places = hashMapOf(
-            "PubName" to i.PubName,
-            "PubID" to i.PubsID,
-            "PubPhoneNum" to i.PubPhoneNum,
-            "PubAddress" to i.PubAddress,
-            "PubLat" to i.PubLat,
-            "PubLng" to i.PubLng,
-            "PubOpeningHours" to i.PubOpeningHours
-        )
-        db.collection("Groups").document(GroupUUID).collection("Pubs").document(i.PubName.toString())
-            .set(places, SetOptions.merge())
-            .addOnSuccessListener {
-                myRuleAdaptor.notifyDataSetChanged()
-            }
-    }
-}
-
-fun RemovePlacesFromGroup(placesModel: ArrayList<GooglePlacesModel>,GroupUUID: String,myRuleAdaptor: LocationRecycleView){
-    val db = Firebase.firestore
-    for (i in placesModel){
-        db.collection("Groups").document(GroupUUID).collection("Pubs").document(i.PubName.toString()).delete()
-            .addOnSuccessListener {
-                Log.d("PubFromGroup","Pub Is removed from group ${i.PubName}")
-                myRuleAdaptor.notifyDataSetChanged()
-            }
-
-
-    }
-}
+//fun AddPlacesToGroup(placesModel: ArrayList<GooglePlacesModel>,GroupUUID: String,myRuleAdaptor: LocationRecycleView){
+//    val db = Firebase.firestore
+//    for (i in placesModel){
+//        val places = hashMapOf(
+//            "PubName" to i.PubName,
+//            "PubID" to i.PubsID,
+//            "PubPhoneNum" to i.PubPhoneNum,
+//            "PubAddress" to i.PubAddress,
+//            "PubLat" to i.PubLat,
+//            "PubLng" to i.PubLng,
+//            "PubOpeningHours" to i.PubOpeningHours
+//        )
+//        db.collection("Groups").document(GroupUUID).collection("Pubs").document(i.PubName.toString())
+//            .set(places, SetOptions.merge())
+//            .addOnSuccessListener {
+//                myRuleAdaptor.notifyDataSetChanged()
+//            }
+//    }
+//}
+//
+//fun RemovePlacesFromGroup(placesModel: ArrayList<GooglePlacesModel>,GroupUUID: String,myRuleAdaptor: LocationRecycleView){
+//    val db = Firebase.firestore
+//    for (i in placesModel){
+//        db.collection("Groups").document(GroupUUID).collection("Pubs").document(i.PubName.toString()).delete()
+//            .addOnSuccessListener {
+//                Log.d("PubFromGroup","Pub Is removed from group ${i.PubName}")
+//                myRuleAdaptor.notifyDataSetChanged()
+//            }
+//
+//
+//    }
+//}
 
 
 

@@ -20,6 +20,9 @@
             android:id="@+id/action_nav_home_to_nav_maps"
             app:destination="@id/nav_maps"
             app:popUpTo="@id/nav_maps" />
+        <action
+            android:id="@+id/action_nav_home_to_rulesFragment"
+            app:destination="@id/nav_rules" />
     </fragment>
 
     <fragment
@@ -44,9 +47,24 @@
         <action
             android:id="@+id/action_nav_settings_to_nav_home"
             app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_nav_settings_to_settings_update_info"
+            app:destination="@id/settings_update_info" />
     </fragment>
     <fragment
         android:id="@+id/nav_group"
         android:name="Izaac.Doyle.PubsApp.ui.Group.GroupsFragment"
         android:label="@string/menu_group" />
+    <dialog
+        android:id="@+id/settings_update_info"
+        android:name="Izaac.Doyle.PubsApp.ui.Settings.settings_update_info"
+        android:label="settings_update_info" >
+        <argument
+            android:name="accountID"
+            app:argType="string" />
+    </dialog>
+    <fragment
+        android:id="@+id/nav_rules"
+        android:name="Izaac.Doyle.PubsApp.ui.Rules.RulesFragment"
+        android:label="RulesFragment" />
 </navigation>

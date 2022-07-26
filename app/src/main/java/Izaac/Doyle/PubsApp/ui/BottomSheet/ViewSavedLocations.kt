@@ -1,5 +1,6 @@
 package Izaac.Doyle.PubsApp.ui.BottomSheet
 
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
 import Izaac.Doyle.PubsApp.Firebase.GoogleRealTimeDB
 import Izaac.Doyle.PubsApp.Firebase.GoogleRealTimeDB.removeLocation
 import Izaac.Doyle.PubsApp.Helpers.LocationRecycleView
@@ -10,6 +11,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -17,6 +19,8 @@ class ViewSavedLocations:BottomSheetDialogFragment(),PlaceClickListener {
 
     private var _binding: ViewSavedLocationsBinding? = null
     lateinit var myRuleAdaptor: LocationRecycleView
+
+    private lateinit var loginViewmodel : AccountActivitysViewModel
 
     private val binding get() = _binding!!
     override fun onCreateView(
@@ -27,6 +31,8 @@ class ViewSavedLocations:BottomSheetDialogFragment(),PlaceClickListener {
 
         _binding = ViewSavedLocationsBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        loginViewmodel = ViewModelProvider(this)[AccountActivitysViewModel::class.java]
 
         if (requireArguments().containsKey("Places")){
             val RuleRecycleView = binding.viewSavedLocationRecyclerView
@@ -63,7 +69,9 @@ class ViewSavedLocations:BottomSheetDialogFragment(),PlaceClickListener {
             binding.actionButton.setOnClickListener {
 //add
 //                AddPlacesToGroup(placesList, requireArguments().getString("GroupOwner").toString(),myRuleAdaptor)
-                GoogleRealTimeDB.AddLocation(requireArguments().getString("GroupOwner").toString(),placesList)
+                GoogleRealTimeDB.AddLocation(requireArguments().getString("GroupOwner").toString(),placesList,
+                    loginViewmodel.liveFirebaseUser.value!!
+                )
                 myRuleAdaptor.notifyDataSetChanged()
                 dismiss()
             }

@@ -1,13 +1,20 @@
 package Izaac.Doyle.PubsApp.Models
 
 import android.app.Activity
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 interface FBAccountStore {
     fun getAccount(uuid:String,account: MutableLiveData<List<FBAccountModel>>)
-    fun createAccount(account: FBAccountModel)
+
     fun updateAccountUserName(account:FBAccountModel)
-    fun deleteAccount(account: MutableLiveData<List<FBAccountModel>>)
-    fun reAuthAccount(account: MutableLiveData<List<FBAccountModel>>,password:String, info: String, activity: Activity)
-    fun signOutAccount(account: MutableLiveData<List<FBAccountModel>>, activity: Activity)
+    fun createAccountDB(account: FBAccountModel, sheet: BottomSheetDialogFragment?,activity: Activity)
+    fun DeleteDB(account: FBAccountModel)
+
+
+
+//    fun reAuthAccount(account: MutableLiveData<List<FBAccountModel>>,password:String, info: String, activity: Activity)
+//    fun deleteAccount(activity: Activity, context: Context, account: FBAccountModel)
+//    fun signOutAccount( account:FBAccountModel, activity: Activity)
 }

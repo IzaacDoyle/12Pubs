@@ -5,19 +5,20 @@ import com.google.firebase.database.Exclude
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class FBAccountModel(var UserUUID:String ="", var Username:String?="", var UserEmail:String="", var GroupName: String? ="",
+class FBAccountModel(var UserUUID:String ="", var Username:String?="", var UserEmail:String="",var AccountID:String? ="", var GroupName: String? ="",
                      var GroupUUID:String? = ""):
     Parcelable {
-    constructor() : this("", "", "", "", "")
+    constructor() : this("", "", "", "", "","")
 
     @Exclude
     fun toMap(): Map<String, Any?> {
         return mapOf(
             "UserUUID" to UserUUID,
-            "UserName" to Username?.lowercase(),
+            "Username" to Username?.lowercase(),
             "UserEmail" to UserEmail,
             "GroupName" to GroupName,
-            "GroupUUID" to GroupUUID
+            "GroupUUID" to GroupUUID,
+            "AccountID" to AccountID
 
             )
     }

@@ -1,6 +1,7 @@
 package Izaac.Doyle.PubsApp.ui.Group.viewpager
 
-import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
+
 
 import Izaac.Doyle.PubsApp.Firebase.FirebaseLoggedIn
 
@@ -23,16 +24,18 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 
 
-class RulesViewpager : Fragment(), RulesClickListener,onDataPasser{
+class RulesViewpager : Fragment(), RulesClickListener{
 
     private val groupViewModel: GroupViewModel by viewModels()
 
     private val firebaseloggedin : FirebaseLoggedIn by activityViewModels()
+    private lateinit var  loginViewmodel : AccountActivitysViewModel
 
     lateinit var myRuleAdaptor: GroupRulesRecycleView
     lateinit var dataPasser : onDataPasser
@@ -46,8 +49,9 @@ class RulesViewpager : Fragment(), RulesClickListener,onDataPasser{
         savedInstanceState: Bundle?
     ): View? {
 
+        loginViewmodel = ViewModelProvider(this)[AccountActivitysViewModel::class.java]
 
-        groupViewModel.QrCodeScanSearch(CheckCurrentUser()!!.uid)
+        groupViewModel.QrCodeScanSearch( loginViewmodel.liveFirebaseUser.value!!.uid)
 
 
         groupViewModel.qrcodeSearch.observe(viewLifecycleOwner){result->
@@ -116,7 +120,7 @@ class RulesViewpager : Fragment(), RulesClickListener,onDataPasser{
 
     override fun onResume() {
 
-        firebaseloggedin.getAccount(CheckCurrentUser()!!.uid)
+        firebaseloggedin.getAccount(loginViewmodel.liveFirebaseUser.value!!.uid)
         firebaseloggedin.AccountObservable.observe(viewLifecycleOwner) { account ->
             if (account.isNotEmpty()) {
 
@@ -145,20 +149,7 @@ class RulesViewpager : Fragment(), RulesClickListener,onDataPasser{
         super.onAttach(context)
     }
 
-    override fun changeBottomSheet(sheetActive: String) {
-    }
 
-    override fun AccountStatus(info: String, email: String) {
-    }
-
-    override fun PassView(view: Boolean) {
-    }
-
-    override fun Rules(Rules: MutableList<RulesModel>) {
-        if (Rules.isNotEmpty()) {
-
-        }
-    }
 
 
 }

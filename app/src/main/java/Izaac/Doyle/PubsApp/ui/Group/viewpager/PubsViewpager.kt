@@ -1,6 +1,7 @@
 package Izaac.Doyle.PubsApp.ui.Group.viewpager
 
-import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
 import Izaac.Doyle.PubsApp.Firebase.FirebaseLoggedIn
 import Izaac.Doyle.PubsApp.Helpers.LocationRecycleView
 import Izaac.Doyle.PubsApp.Helpers.PlaceClickListener
@@ -19,8 +20,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.log
 
 class PubsViewpager : Fragment() , OnAboutDataReceivedListener, PlaceClickListener {
 
@@ -28,6 +31,7 @@ class PubsViewpager : Fragment() , OnAboutDataReceivedListener, PlaceClickListen
     private val groupViewModel: GroupViewModel by viewModels()
     private val mapsViewModel: MapsViewModel by activityViewModels()
     private val firebaseloggedin : FirebaseLoggedIn by activityViewModels()
+    private lateinit var  loginViewmodel : AccountActivitysViewModel
     lateinit var myRuleAdaptor: LocationRecycleView
 
 
@@ -36,6 +40,8 @@ class PubsViewpager : Fragment() , OnAboutDataReceivedListener, PlaceClickListen
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+
+        loginViewmodel = ViewModelProvider(this)[AccountActivitysViewModel::class.java]
 
         setAboutDataListener(this)
 
@@ -57,7 +63,7 @@ class PubsViewpager : Fragment() , OnAboutDataReceivedListener, PlaceClickListen
 
     override fun onResume() {
         super.onResume()
-        firebaseloggedin.getAccount(CheckCurrentUser()!!.uid)
+        firebaseloggedin.getAccount( loginViewmodel.liveFirebaseUser.value!!.uid)
         firebaseloggedin.AccountObservable.observe(viewLifecycleOwner){profile->
             if (!profile.isEmpty()){
                 Log.d("MapsData",profile.toString())

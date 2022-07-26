@@ -1,7 +1,8 @@
 package Izaac.Doyle.PubsApp.ui.Group
 
-import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
 
+
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
 import Izaac.Doyle.PubsApp.Firebase.RandomRules
 import Izaac.Doyle.PubsApp.Firebase.UploadImage
 import Izaac.Doyle.PubsApp.Main.MainApp
@@ -15,11 +16,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class BottomFragmentGroupCreate:BottomSheetDialogFragment() {
 
     private var _binding: FragmentGroupCreateBinding? = null
+
+    private lateinit var loginViewmodel : AccountActivitysViewModel
 
 
     private val binding get() = _binding!!
@@ -38,6 +42,8 @@ class BottomFragmentGroupCreate:BottomSheetDialogFragment() {
         _binding = FragmentGroupCreateBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        loginViewmodel = ViewModelProvider(this)[AccountActivitysViewModel::class.java]
+
 
 
         binding.GroupImageAdd.setOnClickListener {
@@ -54,14 +60,14 @@ class BottomFragmentGroupCreate:BottomSheetDialogFragment() {
 
             if (!binding.GroupNameAdd.text?.isEmpty()!!) {
                 app.group.CreateGroup(
-                    GroupModel(CheckCurrentUser()!!.uid, 0, binding.GroupNameAdd.text.toString().trim(), ArrayList()),
-                    CheckCurrentUser()!!.uid,
-                    requireActivity().getSharedPreferences(CheckCurrentUser()!!.uid, Context.MODE_PRIVATE).getString("Username", "").toString())
+                    GroupModel(loginViewmodel.liveFirebaseUser.value!!.uid, 0, binding.GroupNameAdd.text.toString().trim(), ArrayList()),
+                    loginViewmodel.liveFirebaseUser.value!!.uid,
+                    requireActivity().getSharedPreferences(loginViewmodel.liveFirebaseUser.value!!.uid, Context.MODE_PRIVATE).getString("Username", "").toString())
 
 
 
                 if (ImageUri != null){
-                    UploadImage(CheckCurrentUser()!!.uid,ImageUri!!,"GroupImage")
+                    UploadImage(loginViewmodel.liveFirebaseUser.value!!.uid,ImageUri!!,"GroupImage")
                 }
 
 //                RandomRules(CheckCurrentUser()!!.uid)

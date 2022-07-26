@@ -1,11 +1,13 @@
 package Izaac.Doyle.PubsApp.ui.Group
 
-import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
 import Izaac.Doyle.PubsApp.Firebase.FirebaseLoggedIn
 import Izaac.Doyle.PubsApp.Helpers.UserSearchRecyclerview
 import Izaac.Doyle.PubsApp.Helpers.ViewPagerAdaptor
 import Izaac.Doyle.PubsApp.Helpers.onDataPasser
 import Izaac.Doyle.PubsApp.Main.MainApp
+import Izaac.Doyle.PubsApp.Models.FBAccountModel
 import Izaac.Doyle.PubsApp.Models.GooglePlacesModel
 import Izaac.Doyle.PubsApp.Models.GroupModel
 import Izaac.Doyle.PubsApp.Models.RulesModel
@@ -23,11 +25,15 @@ import android.util.Log
 import android.view.*
 import android.widget.Button
 import androidx.core.os.bundleOf
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.storage.FirebaseStorage
@@ -45,11 +51,12 @@ fun setAboutDataListener(listener: OnAboutDataReceivedListener?) {
     mAboutDataListener = listener
 }
 
-class GroupsFragment : Fragment(), onDataPasser {
+class GroupsFragment : Fragment() {
 
     private val groupViewModel: GroupViewModel by viewModels()
     private val firebaseloggedin : FirebaseLoggedIn by activityViewModels()
     private val mapsViewModel: MapsViewModel by activityViewModels()
+    private lateinit var loginViewmodel : AccountActivitysViewModel
     private var _binding: FragmentGroupBinding? = null
     lateinit var app: MainApp
     lateinit var myAdapter:UserSearchRecyclerview
@@ -80,14 +87,16 @@ class GroupsFragment : Fragment(), onDataPasser {
         _binding = FragmentGroupBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        if (CheckCurrentUser() !=null){
+        loginViewmodel = ViewModelProvider(this)[AccountActivitysViewModel::class.java]
+
+        if (loginViewmodel.liveFirebaseUser.value !=null){
 //            groupViewModel =
 //                ViewModelProvider(this)[GroupViewModel::class.java]
 
             // check if user has invitations on run when the screen is drawn and now always checking. Save app load wont check always but Firebase Functions could help with this
-            groupViewModel.CheckInvitations(CheckCurrentUser()!!.uid)
-            groupViewModel.QrCodeScanSearch(CheckCurrentUser()!!.uid)
-            groupViewModel.getUsersPubsList()
+            groupViewModel.CheckInvitations(loginViewmodel.liveFirebaseUser.value!!.uid)
+            groupViewModel.QrCodeScanSearch(loginViewmodel.liveFirebaseUser.value!!.uid)
+            groupViewModel.getUsersPubsList(loginViewmodel.liveFirebaseUser.value!!.uid)
 
 
 
@@ -170,7 +179,7 @@ class GroupsFragment : Fragment(), onDataPasser {
                 Log.d("Observe group", "$it")
                 if (it.isNotEmpty()) {
                     groupViewModel.Rules(it[0].RuleNumbers)
-                    groupViewModel.CheckGroupAdmin(it[0].OwnerUUID)
+                    groupViewModel.CheckGroupAdmin(it[0].OwnerUUID,loginViewmodel)
                     groupViewModel.getGroupPlaces(it[0].OwnerUUID)
 
                    // binding.groupName.text = it[0].GroupName
@@ -254,10 +263,216 @@ class GroupsFragment : Fragment(), onDataPasser {
         return root
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val menuHost:MenuHost = requireActivity()
 
 
+
+        menuHost.addMenuProvider(object :MenuProvider{
+
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+//                inflater.inflate(R.menu.add_to_group, menu)
+                menuInflater.inflate(R.menu.add_to_group,menu)
+
+
+                groupViewModel.gNames.observe(viewLifecycleOwner) { result ->
+                    val bell = menu.findItem(R.id.Group_join)
+                    val bellAction = bell.actionView
+
+                    Log.d("Gnames", result.toString())
+
+                    menu.findItem(R.id.group_update).setOnMenuItemClickListener {
+
+                        val update = settings_update_info()
+                        update.arguments = bundleOf(
+                            "GroupUpdate" to "GroupUpdate",
+                            "GroupUUID" to result[0].OwnerUUID,
+                            "GroupName" to result[0].GroupName
+                        )
+                        update.show(childFragmentManager, "Group Update")
+
+
+                        true
+                    }
+
+
+
+                    bellAction.setOnClickListener {
+                        groupViewModel.CheckInvitations(loginViewmodel.liveFirebaseUser.value!!.uid)
+                    }
+
+
+
+
+                    if (!result.isNullOrEmpty()) {
+                        menu.findItem(R.id.Create_group).isVisible = !result.isNotEmpty()
+                        menu.findItem(R.id.AddToGroup).isVisible = result.isNotEmpty()
+                        menu.findItem(R.id.Leave_Group).isVisible = result.isNotEmpty()
+                        menu.findItem(R.id.group_update).isVisible = result.isNotEmpty()
+
+                        bell.isVisible = result.isEmpty()
+                        bellAction.isVisible = result.isEmpty()
+                    }
+                    if (result.isNullOrEmpty()) {
+                        println(result)
+
+                        groupViewModel.Invites.observe(viewLifecycleOwner) { result ->
+                            println(result)
+                            if (!result.isNullOrEmpty()) {
+                                bell.isVisible = true
+                                notificationBadge = bellAction.findViewById(R.id.badge) as NotificationBadge
+                                bellAction!!.setOnClickListener {
+
+//                            Toast.makeText(requireContext(), "Notification USer Group UUID  ${result[0].GroupUUID}", Toast.LENGTH_SHORT).show()
+                                    val bottomjoin = BottomJoinGroupFragment()
+                                    bottomjoin.arguments = bundleOf("GroupUUID" to result[0].GroupUUID)
+                                    bottomjoin.show(childFragmentManager, "JoinGroup")
+//
+//                            if (bottomjoin.isAdded){
+//                            if (bottomjoin.requireActivity().isDestroyed){
+//                                requireActivity().recreate()
+//                            }}
+                                }
+                                notificationBadge!!.isVisible = true
+                                notificationBadge!!.setText("1")
+                            }
+                        }
+
+
+                    }
+                    if (result.isNullOrEmpty()) {
+
+
+                    }
+
+
+                }
+
+
+
+                groupViewModel.UsersGroupname.observe(viewLifecycleOwner) { it ->
+//            println("Test Group "+ it[0].GroupUUID)
+
+
+                    firebaseloggedin.AccountObservable.observe(viewLifecycleOwner) { account ->
+                        val bell = menu.findItem(R.id.Group_join)
+                        val bellAction = bell.actionView
+                        if (account.isNotEmpty()) {
+                            if (!account.isNullOrEmpty()) {
+                                bell.isVisible = account.isEmpty()
+                                bellAction.isVisible = account.isEmpty()
+                            }
+                            if (account[0].GroupUUID.isNullOrEmpty()) {
+
+                                bellAction.setOnClickListener {
+                                    groupViewModel.CheckInvitations(loginViewmodel.liveFirebaseUser.value!!.uid)
+                                }
+
+                                println(account)
+
+                                groupViewModel.Invites.observe(viewLifecycleOwner) { result ->
+                                    println(result)
+                                    if (!result.isNullOrEmpty()) {
+                                        bell.isVisible = true
+                                        println("Bell $result")
+                                        notificationBadge =
+                                            bellAction.findViewById(R.id.badge) as NotificationBadge
+                                        bellAction!!.setOnClickListener {
+//                            Toast.makeText(requireContext(), "Notification USer Group UUID  ${result[0].GroupUUID}", Toast.LENGTH_SHORT).show()
+                                            val bottomjoin = BottomJoinGroupFragment()
+                                            bottomjoin.arguments =
+                                                bundleOf("GroupUUID" to result[0].GroupUUID)
+                                            bottomjoin.show(childFragmentManager, "JoinGroup")
+
+                                        }
+                                        notificationBadge!!.isVisible = true
+                                        notificationBadge!!.setText("1")
+                                    }
+                                }
+
+
+                            }
+                        }
+
+                    }
+
+
+
+
+
+//                    super.onCreateOptionsMenu(menu, inflater)
+                }
+            }
+
+
+
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId){
+                    R.id.Create_group ->{
+                        val bottomFragmentGroupCreate = BottomFragmentGroupCreate()
+                        bottomFragmentGroupCreate.show(childFragmentManager,"Create Group")
+
+                        true
+                    }
+                    R.id.AddToGroup->{
+                        val bottomFragmentJoinAddBinding = BottomJoinAddGroupFragment()
+                        bottomFragmentJoinAddBinding.show(childFragmentManager,"JoinAdd Group")
+
+                        true
+                    }
+                    R.id.Leave_Group->{
+
+                        val view = View.inflate(context, R.layout.group_leave_group_confirm,null)
+                        val builder = AlertDialog.Builder(context)
+                        builder.setView(view)
+                        builder.setMessage("Confirm if you would like to leave this group")
+                        val dialog = builder.create()
+
+                        view.findViewById<Button>(R.id.group_leave_cancel).setOnClickListener {
+                            dialog.dismiss()
+                        }
+                        view.findViewById<Button>(R.id.group_leave_leave).setOnClickListener {
+//                    groupViewModel.UsersGroupname.value!!.clear()
+//                    groupViewModel.gNames.value!!.clear()
+//                    groupViewModel.groupRule.value!!.clear()
+//                    groupViewModel.GroupNames.value!!.clear()
+//                    groupViewModel.Rules.value!!.clear()
+//                    groupViewModel.Update()
+//                    requireActivity().recreate()
+                            dialog.dismiss()
+
+                            app.group.LeaveGroup(groupdata!!,requireActivity(),groupViewModel,loginViewmodel.liveFirebaseUser.value!!)
+
+                            firebaseloggedin.getAccount(loginViewmodel.liveFirebaseUser.value!!.uid)
+
+                            app.group.LeaveGroup(groupdata!!,requireActivity(),groupViewModel,loginViewmodel.liveFirebaseUser.value!!)
+                            groupdata = null
+
+                        }
+
+                        dialog.show()
+
+                        true
+                    }
+
+
+                    else -> {
+                        return false
+                    }
+//                        super.onOptionsItemSelected(item)
+                }            }
+
+
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
+
+
+
+
 
     private fun setUpTabs() {
 
@@ -300,208 +515,74 @@ class GroupsFragment : Fragment(), onDataPasser {
 
 
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.add_to_group, menu)
 
 
 
-
-        groupViewModel.gNames.observe(viewLifecycleOwner) { result ->
-
-
-            val bell = menu.findItem(R.id.Group_join)
-            val bellAction = bell.actionView
-
-            Log.d("Gnames", result.toString())
-
-
-
-
-
-            menu.findItem(R.id.group_update).setOnMenuItemClickListener {
-
-                val update = settings_update_info()
-                update.arguments = bundleOf(
-                    "GroupUpdate" to "GroupUpdate",
-                    "GroupUUID" to result[0].OwnerUUID,
-                    "GroupName" to result[0].GroupName
-                )
-                update.show(childFragmentManager, "Group Update")
-
-
-                true
-            }
-
-
-
-            bellAction.setOnClickListener {
-                groupViewModel.CheckInvitations(CheckCurrentUser()!!.uid)
-            }
-
-
-
-
-            if (!result.isNullOrEmpty()) {
-                menu.findItem(R.id.Create_group).isVisible = !result.isNotEmpty()
-                menu.findItem(R.id.AddToGroup).isVisible = result.isNotEmpty()
-                menu.findItem(R.id.Leave_Group).isVisible = result.isNotEmpty()
-                menu.findItem(R.id.group_update).isVisible = result.isNotEmpty()
-
-                bell.isVisible = result.isEmpty()
-                bellAction.isVisible = result.isEmpty()
-            }
-            if (result.isNullOrEmpty()) {
-                println(result)
-
-                groupViewModel.Invites.observe(viewLifecycleOwner) { result ->
-                    println(result)
-                    if (!result.isNullOrEmpty()) {
-                        bell.isVisible = true
-                        notificationBadge = bellAction.findViewById(R.id.badge) as NotificationBadge
-                        bellAction!!.setOnClickListener {
-
-//                            Toast.makeText(requireContext(), "Notification USer Group UUID  ${result[0].GroupUUID}", Toast.LENGTH_SHORT).show()
-                            val bottomjoin = BottomJoinGroupFragment()
-                            bottomjoin.arguments = bundleOf("GroupUUID" to result[0].GroupUUID)
-                            bottomjoin.show(childFragmentManager, "JoinGroup")
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
 //
-//                            if (bottomjoin.isAdded){
-//                            if (bottomjoin.requireActivity().isDestroyed){
-//                                requireActivity().recreate()
-//                            }}
-                        }
-                        notificationBadge!!.isVisible = true
-                        notificationBadge!!.setText("1")
-                    }
-                }
+//    }
 
-
-            }
-            if (result.isNullOrEmpty()) {
-
-
-            }
-
-
-        }
-
-
-
-        groupViewModel.UsersGroupname.observe(viewLifecycleOwner) { it ->
-//            println("Test Group "+ it[0].GroupUUID)
-
-
-            firebaseloggedin.AccountObservable.observe(viewLifecycleOwner) { account ->
-                val bell = menu.findItem(R.id.Group_join)
-                val bellAction = bell.actionView
-                if (account.isNotEmpty()) {
-                    if (!account.isNullOrEmpty()) {
-                        bell.isVisible = account.isEmpty()
-                        bellAction.isVisible = account.isEmpty()
-                    }
-                    if (account[0].GroupUUID.isNullOrEmpty()) {
-
-                        bellAction.setOnClickListener {
-                            groupViewModel.CheckInvitations(CheckCurrentUser()!!.uid)
-                        }
-
-                        println(account)
-
-                        groupViewModel.Invites.observe(viewLifecycleOwner) { result ->
-                            println(result)
-                            if (!result.isNullOrEmpty()) {
-                                bell.isVisible = true
-                                println("Bell $result")
-                                notificationBadge =
-                                    bellAction.findViewById(R.id.badge) as NotificationBadge
-                                bellAction!!.setOnClickListener {
-//                            Toast.makeText(requireContext(), "Notification USer Group UUID  ${result[0].GroupUUID}", Toast.LENGTH_SHORT).show()
-                                    val bottomjoin = BottomJoinGroupFragment()
-                                    bottomjoin.arguments =
-                                        bundleOf("GroupUUID" to result[0].GroupUUID)
-                                    bottomjoin.show(childFragmentManager, "JoinGroup")
-
-                                }
-                                notificationBadge!!.isVisible = true
-                                notificationBadge!!.setText("1")
-                            }
-                        }
-
-
-                    }
-                }
-
-            }
-
-
-
-
-
-            super.onCreateOptionsMenu(menu, inflater)
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId){
-            R.id.Create_group ->{
-                val bottomFragmentGroupCreate = BottomFragmentGroupCreate()
-                bottomFragmentGroupCreate.show(childFragmentManager,"Create Group")
-
-                true
-            }
-            R.id.AddToGroup->{
-                val bottomFragmentJoinAddBinding = BottomJoinAddGroupFragment()
-                bottomFragmentJoinAddBinding.show(childFragmentManager,"JoinAdd Group")
-
-                true
-            }
-            R.id.Leave_Group->{
-
-                val view = View.inflate(context, R.layout.group_leave_group_confirm,null)
-                val builder = AlertDialog.Builder(context)
-                builder.setView(view)
-                builder.setMessage("Confirm if you would like to leave this group")
-                val dialog = builder.create()
-
-                view.findViewById<Button>(R.id.group_leave_cancel).setOnClickListener {
-                    dialog.dismiss()
-                }
-                view.findViewById<Button>(R.id.group_leave_leave).setOnClickListener {
-//                    groupViewModel.UsersGroupname.value!!.clear()
-//                    groupViewModel.gNames.value!!.clear()
-//                    groupViewModel.groupRule.value!!.clear()
-//                    groupViewModel.GroupNames.value!!.clear()
-//                    groupViewModel.Rules.value!!.clear()
-//                    groupViewModel.Update()
-//                    requireActivity().recreate()
-                    dialog.dismiss()
-
-                    app.group.LeaveGroup(groupdata!!,requireActivity(),groupViewModel)
-
-                    firebaseloggedin.getAccount(CheckCurrentUser()!!.uid)
-
-                    app.group.LeaveGroup(groupdata!!,requireActivity(),groupViewModel)
-                    groupdata = null
-
-                }
-
-                dialog.show()
-
-                true
-            }
-
-
-            else -> super.onOptionsItemSelected(item)
-        }
-
-    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        return when (item.itemId){
+//            R.id.Create_group ->{
+//                val bottomFragmentGroupCreate = BottomFragmentGroupCreate()
+//                bottomFragmentGroupCreate.show(childFragmentManager,"Create Group")
+//
+//                true
+//            }
+//            R.id.AddToGroup->{
+//                val bottomFragmentJoinAddBinding = BottomJoinAddGroupFragment()
+//                bottomFragmentJoinAddBinding.show(childFragmentManager,"JoinAdd Group")
+//
+//                true
+//            }
+//            R.id.Leave_Group->{
+//
+//                val view = View.inflate(context, R.layout.group_leave_group_confirm,null)
+//                val builder = AlertDialog.Builder(context)
+//                builder.setView(view)
+//                builder.setMessage("Confirm if you would like to leave this group")
+//                val dialog = builder.create()
+//
+//                view.findViewById<Button>(R.id.group_leave_cancel).setOnClickListener {
+//                    dialog.dismiss()
+//                }
+//                view.findViewById<Button>(R.id.group_leave_leave).setOnClickListener {
+////                    groupViewModel.UsersGroupname.value!!.clear()
+////                    groupViewModel.gNames.value!!.clear()
+////                    groupViewModel.groupRule.value!!.clear()
+////                    groupViewModel.GroupNames.value!!.clear()
+////                    groupViewModel.Rules.value!!.clear()
+////                    groupViewModel.Update()
+////                    requireActivity().recreate()
+//                    dialog.dismiss()
+//
+//                    app.group.LeaveGroup(groupdata!!,requireActivity(),groupViewModel)
+//
+//                    firebaseloggedin.getAccount(CheckCurrentUser()!!.uid)
+//
+//                    app.group.LeaveGroup(groupdata!!,requireActivity(),groupViewModel)
+//                    groupdata = null
+//
+//                }
+//
+//                dialog.show()
+//
+//                true
+//            }
+//
+//
+//            else -> super.onOptionsItemSelected(item)
+//        }
+//
+//    }
 
     override fun onResume() {
         super.onResume()
 
 
-        if (CheckCurrentUser() != null) {
-            firebaseloggedin.getAccount(CheckCurrentUser()!!.uid)
+        if (loginViewmodel.liveFirebaseUser.value != null) {
+            firebaseloggedin.getAccount(loginViewmodel.liveFirebaseUser.value!!.uid)
             firebaseloggedin.AccountObservable.observe(viewLifecycleOwner) { profile ->
                 if (!profile.isEmpty()) {
                     Log.d("MapsData", profile.toString())
@@ -511,12 +592,12 @@ class GroupsFragment : Fragment(), onDataPasser {
                     mapsViewModel.load(profile[0].GroupUUID.toString())
 
 
-                    groupViewModel.CheckInvitations(CheckCurrentUser()!!.uid)
-                    groupViewModel.QrCodeScanSearch(CheckCurrentUser()!!.uid)
-                    groupViewModel.getUsersPubsList()
+                    groupViewModel.CheckInvitations(loginViewmodel.liveFirebaseUser.value!!.uid)
+                    groupViewModel.QrCodeScanSearch(loginViewmodel.liveFirebaseUser.value!!.uid)
+                    groupViewModel.getUsersPubsList(loginViewmodel.liveFirebaseUser.value!!.uid)
 
-                    if (CheckCurrentUser() != null) {
-                        firebaseloggedin.getAccount(CheckCurrentUser()!!.uid)
+                    if (loginViewmodel.liveFirebaseUser.value != null) {
+                        firebaseloggedin.getAccount(loginViewmodel.liveFirebaseUser.value!!.uid)
                         firebaseloggedin.AccountObservable.observe(viewLifecycleOwner) { profile ->
                             if (profile.isNotEmpty()) {
 
@@ -548,22 +629,7 @@ class GroupsFragment : Fragment(), onDataPasser {
         super.onAttach(context)
     }
 
-    override fun changeBottomSheet(sheetActive: String) {
 
-    }
-
-    override fun AccountStatus(info: String, email: String) {
-    }
-
-    override fun PassView(view: Boolean) {
-        println(view.toString())
-
-
-    }
-
-    override fun Rules(Rules: MutableList<RulesModel>) {
-
-    }
 
 
 

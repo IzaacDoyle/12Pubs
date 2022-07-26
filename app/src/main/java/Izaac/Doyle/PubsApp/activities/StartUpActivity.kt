@@ -1,12 +1,14 @@
 package Izaac.Doyle.PubsApp.activities
 
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
 import Izaac.Doyle.PubsApp.Firebase.AccountData
-import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+
 import Izaac.Doyle.PubsApp.Models.FBAccountModel
 import Izaac.Doyle.PubsApp.R
 import android.Manifest
 import android.app.Application
 import android.content.Intent
+import androidx.lifecycle.Observer
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
@@ -16,18 +18,34 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.core.os.bundleOf
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import kotlin.system.exitProcess
 
 class StartUpActivity: AppCompatActivity() {
     private val PERMISSIONS_GRANTED = 101
 
+    private lateinit var loggedViewModel:AccountActivitysViewModel
+    val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
+
+
+//        loggedViewModel.CheckCurrentUser()
+
+
+
+
+
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_screen)
-        requestPermissions()
+
 
     }
 
@@ -51,27 +69,26 @@ class StartUpActivity: AppCompatActivity() {
 
         }else{
          //   Toast.makeText(this, "Else Entered", Toast.LENGTH_SHORT).show()
-            if (CheckCurrentUser() != null){
-
-                 val account = MutableLiveData<List<FBAccountModel>>()
-                AccountData.getAccount(CheckCurrentUser()!!.uid, account)
-
+            if (firebaseAuth.currentUser != null){
+                val profile =  MutableLiveData<List<FBAccountModel>>()
+                AccountData.getAccount(firebaseAuth.currentUser!!.uid, profile)
                 Handler(Looper.getMainLooper()).postDelayed({
                     val intent = Intent(applicationContext, MainActivity::class.java)
-                    if (account.value?.get(0) != null) {
-                        intent.putExtra("account", account.value?.get(0)!!.UserEmail)
-                        Log.d("StartUp","Account Available " + account.value?.get(0)!!.UserEmail)
+                    if (profile.value != null && profile.value!!.isNotEmpty()) {
+                        intent.putExtra("account", profile.value!![0].Username!!)
+
+                        Log.d("StartUp","Account Available " + profile.value?.get(0)!!.Username!!)
                     }
                     startActivity(intent)
                     finish()
-                }, 3000)
+                }, 4000)
 
             }else {
                 Handler(Looper.getMainLooper()).postDelayed({
                     val intent = Intent(applicationContext, MainActivity::class.java)
                     startActivity(intent)
                     finish()
-                }, 3000)
+                }, 4000)
             }
         }
         return
@@ -95,7 +112,7 @@ class StartUpActivity: AppCompatActivity() {
                         val intent = Intent(applicationContext, MainActivity::class.java)
                         startActivity(intent)
                         finish()
-                    }, 2000)
+                    }, 4000)
                 }else{
                     exitProcess(-1)
                 }
@@ -105,6 +122,21 @@ class StartUpActivity: AppCompatActivity() {
         }
 
     }
+
+    override fun onStart() {
+        super.onStart()
+        loggedViewModel = ViewModelProvider(this)[AccountActivitysViewModel::class.java]
+        loggedViewModel.liveFirebaseUser.observe(this, Observer
+        { firebaseUser -> if (firebaseUser != null){
+            Log.d("StartUp","${firebaseUser.uid}")
+            requestPermissions()
+        }else{
+            requestPermissions()
+        }
+
+        })
+    }
+
 
 
 }

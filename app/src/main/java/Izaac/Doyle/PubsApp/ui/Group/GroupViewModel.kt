@@ -1,17 +1,23 @@
 package Izaac.Doyle.PubsApp.ui.home
 
-import Izaac.Doyle.PubsApp.Firebase.CheckCurrentUser
+
+import Izaac.Doyle.PubsApp.Firebase.AccountActivitysViewModel
 import Izaac.Doyle.PubsApp.Models.*
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class GroupViewModel : ViewModel() {
     private lateinit var db: FirebaseFirestore
-    private lateinit var CUuid:String
+//    private lateinit var CUuid:String
+
+
+
     var GroupNames: MutableLiveData<ArrayList<GroupModel>> = MutableLiveData<ArrayList<GroupModel>>()
     private var Username: MutableLiveData<ArrayList<FBAccountModel>> = MutableLiveData<ArrayList<FBAccountModel>>()
     private var QrcodeSearch:  MutableLiveData<MutableList<FBAccountModel>> = MutableLiveData(ArrayList<FBAccountModel>())
@@ -23,19 +29,23 @@ class GroupViewModel : ViewModel() {
     private var GroupsPlaces: MutableLiveData<MutableList<GooglePlacesModel>> = MutableLiveData(ArrayList<GooglePlacesModel>())
 
     init {
+//        loginViewmodel = ViewModelProvider()[AccountActivitysViewModel::class.java]
+
         db = FirebaseFirestore.getInstance()
         db.firestoreSettings = FirebaseFirestoreSettings.Builder().build()
-        CUuid = CheckCurrentUser()!!.uid
-
-        getUserGroup(CUuid)
-        CheckInvitations(CheckCurrentUser()!!.uid)
-        QrCodeScanSearch(CheckCurrentUser()!!.uid)
-
-       // getGroupName()
 
 
-        CheckInvitations(CheckCurrentUser()!!.uid)
-        QrCodeScanSearch(CheckCurrentUser()!!.uid)
+//        CUuid = CheckCurrentUser()!!.uid
+//
+//        getUserGroup(CUuid)
+//        CheckInvitations(CheckCurrentUser()!!.uid)
+//        QrCodeScanSearch(CheckCurrentUser()!!.uid)
+//
+//       // getGroupName()
+//
+//
+//        CheckInvitations(CheckCurrentUser()!!.uid)
+//        QrCodeScanSearch(CheckCurrentUser()!!.uid)
 
 
 
@@ -43,7 +53,7 @@ class GroupViewModel : ViewModel() {
     }
 
 
-    fun Update(){
+    fun Update(CUuid:String){
         getUserGroup(CUuid)
         CheckInvitations(CUuid)
         QrCodeScanSearch(CUuid)
@@ -73,11 +83,11 @@ class GroupViewModel : ViewModel() {
 
      }
 
-    fun CheckGroupAdmin(UUID: String){
+    fun CheckGroupAdmin(UUID: String, loginViewmodel: AccountActivitysViewModel){
         val db = Firebase.firestore
         val GroupUsers = ArrayList<GroupUserModel>()
 
-        db.collection("Groups").document(UUID).collection("Users").document(CheckCurrentUser()!!.uid).get()
+        db.collection("Groups").document(UUID).collection("Users").document(loginViewmodel.liveFirebaseUser.value!!.uid).get()
             .addOnSuccessListener {it->
                 if (it != null){
                     val groupusers = it.toObject(GroupUserModel::class.java)
@@ -166,7 +176,7 @@ class GroupViewModel : ViewModel() {
     }
 
 
-    fun getUsersPubsList(){
+    fun getUsersPubsList(CUuid:String){
         val db = Firebase.firestore
         val placeList= ArrayList<GooglePlacesModel>()
 
