@@ -21,7 +21,7 @@
           app:layout_constraintStart_toStartOf="@+id/imageView7" />
   </ConstraintSet>
 
-  <ConstraintSet android:id="@+id/end">
+  <ConstraintSet android:id="@+id/finshSpin">
       <Constraint android:id="@id/imageView7"/>
       <Constraint
           android:id="@+id/textView"
@@ -81,8 +81,7 @@
     <Transition
         app:constraintSetStart="@+id/spintop"
         app:constraintSetEnd="@+id/spinbottom"
-        app:duration="601"
-        app:autoTransition="animateToEnd">
+        app:duration="601">
         <KeyFrameSet >
             <KeyAttribute
                 app:motionTarget="@+id/imageView7"
@@ -118,7 +117,7 @@
     <Transition
         app:constraintSetStart="@+id/spinbottom"
         app:constraintSetEnd="@+id/spintop"
-        app:autoTransition="animateToEnd" >
+        app:motionInterpolator="cubic(0.6,1,0.4,0)">
         <KeyFrameSet >
             <KeyAttribute
                 app:motionTarget="@+id/imageView7"
@@ -132,12 +131,14 @@
                 app:motionTarget="@+id/imageView7"
                 app:framePosition="0"
                 android:alpha="0.5" />
+
+
+
         </KeyFrameSet>
     </Transition>
     <Transition
         app:constraintSetStart="@+id/spinbottom"
-        app:constraintSetEnd="@+id/end"
-        app:autoTransition="animateToEnd"
+        app:constraintSetEnd="@+id/finshSpin"
         app:duration="1082">
         <KeyFrameSet >
             <KeyAttribute
@@ -149,12 +150,6 @@
                 app:framePosition="0"
                 android:alpha="100" />
         </KeyFrameSet>
-        <OnSwipe app:maxAcceleration="19.93"
-            app:maxVelocity="1.3099"
-            app:springStiffness="99.85"
-            app:springDamping="4.58"
-            app:springMass="1.1"
-            app:springStopThreshold="0.7008" />
     </Transition>
 
 
